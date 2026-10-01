@@ -1,0 +1,35 @@
+[project]
+name = "pitchlens-workspace"
+version = "0.0.0"
+requires-python = ">=3.12"
+dependencies = ["pitchlens"]
+
+[dependency-groups]
+dev = ["pytest", "hypothesis", "ruff", "mypy", "pre-commit", "ipykernel", "pandas-stubs"]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["pipeline"]
+
+[tool.uv.sources]
+pitchlens = { workspace = true }
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["pitchlens"]
+
+[tool.mypy]
+strict = true
+files = ["pipeline/src", "tests"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
