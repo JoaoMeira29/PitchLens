@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PitchLens kickoff: phase 0 in VS Code</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Schibsted+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF2F8; --surface:#FFFFFF; --ink:#10204A; --muted:#4A5878; --line:#CDD6E8;
+  --cobalt:#2346E8; --cobalt-soft:#E3E9FF; --coral:#E8473B; --coral-soft:#FFE6E3;
+  --turf:#0B8C68; --turf-soft:#DDF4EC; --sun:#A87A00; --sun-soft:#FFF1C7;
+  --magenta:#B8399D; --magenta-soft:#FBE4F5; --code-bg:#0F1D45; --code-ink:#E6ECFF;
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --body:"Schibsted Grotesk","Helvetica Neue",Arial,system-ui,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A1433; --surface:#111D45; --ink:#EAF0FF; --muted:#A5B2D6; --line:#2A3B74;
+    --cobalt:#7C93FF; --cobalt-soft:#1B2B66; --coral:#FF7A70; --coral-soft:#3E1C2A;
+    --turf:#38CC9F; --turf-soft:#0F3A3A; --sun:#FFCF3F; --sun-soft:#3A3220;
+    --magenta:#F07FD6; --magenta-soft:#3D1838; --code-bg:#060D26; --code-ink:#E6ECFF;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A1433; --surface:#111D45; --ink:#EAF0FF; --muted:#A5B2D6; --line:#2A3B74;
+  --cobalt:#7C93FF; --cobalt-soft:#1B2B66; --coral:#FF7A70; --coral-soft:#3E1C2A;
+  --turf:#38CC9F; --turf-soft:#0F3A3A; --sun:#FFCF3F; --sun-soft:#3A3220;
+  --magenta:#F07FD6; --magenta-soft:#3D1838; --code-bg:#060D26; --code-ink:#E6ECFF;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 16px);scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--cobalt);text-underline-offset:3px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--cobalt);outline-offset:2px;border-radius:6px}
+code{font-family:var(--mono);font-size:.88em}
+p code,li code,.intro code{background:var(--cobalt-soft);padding:.1em .35em;border-radius:5px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+/* hero */
+.hero{padding:40px 0 10px}
+.links{display:flex;gap:18px;flex-wrap:wrap;font-size:14.5px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,5.6vw,60px);line-height:1;letter-spacing:-.03em;margin:18px 0 14px}
+.lede{max-width:64ch;color:var(--muted);font-size:18px;margin:0 0 22px}
+.prog{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.bar{flex:1 1 260px;max-width:520px;height:12px;background:var(--surface);border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--turf);border-radius:999px;transition:width .4s}
+.prog b{font-family:var(--display);font-weight:500;font-size:15px}
+.sync{font-size:13.5px;color:var(--muted);margin:6px 0 0}
+.keys{display:flex;flex-wrap:wrap;gap:10px 22px;margin:22px 0 0;font-size:14.5px;color:var(--muted)}
+.keys span{display:inline-flex;align-items:center;gap:8px}
+.kd{width:12px;height:12px;border-radius:50%}
+
+/* board */
+.boardwrap{overflow-x:auto;margin:28px 0 8px;border:1px solid var(--line);border-radius:18px;background:var(--surface)}
+.board{display:grid;grid-template-columns:130px repeat(3,minmax(220px,1fr));min-width:800px}
+.bcell{padding:14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start}
+.board > .bcell:nth-child(4n){border-right:none}
+.board > .bcell:nth-last-child(-n+4){border-bottom:none}
+.bhead{display:block;background:var(--bg)}
+.bhead small{display:block;color:var(--muted);font-size:13px}
+.bhead b{display:block;font-family:var(--display);font-weight:500;font-size:16px;line-height:1.25;margin:2px 0 4px}
+.bhead span{display:block;color:var(--muted);font-size:13.5px;line-height:1.35}
+.blane{font-weight:700;font-size:15px;align-items:center;gap:8px}
+.blane i{width:12px;height:12px;border-radius:50%;background:var(--c)}
+.lane-both{--c:var(--ink);--soft:var(--bg)}
+.lane-A{--c:var(--cobalt);--soft:var(--cobalt-soft)}
+.lane-B{--c:var(--coral);--soft:var(--coral-soft)}
+.empty{background:repeating-linear-gradient(135deg,transparent 0 8px,var(--bg) 8px 10px)}
+.tchip{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--line);border-left:5px solid var(--c);background:var(--surface);border-radius:10px;padding:6px 10px;cursor:pointer;font-size:14px;font-weight:500;text-align:left;transition:transform .12s,border-color .12s}
+.tchip:hover{transform:translateY(-1px);border-color:var(--c)}
+.tchip.agent{box-shadow:inset 0 -3px 0 var(--magenta)}
+.tchip.opt{border-style:dashed;border-left-style:solid}
+.tn{font-family:var(--display);font-size:12px;font-weight:700;color:var(--c)}
+.tck{display:none;width:18px;height:18px;border-radius:50%;background:var(--turf);color:#fff;font-size:11px;line-height:18px;text-align:center}
+.tchip.is-done{background:var(--turf-soft)}
+.tchip.is-done .tck{display:inline-block}
+.tchip.is-done .tt{text-decoration:line-through;text-decoration-color:var(--turf)}
+.dep{width:100%;margin:2px 0 0;font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion: reduce){.tchip,.bar span{transition:none}}
+
+/* stages and cards */
+.stage{font-family:var(--display);font-weight:700;font-size:clamp(24px,3.2vw,32px);letter-spacing:-.02em;line-height:1.15;margin:52px 0 4px}
+.stage small{display:block;font-weight:500;font-size:14px;color:var(--muted);letter-spacing:0;margin-bottom:4px}
+.stagesub{color:var(--muted);margin:0 0 16px}
+.card{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--c);border-radius:14px;margin:0 0 12px}
+.card summary{list-style:none;display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer}
+.card summary::-webkit-details-marker{display:none}
+.num{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:14px;background:var(--soft);color:var(--c)}
+.lane-both .num{background:var(--bg);color:var(--ink)}
+.stitle{flex:1;min-width:0}
+.stitle b{display:block;font-size:17px;line-height:1.3}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.meta span{font-size:12.5px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--bg);color:var(--muted)}
+.meta .who{background:var(--soft);color:var(--c)}
+.lane-both .meta .who{color:var(--ink)}
+.meta .mode.agent{background:var(--magenta-soft);color:var(--magenta)}
+.state{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid var(--line);color:transparent;display:grid;place-items:center;font-size:14px;font-weight:700}
+.card.is-done .state{background:var(--turf);border-color:var(--turf);color:#fff}
+.card.is-done summary b{color:var(--muted)}
+.card[open] summary{border-bottom:1px solid var(--line)}
+.cbody{padding:16px 20px 20px}
+.intro{margin:0 0 14px}
+.panel ol,.panel ul{padding-left:22px;margin:0 0 12px}
+.panel li{margin-bottom:5px}
+.panel p{margin:0 0 12px}
+.tabs{display:inline-flex;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px;margin:0 0 14px}
+.tabs button{border:none;background:none;border-radius:999px;padding:6px 14px;cursor:pointer;font-weight:500;font-size:14.5px;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(6,12,35,.15)}
+.tabs button[data-tab="agent"][aria-selected="true"]{color:var(--magenta)}
+.code{position:relative;margin:0 0 14px;border-radius:12px;background:var(--code-bg);color:var(--code-ink)}
+.code pre{margin:0;padding:16px 18px;overflow-x:auto;font-size:13.5px;line-height:1.55}
+.code .clabel{display:block;padding:9px 18px 0;font-size:12.5px;color:#9FB0E0;font-family:var(--body)}
+.code.prompt{background:var(--magenta-soft);color:var(--ink)}
+.code.prompt pre{white-space:pre-wrap;font-family:var(--body);font-size:15px}
+.code.prompt code{font-family:var(--body);font-size:1em}
+.code.prompt .clabel{color:var(--magenta);font-weight:700}
+.copy{position:absolute;top:8px;right:8px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:inherit;border-radius:8px;padding:3px 10px;font-size:12.5px;cursor:pointer}
+.code.prompt .copy{border-color:var(--magenta);background:var(--surface);color:var(--magenta)}
+.rule{background:var(--sun-soft);border-radius:10px;padding:12px 14px;margin:0 0 12px;font-size:15.5px}
+.small{font-size:14px;color:var(--muted)}
+.donebox{background:var(--turf-soft);border-radius:10px;padding:11px 14px;margin:6px 0 14px}
+.donebox b{color:var(--turf);margin-right:4px}
+.markdone{border:1.5px solid var(--turf);background:var(--surface);color:var(--turf);border-radius:999px;padding:8px 16px;font-weight:700;cursor:pointer;font-size:14.5px}
+.card.is-done .markdone{background:var(--turf);color:#fff}
+.smsg{font-size:13px;color:var(--muted);margin:6px 0 0;min-height:1.2em}
+footer{color:var(--muted);font-size:14px;padding:40px 0 48px}
+@media (max-width:600px){.card summary{padding:14px}.cbody{padding:14px}.num{width:32px;height:32px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="links">
+      <a href="https://claude.ai/artifact/B5e1w4VcDCSQxaVpe6oVLR" target="_blank" rel="noopener">Project plan</a>
+      <a href="https://claude.ai/artifact/BWMciBjn9fVaKR66Rgsrs7" target="_blank" rel="noopener">Learning roadmap</a>
+    </div>
+    <h1>PitchLens kickoff</h1>
+    <p class="lede">Phase 0 in VS Code, from a freshly cloned repo to green CI and your first shot map. Sixteen tasks in three stages, split between two people, with a ready-made Claude Code prompt for every task an agent can do.</p>
+    <div class="prog"><div class="bar" aria-hidden="true"><span id="pbar"></span></div><b id="ptext">0 of 16 tasks done</b></div>
+    <p class="sync" id="sync">Loading progress…</p>
+    <div class="keys">
+      <span><i class="kd" style="background:var(--cobalt)"></i>Person A: data and models</span>
+      <span><i class="kd" style="background:var(--coral)"></i>Person B: product and platform</span>
+      <span><i class="kd" style="background:var(--ink)"></i>Both of you</span>
+      <span><i class="kd" style="background:var(--magenta)"></i>Agent-ready: do it yourself or hand it to Claude Code</span>
+    </div>
+  </header>
+
+  <div class="boardwrap"><div class="board" role="table" aria-label="Who does what, by stage"><div class="bcell bhead blane" role="columnheader"></div>
+<div class="bcell bhead" role="columnheader"><small>Stage 1</small><b>Set up your machines</b><span>Both of you, separately</span></div>
+<div class="bcell bhead" role="columnheader"><small>Stage 2</small><b>Build in parallel</b><span>Person B scaffolds, Person A gets into the data</span></div>
+<div class="bcell bhead" role="columnheader"><small>Stage 3</small><b>Ship phase 0 together</b><span>One pull request, reviewed by the other</span></div>
+<div class="bcell blane lane-both" role="rowheader"><i></i>Both</div>
+<div class="bcell"><button class="tchip lane-both" data-go="prereqs"><span class="tn">1</span><span class="tt">Prerequisites</span><span class="tck" aria-hidden="true">✓</span></button><button class="tchip lane-both" data-go="vscode"><span class="tn">2</span><span class="tt">VS Code</span><span class="tck" aria-hidden="true">✓</span></button><button class="tchip lane-both" data-go="claudecode"><span class="tn">3</span><span class="tt">Claude Code</span><span class="tck" aria-hidden="true">✓</span></button></div>
+<div class="bcell empty" aria-hidden="true"></div>
+<div class="bcell"><button class="tchip lane-both" data-go="pr"><span class="tn">14</span><span class="tt">First PR</span><span class="tck" aria-hidden="true">✓</span></button><button class="tchip lane-both" data-go="protect"><span class="tn">15</span><span class="tt">Branch rules</span><span class="tck" aria-hidden="true">✓</span></button><button class="tchip lane-both agent" data-go="wrapup"><span class="tn">16</span><span class="tt">Wrap up phase 0</span><span class="tck" aria-hidden="true">✓</span></button></div>
+<div class="bcell blane lane-A" role="rowheader"><i></i>Person A</div>
+<div class="bcell empty" aria-hidden="true"></div>
+<div class="bcell"><button class="tchip lane-A" data-go="statsbomb"><span class="tn">11</span><span class="tt">StatsBomb data</span><span class="tck" aria-hidden="true">✓</span></button><button class="tchip lane-A agent" data-go="shotmap"><span class="tn">12</span><span class="tt">Shot map notebook</span><span class="tck" aria-hidden="true">✓</span></button><button class="tchip lane-A opt" data-go="notes"><span class="tn">13</span><span class="tt">Learning notes</span><span class="tck" aria-hidden="true">✓</span></button><p class="dep">Notebook starts after task 4 is pushed</p></div>
+<div class="bcell empty" aria-hidden="true"></div>
+<div class="bcell blane lane-B" role="rowheader"><i></i>Person B</div>
+<div class="bcell empty" aria-hidden="true"></div>
+<div class="bcell"><button class="tchip lane-B agent" data-go="workspace"><span class="tn">4</span><span class="tt">uv workspace</span><span class="tck" aria-hidden="true">✓</span></button><button class="tchip lane-B agent" data-go="hygiene"><span class="tn">5</span><span class="tt">Repo hygiene</span><span class="tck" aria-hidden="true">✓</span></button><button class="tchip lane-B agent" data-go="quality"><span class="tn">6</span><span class="tt">Lint, types, hooks</span><span class="tck" aria-hidden="true">✓</span></button><button class="tchip lane-B agent" data-go="firsttest"><span class="tn">7</span><span class="tt">Coordinates + tests</span><span class="tck" aria-hidden="true">✓</span></button><button class="tchip lane-B agent" data-go="compose"><span class="tn">8</span><span class="tt">Docker Compose</span><span class="tck" aria-hidden="true">✓</span></button><button class="tchip lane-B agent" data-go="ci"><span class="tn">9</span><span class="tt">CI</span><span class="tck" aria-hidden="true">✓</span></button><button class="tchip lane-B agent" data-go="claudemd"><span class="tn">10</span><span class="tt">CLAUDE.md</span><span class="tck" aria-hidden="true">✓</span></button></div>
+<div class="bcell empty" aria-hidden="true"></div>
+</div></div>
+  <p class="small">Click a task to jump to it. Code and file contents on this page were run and checked: the tests pass, lint and type checks are clean, and the notebook produces the right shot map.</p>
+
+  <main><h2 class="stage" id="stage-0"><small>Stage 1</small>Set up your machines</h2><p class="stagesub">Both of you, separately</p>
+<details class="card lane-both" id="prereqs" data-id="prereqs" open>
+  <summary><span class="num">1</span><span class="stitle"><b>Install the prerequisites</b><span class="meta"><span class="who">Each of you</span><span class="mode">By hand</span><span class="time">30 min</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
+  <div class="cbody">
+    <p class="intro">Each of you does this on your own laptop. On Windows, use WSL2 with Ubuntu and clone the repo inside the Linux file system, not under /mnt/c: file watching and Docker are much faster there.</p>
+    <div class="panel"><ol><li>Git, and VS Code 1.98 or newer.</li><li>Docker Desktop (with the WSL2 backend on Windows). Start it once.</li><li>uv, which also installs Python for you:</li></ol><div class="code"><span class="clabel">macOS, Linux, WSL</span><button class="copy" type="button">Copy</button><pre><code>curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre></div><p>Then check everything:</p><div class="code"><button class="copy" type="button">Copy</button><pre><code>git --version
+code --version
+docker --version
+uv --version</code></pre></div><p>Node.js and pnpm can wait until phase 3.</p></div>
+    <div class="donebox"><b>Done when</b> All four version commands print a version.</div>
+    <button class="markdone" type="button" data-mark="prereqs">Mark task done</button>
+    <p class="smsg" aria-live="polite"></p>
+  </div>
+</details>
+<details class="card lane-both" id="vscode" data-id="vscode">
+  <summary><span class="num">2</span><span class="stitle"><b>Open the repo in VS Code</b><span class="meta"><span class="who">Each of you</span><span class="mode">By hand</span><span class="time">10 min</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
+  <div class="cbody">
+    <p class="intro">Open the cloned folder as the workspace root so every setting and tool finds the project files.</p>
+    <div class="panel"><div class="code"><button class="copy" type="button">Copy</button><pre><code>cd pitchlens
+code .</code></pre></div><p>Install these extensions from the Extensions view (Ctrl/Cmd+Shift+X). In task 5 Person B commits them as recommendations, so later VS Code offers them automatically:</p><ul><li><b>Python</b> and <b>Pylance</b>: interpreter, IntelliSense, test explorer</li><li><b>Ruff</b>: lint and format on save</li><li><b>Jupyter</b>: notebooks inside VS Code</li><li><b>Docker</b>: see and manage the local database container</li><li><b>Even Better TOML</b>: for pyproject.toml</li><li><b>GitHub Actions</b>: workflow syntax and run status</li><li><b>Claude Code</b>: your agent, next task</li></ul></div>
+    <div class="donebox"><b>Done when</b> All extensions installed and the repo open as the workspace root.</div>
+    <button class="markdone" type="button" data-mark="vscode">Mark task done</button>
+    <p class="smsg" aria-live="polite"></p>
+  </div>
+</details>
+<details class="card lane-both" id="claudecode" data-id="claudecode">
+  <summary><span class="num">3</span><span class="stitle"><b>Connect Claude Code</b><span class="meta"><span class="who">Each of you</span><span class="mode">By hand</span><span class="time">10 min</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
+  <div class="cbody">
+    <p class="intro">The Claude Code extension gives you the agent in a VS Code panel, with inline diffs you approve before anything changes.</p>
+    <div class="panel"><ol><li>Install <b>Claude Code</b> (publisher: Anthropic) from the Extensions view.</li><li>Click the Claude icon in the top-right of the editor and sign in with your Claude account.</li><li>Optional: install the command-line version too if you want to run <code>claude</code> in the integrated terminal (see Anthropic's Claude Code quickstart).</li></ol><div class="rule"><b>Agent ground rules for the team:</b> ask for a plan before edits, review every diff like a teammate's pull request, keep each agent task to one task card below, and never accept made-up numbers in code, tests or docs.</div></div>
+    <div class="donebox"><b>Done when</b> You can open the Claude panel and it answers a question about the (still empty) repo.</div>
+    <button class="markdone" type="button" data-mark="claudecode">Mark task done</button>
+    <p class="smsg" aria-live="polite"></p>
+  </div>
+</details>
+<h2 class="stage" id="stage-1"><small>Stage 2</small>Build in parallel</h2><p class="stagesub">Person B scaffolds, Person A gets into the data</p>
+<details class="card lane-B" id="workspace" data-id="workspace">
+  <summary><span class="num">4</span><span class="stitle"><b>Create the Python workspace</b><span class="meta"><span class="who">Person B: product and platform</span><span class="mode agent">Agent-ready</span><span class="time">30 min</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
+  <div class="cbody">
+    <p class="intro">A uv workspace: a root that holds shared dev tools and config, and a pitchlens package in pipeline/. The API package joins as a second member in phase 3.</p>
+    <div class="tabs" role="tablist" aria-label="How to do this task">
+              <button role="tab" aria-selected="true" data-tab="hand">Do it yourself</button>
+              <button role="tab" aria-selected="false" data-tab="agent">Ask Claude Code</button></div>
+              <div class="panel" data-panel="hand"><p>Create <code>pyproject.toml</code> at the repo root:</p><div class="code"><span class="clabel">pyproject.toml</span><button class="copy" type="button">Copy</button><pre><code>[project]
+name = &quot;pitchlens-workspace&quot;
+version = &quot;0.0.0&quot;
+requires-python = &quot;&gt;=3.12&quot;
+dependencies = [&quot;pitchlens&quot;]
+
+[dependency-groups]
+dev = [&quot;pytest&quot;, &quot;hypothesis&quot;, &quot;ruff&quot;, &quot;mypy&quot;, &quot;pre-commit&quot;, &quot;ipykernel&quot;, &quot;pandas-stubs&quot;]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = [&quot;pipeline&quot;]
+
+[tool.uv.sources]
+pitchlens = { workspace = true }
+
+[tool.ruff]
+line-length = 100
+target-version = &quot;py312&quot;
+
+[tool.ruff.lint]
+select = [&quot;E&quot;, &quot;F&quot;, &quot;I&quot;, &quot;B&quot;, &quot;UP&quot;, &quot;SIM&quot;]
+
+[tool.ruff.lint.isort]
+known-first-party = [&quot;pitchlens&quot;]
+
+[tool.mypy]
+strict = true
+files = [&quot;pipeline/src&quot;, &quot;tests&quot;]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = [&quot;tests&quot;]</code></pre></div><p>Then create the pipeline package, add its dependencies and install:</p><div class="code"><button class="copy" type="button">Copy</button><pre><code>uv python pin 3.12
+uv init --package --name pitchlens --no-workspace pipeline
+cd pipeline &amp;&amp; uv add pandas pyarrow duckdb statsbombpy mplsoccer typer &amp;&amp; cd ..
+uv sync</code></pre></div><p>In VS Code: Command Palette, <b>Python: Select Interpreter</b>, choose <code>.venv</code>. Commit <code>uv.lock</code> and <code>.python-version</code>.</p></div>
+              <div class="panel" data-panel="agent" hidden>
+                <p>Paste this into the Claude Code panel. Read its plan, approve the edits you agree with, then review the diff before committing.</p>
+                <div class="code prompt"><span class="clabel">Prompt for Claude Code</span><button class="copy" type="button">Copy</button><pre><code>Set up a uv workspace in this repo. Root pyproject.toml is a virtual root (tool.uv package = false) that depends on the workspace package &quot;pitchlens&quot; and has a dev dependency group: pytest, hypothesis, ruff, mypy, pre-commit, ipykernel, pandas-stubs. Member package &quot;pitchlens&quot; lives in pipeline/ (src layout, uv_build) and depends on pandas, pyarrow, duckdb, statsbombpy, mplsoccer and typer. Pin Python 3.12. Configure ruff (line length 100, rules E F I B UP SIM, pitchlens as first-party), strict mypy over pipeline/src and tests, and pytest with testpaths = tests. Run uv sync. Show me your plan first, then the diff before committing.</code></pre></div>
+                <p class="small">Check the result against the "Do it yourself" tab: that version has been run and works.</p>
+              </div>
+    <div class="donebox"><b>Done when</b> uv sync succeeds on a fresh clone and VS Code uses the .venv interpreter.</div>
+    <button class="markdone" type="button" data-mark="workspace">Mark task done</button>
+    <p class="smsg" aria-live="polite"></p>
+  </div>
+</details>
+<details class="card lane-B" id="hygiene" data-id="hygiene">
+  <summary><span class="num">5</span><span class="stitle"><b>Folders, .gitignore and env file</b><span class="meta"><span class="who">Person B: product and platform</span><span class="mode agent">Agent-ready</span><span class="time">15 min</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
+  <div class="cbody">
+    <p class="intro">The layout from the plan, with data and secrets kept out of git from the very first commit.</p>
+    <div class="tabs" role="tablist" aria-label="How to do this task">
+              <button role="tab" aria-selected="true" data-tab="hand">Do it yourself</button>
+              <button role="tab" aria-selected="false" data-tab="agent">Ask Claude Code</button></div>
+              <div class="panel" data-panel="hand"><div class="code"><button class="copy" type="button">Copy</button><pre><code>mkdir -p api web notebooks docs/adr tests/fixtures .vscode .github/workflows
+touch api/.gitkeep web/.gitkeep tests/fixtures/.gitkeep</code></pre></div><div class="code"><span class="clabel">.gitignore</span><button class="copy" type="button">Copy</button><pre><code>.venv/
+__pycache__/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.hypothesis/
+.ipynb_checkpoints/
+.env
+data/
+node_modules/
+dist/
+.DS_Store</code></pre></div><div class="code"><span class="clabel">.env.example</span><button class="copy" type="button">Copy</button><pre><code># Copy to .env (never commit .env)
+DATABASE_URL=postgresql+psycopg://pitchlens:pitchlens@localhost:5432/pitchlens
+FOOTBALL_DATA_TOKEN=   # phase 4
+ANTHROPIC_API_KEY=     # phase 5</code></pre></div><div class="code"><span class="clabel">.vscode/extensions.json</span><button class="copy" type="button">Copy</button><pre><code>{
+  &quot;recommendations&quot;: [
+    &quot;ms-python.python&quot;,
+    &quot;ms-python.vscode-pylance&quot;,
+    &quot;charliermarsh.ruff&quot;,
+    &quot;ms-toolsai.jupyter&quot;,
+    &quot;ms-azuretools.vscode-docker&quot;,
+    &quot;tamasfe.even-better-toml&quot;,
+    &quot;github.vscode-github-actions&quot;,
+    &quot;anthropic.claude-code&quot;
+  ]
+}</code></pre></div><p>Also copy <code>PITCHLENS_CONTEXT.md</code> into <code>docs/CONTEXT.md</code> so the agent can read it.</p></div>
+              <div class="panel" data-panel="agent" hidden>
+                <p>Paste this into the Claude Code panel. Read its plan, approve the edits you agree with, then review the diff before committing.</p>
+                <div class="code prompt"><span class="clabel">Prompt for Claude Code</span><button class="copy" type="button">Copy</button><pre><code>Create the repo layout from docs/CONTEXT.md: api/, web/, notebooks/, docs/adr/, tests/fixtures/ (with .gitkeep where empty). Add a .gitignore for Python, Jupyter, Node and macOS that also ignores data/ and .env. Add .env.example with DATABASE_URL for the local Postgres from compose, plus empty FOOTBALL_DATA_TOKEN and ANTHROPIC_API_KEY marked for phases 4 and 5. Add .vscode/extensions.json recommending Python, Pylance, Ruff, Jupyter, Docker, Even Better TOML, GitHub Actions and Claude Code. Show the diff before committing.</code></pre></div>
+                <p class="small">Check the result against the "Do it yourself" tab: that version has been run and works.</p>
+              </div>
+    <div class="donebox"><b>Done when</b> git status shows no data files, no .env and no cache folders.</div>
+    <button class="markdone" type="button" data-mark="hygiene">Mark task done</button>
+    <p class="smsg" aria-live="polite"></p>
+  </div>
+</details>
+<details class="card lane-B" id="quality" data-id="quality">
+  <summary><span class="num">6</span><span class="stitle"><b>Quality gates in the editor and on commit</b><span class="meta"><span class="who">Person B: product and platform</span><span class="mode agent">Agent-ready</span><span class="time">20 min</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
+  <div class="cbody">
+    <p class="intro">Format on save in VS Code, and the same checks before every commit. The hooks call uv run, so the versions always match the lockfile.</p>
+    <div class="tabs" role="tablist" aria-label="How to do this task">
+              <button role="tab" aria-selected="true" data-tab="hand">Do it yourself</button>
+              <button role="tab" aria-selected="false" data-tab="agent">Ask Claude Code</button></div>
+              <div class="panel" data-panel="hand"><div class="code"><span class="clabel">.vscode/settings.json</span><button class="copy" type="button">Copy</button><pre><code>{
+  &quot;python.defaultInterpreterPath&quot;: &quot;${workspaceFolder}/.venv/bin/python&quot;,
+  &quot;python.testing.pytestEnabled&quot;: true,
+  &quot;python.testing.pytestArgs&quot;: [&quot;tests&quot;],
+  &quot;[python]&quot;: {
+    &quot;editor.defaultFormatter&quot;: &quot;charliermarsh.ruff&quot;,
+    &quot;editor.formatOnSave&quot;: true,
+    &quot;editor.codeActionsOnSave&quot;: {
+      &quot;source.fixAll&quot;: &quot;explicit&quot;,
+      &quot;source.organizeImports&quot;: &quot;explicit&quot;
+    }
+  },
+  &quot;files.exclude&quot;: {
+    &quot;**/__pycache__&quot;: true,
+    &quot;.mypy_cache&quot;: true,
+    &quot;.ruff_cache&quot;: true,
+    &quot;.pytest_cache&quot;: true
+  }
+}</code></pre></div><p>On Windows-native (not WSL) the interpreter path is <code>.venv/Scripts/python.exe</code>.</p><div class="code"><span class="clabel">.pre-commit-config.yaml</span><button class="copy" type="button">Copy</button><pre><code>repos:
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: ruff check
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format
+        language: system
+        types: [python]
+      - id: mypy
+        name: mypy
+        entry: uv run mypy
+        language: system
+        types: [python]
+        pass_filenames: false</code></pre></div><div class="code"><button class="copy" type="button">Copy</button><pre><code>uv run pre-commit install
+uv run pre-commit run --all-files</code></pre></div></div>
+              <div class="panel" data-panel="agent" hidden>
+                <p>Paste this into the Claude Code panel. Read its plan, approve the edits you agree with, then review the diff before committing.</p>
+                <div class="code prompt"><span class="clabel">Prompt for Claude Code</span><button class="copy" type="button">Copy</button><pre><code>Add .vscode/settings.json so Python files format and organise imports with the Ruff extension on save, the interpreter is .venv, and pytest is enabled for the tests folder. Add a .pre-commit-config.yaml using local hooks that run uv run ruff check --fix, uv run ruff format and uv run mypy (no pinned remote hook repos). Install the hooks and run them on all files. Show the diff.</code></pre></div>
+                <p class="small">Check the result against the "Do it yourself" tab: that version has been run and works.</p>
+              </div>
+    <div class="donebox"><b>Done when</b> Saving a messy Python file reformats it, and a commit runs ruff and mypy.</div>
+    <button class="markdone" type="button" data-mark="quality">Mark task done</button>
+    <p class="smsg" aria-live="polite"></p>
+  </div>
+</details>
+<details class="card lane-B" id="firsttest" data-id="firsttest">
+  <summary><span class="num">7</span><span class="stitle"><b>Your first real code and tests</b><span class="meta"><span class="who">Person B: product and platform</span><span class="mode agent">Agent-ready</span><span class="time">30 min</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
+  <div class="cbody">
+    <p class="intro">Start with the convention most likely to produce silently wrong charts: pitch coordinates. These tests have been run and pass.</p>
+    <div class="tabs" role="tablist" aria-label="How to do this task">
+              <button role="tab" aria-selected="true" data-tab="hand">Do it yourself</button>
+              <button role="tab" aria-selected="false" data-tab="agent">Ask Claude Code</button></div>
+              <div class="panel" data-panel="hand"><div class="code"><span class="clabel">pipeline/src/pitchlens/coords.py</span><button class="copy" type="button">Copy</button><pre><code>&quot;&quot;&quot;Pitch coordinate conversion.
+
+StatsBomb: 120 x 80 units, origin top-left, the team in possession attacks left to right.
+PitchLens internal: metres on a 105 x 68 pitch, origin bottom-left, attacking left to right.
+&quot;&quot;&quot;
+
+SB_LENGTH, SB_WIDTH = 120.0, 80.0
+PITCH_LENGTH, PITCH_WIDTH = 105.0, 68.0
+
+
+def statsbomb_to_internal(x: float, y: float) -&gt; tuple[float, float]:
+    &quot;&quot;&quot;Convert a StatsBomb location to internal metres (y axis flipped).&quot;&quot;&quot;
+    if not (0 &lt;= x &lt;= SB_LENGTH and 0 &lt;= y &lt;= SB_WIDTH):
+        raise ValueError(f&quot;location outside StatsBomb pitch: ({x}, {y})&quot;)
+    return x * PITCH_LENGTH / SB_LENGTH, (SB_WIDTH - y) * PITCH_WIDTH / SB_WIDTH</code></pre></div><div class="code"><span class="clabel">tests/test_coords.py</span><button class="copy" type="button">Copy</button><pre><code>import pytest
+from hypothesis import given
+from hypothesis import strategies as st
+
+from pitchlens.coords import PITCH_LENGTH, PITCH_WIDTH, statsbomb_to_internal
+
+
+def test_corners_map_correctly() -&gt; None:
+    assert statsbomb_to_internal(0, 0) == (0, PITCH_WIDTH)  # top-left becomes top-left in metres
+    assert statsbomb_to_internal(120, 80) == (PITCH_LENGTH, 0)
+
+
+def test_penalty_spot_is_centred_and_11m_from_goal() -&gt; None:
+    x, y = statsbomb_to_internal(108, 40)
+    assert y == pytest.approx(PITCH_WIDTH / 2)
+    assert PITCH_LENGTH - x == pytest.approx(10.5, abs=1)  # approx: real spot is 11 m
+
+
+def test_outside_pitch_is_rejected() -&gt; None:
+    with pytest.raises(ValueError):
+        statsbomb_to_internal(121, 40)
+
+
+@given(st.floats(0, 120), st.floats(0, 80))
+def test_always_inside_internal_pitch(x: float, y: float) -&gt; None:
+    ix, iy = statsbomb_to_internal(x, y)
+    assert 0 &lt;= ix &lt;= PITCH_LENGTH
+    assert 0 &lt;= iy &lt;= PITCH_WIDTH</code></pre></div><div class="code"><button class="copy" type="button">Copy</button><pre><code>uv run pytest
+uv run mypy</code></pre></div><p>Open the <b>Testing</b> panel in VS Code (the flask icon) to run and debug tests individually.</p></div>
+              <div class="panel" data-panel="agent" hidden>
+                <p>Paste this into the Claude Code panel. Read its plan, approve the edits you agree with, then review the diff before committing.</p>
+                <div class="code prompt"><span class="clabel">Prompt for Claude Code</span><button class="copy" type="button">Copy</button><pre><code>Add pipeline/src/pitchlens/coords.py with statsbomb_to_internal(x, y) converting StatsBomb locations (120 x 80, origin top-left) to internal metres (105 x 68, origin bottom-left, y flipped), raising ValueError outside the pitch. Add tests/test_coords.py with example tests (corners, penalty spot centred) and a Hypothesis property test that every valid input stays inside the internal pitch. Run pytest and mypy and show the results.</code></pre></div>
+                <p class="small">Check the result against the "Do it yourself" tab: that version has been run and works.</p>
+              </div>
+    <div class="donebox"><b>Done when</b> pytest shows 4 passing tests and mypy reports no issues.</div>
+    <button class="markdone" type="button" data-mark="firsttest">Mark task done</button>
+    <p class="smsg" aria-live="polite"></p>
+  </div>
+</details>
+<details class="card lane-B" id="compose" data-id="compose">
+  <summary><span class="num">8</span><span class="stitle"><b>Local Postgres with Docker Compose</b><span class="meta"><span class="who">Person B: product and platform</span><span class="mode agent">Agent-ready</span><span class="time">15 min</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
+  <div class="cbody">
+    <p class="intro">Only the database for now. The API service joins this file in phase 3.</p>
+    <div class="tabs" role="tablist" aria-label="How to do this task">
+              <button role="tab" aria-selected="true" data-tab="hand">Do it yourself</button>
+              <button role="tab" aria-selected="false" data-tab="agent">Ask Claude Code</button></div>
+              <div class="panel" data-panel="hand"><div class="code"><span class="clabel">compose.yaml</span><button class="copy" type="button">Copy</button><pre><code>services:
+  db:
+    image: postgres:17   # match the major version your Supabase project shows
+    environment:
+      POSTGRES_USER: pitchlens
+      POSTGRES_PASSWORD: pitchlens
+      POSTGRES_DB: pitchlens
+    ports: [&quot;5432:5432&quot;]
+    volumes: [&quot;pgdata:/var/lib/postgresql/data&quot;]
+    healthcheck:
+      test: [&quot;CMD-SHELL&quot;, &quot;pg_isready -U pitchlens&quot;]
+      interval: 5s
+      retries: 10
+
+volumes:
+  pgdata:</code></pre></div><div class="code"><button class="copy" type="button">Copy</button><pre><code>docker compose up -d
+docker compose exec db psql -U pitchlens -c &quot;select version();&quot;</code></pre></div><p>The Docker extension's sidebar now shows the running container.</p></div>
+              <div class="panel" data-panel="agent" hidden>
+                <p>Paste this into the Claude Code panel. Read its plan, approve the edits you agree with, then review the diff before committing.</p>
+                <div class="code prompt"><span class="clabel">Prompt for Claude Code</span><button class="copy" type="button">Copy</button><pre><code>Add compose.yaml with a single Postgres 17 service named db (user, password and database all pitchlens, port 5432, a named volume and a pg_isready healthcheck). Start it and run a select version() through docker compose exec to confirm it works.</code></pre></div>
+                <p class="small">Check the result against the "Do it yourself" tab: that version has been run and works.</p>
+              </div>
+    <div class="donebox"><b>Done when</b> The psql command prints a PostgreSQL version.</div>
+    <button class="markdone" type="button" data-mark="compose">Mark task done</button>
+    <p class="smsg" aria-live="polite"></p>
+  </div>
+</details>
+<details class="card lane-B" id="ci" data-id="ci">
+  <summary><span class="num">9</span><span class="stitle"><b>CI with GitHub Actions</b><span class="meta"><span class="who">Person B: product and platform</span><span class="mode agent">Agent-ready</span><span class="time">20 min</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
+  <div class="cbody">
+    <p class="intro">The same checks as pre-commit, on every pull request. Dependabot can bump the action versions later.</p>
+    <div class="tabs" role="tablist" aria-label="How to do this task">
+              <button role="tab" aria-selected="true" data-tab="hand">Do it yourself</button>
+              <button role="tab" aria-selected="false" data-tab="agent">Ask Claude Code</button></div>
+              <div class="panel" data-panel="hand"><div class="code"><span class="clabel">.github/workflows/ci.yml</span><button class="copy" type="button">Copy</button><pre><code>name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy
+      - run: uv run pytest</code></pre></div></div>
+              <div class="panel" data-panel="agent" hidden>
+                <p>Paste this into the Claude Code panel. Read its plan, approve the edits you agree with, then review the diff before committing.</p>
+                <div class="code prompt"><span class="clabel">Prompt for Claude Code</span><button class="copy" type="button">Copy</button><pre><code>Add .github/workflows/ci.yml that runs on pull requests and pushes to main: checkout, astral-sh/setup-uv with caching, uv sync --locked, then ruff check, ruff format --check, mypy and pytest via uv run. Keep it to one job named python.</code></pre></div>
+                <p class="small">Check the result against the "Do it yourself" tab: that version has been run and works.</p>
+              </div>
+    <div class="donebox"><b>Done when</b> The workflow appears under the Actions tab and passes on your first pull request.</div>
+    <button class="markdone" type="button" data-mark="ci">Mark task done</button>
+    <p class="smsg" aria-live="polite"></p>
+  </div>
+</details>
+<details class="card lane-B" id="claudemd" data-id="claudemd">
+  <summary><span class="num">10</span><span class="stitle"><b>Write CLAUDE.md</b><span class="meta"><span class="who">Person B: product and platform</span><span class="mode agent">Agent-ready</span><span class="time">15 min</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
+  <div class="cbody">
+    <p class="intro">The agent reads this at the start of every session. It&#x27;s where the project&#x27;s hard rules live for Claude Code.</p>
+    <div class="tabs" role="tablist" aria-label="How to do this task">
+              <button role="tab" aria-selected="true" data-tab="hand">Do it yourself</button>
+              <button role="tab" aria-selected="false" data-tab="agent">Ask Claude Code</button></div>
+              <div class="panel" data-panel="hand"><div class="code"><span class="clabel">CLAUDE.md</span><button class="copy" type="button">Copy</button><pre><code># PitchLens: notes for Claude Code
+
+Open football analytics app. Full context: docs/CONTEXT.md (copy of PITCHLENS_CONTEXT.md).
+
+## Commands
+- Install: `uv sync`
+- Tests: `uv run pytest`
+- Lint and format: `uv run ruff check --fix . &amp;&amp; uv run ruff format .`
+- Types: `uv run mypy`
+- Local database: `docker compose up -d`
+
+## Conventions
+- Coordinates: StatsBomb is 120 x 80, origin top-left. Convert at ingest with
+  `pitchlens.coords.statsbomb_to_internal` (metres, 105 x 68, origin bottom-left).
+- Exclude penalty shootouts (period 5) from match stats. Penalties are modelled
+  separately from open-play xG. Own goals are not shots.
+- Per-90 rankings need at least 900 minutes.
+- Every transform gets a test, ideally one that would catch a silently wrong number.
+- Small pull requests; record decisions as ADRs in docs/adr/.
+
+## Rules
+- Never invent statistics, xG values, results or player numbers, in code, tests or docs.
+- Ask before adding a dependency, tool or service.
+- Never commit data/, .env or notebook outputs.
+- Plan first, then edit; show the diff before committing.</code></pre></div></div>
+              <div class="panel" data-panel="agent" hidden>
+                <p>Paste this into the Claude Code panel. Read its plan, approve the edits you agree with, then review the diff before committing.</p>
+                <div class="code prompt"><span class="clabel">Prompt for Claude Code</span><button class="copy" type="button">Copy</button><pre><code>Run /init to draft CLAUDE.md, then merge in these rules: never invent statistics or player numbers anywhere; ask before adding dependencies or tools; never commit data/, .env or notebook outputs; plan first and show diffs; coordinates go through pitchlens.coords; exclude penalty shootouts (period 5) from match stats. Keep it under 50 lines.</code></pre></div>
+                <p class="small">Check the result against the "Do it yourself" tab: that version has been run and works.</p>
+              </div>
+    <div class="donebox"><b>Done when</b> CLAUDE.md is committed and both of you have read it.</div>
+    <button class="markdone" type="button" data-mark="claudemd">Mark task done</button>
+    <p class="smsg" aria-live="polite"></p>
+  </div>
+</details>
+<details class="card lane-A" id="statsbomb" data-id="statsbomb">
+  <summary><span class="num">11</span><span class="stitle"><b>Get to know StatsBomb open data</b><span class="meta"><span class="who">Person A: data and models</span><span class="mode">By hand</span><span class="time">45 min</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
+  <div class="cbody">
+    <p class="intro">Read before you code. The open data needs no credentials, but it comes with a user agreement and an attribution rule.</p>
+    <div class="panel"><ol><li>Read the README and user agreement in the <a href="https://github.com/statsbomb/open-data" target="_blank" rel="noopener">statsbomb/open-data</a> repository, including the attribution and logo requirement.</li><li>Skim the event specification in its <code>doc</code> folder: event types, locations, possession, related events, and what 360 data adds.</li><li>Note which competitions and seasons are available; this becomes the coverage table in phase 1.</li><li>Add a line for StatsBomb to <code>docs/DATA_SOURCES.md</code> with the licence link and today's date.</li></ol></div>
+    <div class="donebox"><b>Done when</b> You can explain what one row of events data means, and DATA_SOURCES.md has its first entry.</div>
+    <button class="markdone" type="button" data-mark="statsbomb">Mark task done</button>
+    <p class="smsg" aria-live="polite"></p>
+  </div>
+</details>
+<details class="card lane-A" id="shotmap" data-id="shotmap">
+  <summary><span class="num">12</span><span class="stitle"><b>First shot map notebook</b><span class="meta"><span class="who">Person A: data and models</span><span class="mode agent">Agent-ready</span><span class="time">60 min</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
+  <div class="cbody">
+    <p class="intro">Start once Person B has pushed task 4: pull, run uv sync, then create notebooks/2026-10-first-shot-map.ipynb and pick the .venv kernel (top right of the notebook). This code has been run against the real data.</p>
+    <div class="tabs" role="tablist" aria-label="How to do this task">
+              <button role="tab" aria-selected="true" data-tab="hand">Do it yourself</button>
+              <button role="tab" aria-selected="false" data-tab="agent">Ask Claude Code</button></div>
+              <div class="panel" data-panel="hand"><div class="code"><span class="clabel">notebook cell</span><button class="copy" type="button">Copy</button><pre><code>import warnings
+
+from mplsoccer import VerticalPitch
+from statsbombpy import sb
+
+warnings.filterwarnings(&quot;ignore&quot;)  # no-credentials warning is fine for open data
+
+# 1. Find a match: the 2022 World Cup is competition 43, season 106
+matches = sb.matches(competition_id=43, season_id=106)
+final = matches[matches.competition_stage == &quot;Final&quot;].iloc[0]
+print(final.match_id, final.home_team, final.home_score, &quot;-&quot;, final.away_score, final.away_team)
+
+# 2. Load events and keep one team&#x27;s shots
+events = sb.events(match_id=final.match_id)
+shots = events[(events.type == &quot;Shot&quot;) &amp; (events.team == &quot;Argentina&quot;)]
+
+# 3. Pitfall: period 5 is the penalty shootout. Leave it in and Argentina &quot;score&quot; 7.
+print(shots.groupby(&quot;period&quot;).size())
+shots = shots[shots.period &lt; 5]
+
+# 4. Draw: circle size = StatsBomb xG, goals filled
+pitch = VerticalPitch(pitch_type=&quot;statsbomb&quot;, half=True)
+fig, ax = pitch.draw(figsize=(7, 6))
+x, y = shots.location.str[0], shots.location.str[1]
+goal = shots.shot_outcome == &quot;Goal&quot;
+size = shots.shot_statsbomb_xg * 900
+pitch.scatter(x[~goal], y[~goal], s=size[~goal], ax=ax, facecolors=&quot;none&quot;, edgecolors=&quot;black&quot;)
+pitch.scatter(x[goal], y[goal], s=size[goal], ax=ax, color=&quot;#E8473B&quot;, edgecolors=&quot;black&quot;)
+ax.set_title(&quot;Argentina shots, 2022 World Cup final (excl. shootout)\n&quot;
+             &quot;Circle size = StatsBomb xG. Data: StatsBomb open data&quot;, fontsize=10)</code></pre></div><div class="rule"><b>The lesson hiding in this match:</b> the final went to penalties. Without the period filter, the shootout kicks count as shots and Argentina appear to score 7. Wrong numbers like this don't crash anything, which is exactly why every transform gets a test.</div><p>Clear all outputs before committing (the notebook toolbar has a button for it).</p></div>
+              <div class="panel" data-panel="agent" hidden>
+                <p>Paste this into the Claude Code panel. Read its plan, approve the edits you agree with, then review the diff before committing.</p>
+                <div class="code prompt"><span class="clabel">Prompt for Claude Code</span><button class="copy" type="button">Copy</button><pre><code>In notebooks/2026-10-first-shot-map.ipynb, load the 2022 World Cup final from StatsBomb open data with statsbombpy (competition 43, season 106, stage Final), keep Argentina&#x27;s shots excluding the penalty shootout (period 5), and draw a half-pitch VerticalPitch shot map with mplsoccer: circle size from shot_statsbomb_xg, goals filled. Title it with StatsBomb attribution. Explain each step in a markdown cell so I learn it. Don&#x27;t state any numbers in markdown that the code doesn&#x27;t compute.</code></pre></div>
+                <p class="small">Check the result against the "Do it yourself" tab: that version has been run and works.</p>
+              </div>
+    <div class="donebox"><b>Done when</b> A shot map with three goals, attributed to StatsBomb.</div>
+    <button class="markdone" type="button" data-mark="shotmap">Mark task done</button>
+    <p class="smsg" aria-live="polite"></p>
+  </div>
+</details>
+<details class="card lane-A" id="notes" data-id="notes">
+  <summary><span class="num">13</span><span class="stitle"><b>Write five things you learned</b><span class="meta"><span class="who">Person A: data and models</span><span class="mode">By hand</span><span class="time">20 min</span><span class="optl">Optional</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
+  <div class="cbody">
+    <p class="intro">Optional, but it becomes raw material for write-up #1 and your case study.</p>
+    <div class="panel"><p>Create <code>docs/notes/event-data.md</code> with five short bullets: something surprising about the data, one pitfall (the shootout), what xG means in your own words, a question you can't answer yet, and one idea for phase 1.</p></div>
+    <div class="donebox"><b>Done when</b> Five bullets committed; Person B has read them.</div>
+    <button class="markdone" type="button" data-mark="notes">Mark task done</button>
+    <p class="smsg" aria-live="polite"></p>
+  </div>
+</details>
+<h2 class="stage" id="stage-2"><small>Stage 3</small>Ship phase 0 together</h2><p class="stagesub">One pull request, reviewed by the other</p>
+<details class="card lane-both" id="pr" data-id="pr">
+  <summary><span class="num">14</span><span class="stitle"><b>First pull request</b><span class="meta"><span class="who">Together</span><span class="mode">By hand</span><span class="time">30 min</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
+  <div class="cbody">
+    <p class="intro">Person B opens it with the scaffold; Person A adds the notebook in a second PR or the same branch. Each reviews the other&#x27;s work.</p>
+    <div class="panel"><div class="code"><button class="copy" type="button">Copy</button><pre><code>git switch -c phase-0-foundations
+git add -A
+git commit -m &quot;Phase 0: workspace, quality gates, CI, coordinates&quot;
+git push -u origin phase-0-foundations</code></pre></div><p>Open the pull request on GitHub (or from the GitHub Pull Requests extension), wait for the <b>ci</b> check, review, merge.</p></div>
+    <div class="donebox"><b>Done when</b> CI is green on main and both of you have reviewed something.</div>
+    <button class="markdone" type="button" data-mark="pr">Mark task done</button>
+    <p class="smsg" aria-live="polite"></p>
+  </div>
+</details>
+<details class="card lane-both" id="protect" data-id="protect">
+  <summary><span class="num">15</span><span class="stitle"><b>Protect main</b><span class="meta"><span class="who">Together</span><span class="mode">By hand</span><span class="time">10 min</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
+  <div class="cbody">
+    <p class="intro">From now on, everything reaches main through a reviewed pull request.</p>
+    <div class="panel"><p>Repository Settings, Rules, add a branch ruleset for <code>main</code>: require a pull request with 1 approval, require the <code>python</code> status check to pass, and block force pushes.</p></div>
+    <div class="donebox"><b>Done when</b> A direct push to main is rejected.</div>
+    <button class="markdone" type="button" data-mark="protect">Mark task done</button>
+    <p class="smsg" aria-live="polite"></p>
+  </div>
+</details>
+<details class="card lane-both" id="wrapup" data-id="wrapup">
+  <summary><span class="num">16</span><span class="stitle"><b>ADR, board and status update</b><span class="meta"><span class="who">Together</span><span class="mode agent">Agent-ready</span><span class="time">30 min</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
+  <div class="cbody">
+    <p class="intro">Close the phase properly so phase 1 starts with a clear board.</p>
+    <div class="tabs" role="tablist" aria-label="How to do this task">
+              <button role="tab" aria-selected="true" data-tab="hand">Do it yourself</button>
+              <button role="tab" aria-selected="false" data-tab="agent">Ask Claude Code</button></div>
+              <div class="panel" data-panel="hand"><div class="code"><span class="clabel">docs/adr/0001-pitch-coordinates.md</span><button class="copy" type="button">Copy</button><pre><code># ADR 0001: Internal pitch coordinates
+
+Status: accepted, October 2026
+
+We convert every location at ingest from the provider&#x27;s system (StatsBomb: 120 x 80, origin
+top-left) into one internal convention: metres on a 105 x 68 pitch, origin bottom-left, the
+team in possession attacking left to right. Charts, models and the API use only internal
+coordinates. Conversion lives in pitchlens.coords and is covered by example and property
+tests. Trade-off: scaling StatsBomb units to metres is approximate near the boxes (the
+penalty spot lands about 10.5 m from goal instead of 11 m); we accept this for display and
+modelling, and revisit if we add a provider with true metric coordinates.</code></pre></div><ol><li>Create a GitHub Projects board with phase 1 issues: ingest 2–3 competitions, pandera contracts, fixture matches, pipeline CLI, end-to-end test.</li><li>Update <b>Current status</b> and the decisions log in PITCHLENS_CONTEXT.md, and re-upload it to the Claude Project.</li><li>Tick phase 0 topics on the learning roadmap.</li></ol></div>
+              <div class="panel" data-panel="agent" hidden>
+                <p>Paste this into the Claude Code panel. Read its plan, approve the edits you agree with, then review the diff before committing.</p>
+                <div class="code prompt"><span class="clabel">Prompt for Claude Code</span><button class="copy" type="button">Copy</button><pre><code>Draft docs/adr/0001-pitch-coordinates.md recording our internal coordinate convention (metres, 105 x 68, origin bottom-left, attacking left to right), why we convert at ingest, and the trade-off that scaled StatsBomb units are approximate near the boxes. Then draft five GitHub issues for phase 1 from docs/CONTEXT.md, each with acceptance criteria. Don&#x27;t create the issues; show me the text.</code></pre></div>
+                <p class="small">Check the result against the "Do it yourself" tab: that version has been run and works.</p>
+              </div>
+    <div class="donebox"><b>Done when</b> Phase 0 is done: CI green on main, ADR 0001 merged, phase 1 issues on the board, context file updated.</div>
+    <button class="markdone" type="button" data-mark="wrapup">Mark task done</button>
+    <p class="smsg" aria-live="polite"></p>
+  </div>
+</details></main>
+
+  <footer>When every box is ticked, phase 0 is done: update "Current status" in PITCHLENS_CONTEXT.md and start phase 1 on the learning roadmap. Remember StatsBomb attribution on anything you publish.</footer>
+</div>
+<script>
+(function(){
+  const IDS=["prereqs", "vscode", "claudecode", "workspace", "hygiene", "quality", "firsttest", "compose", "ci", "claudemd", "statsbomb", "shotmap", "notes", "pr", "protect", "wrapup"];
+  let state={}, store=null;
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+
+  function render(){
+    let d=0;
+    IDS.forEach(id=>{
+      const done=state[id]==="done"; if(done)d++;
+      const card=document.getElementById(id);
+      card.classList.toggle("is-done",done);
+      const b=card.querySelector(".markdone"); b.textContent=done?"Done: click to undo":"Mark task done"; b.setAttribute("aria-pressed",String(done));
+      $$(`.tchip[data-go="${id}"]`).forEach(c=>c.classList.toggle("is-done",done));
+    });
+    $("#pbar").style.width=(d/IDS.length*100)+"%";
+    $("#ptext").textContent=`${d} of ${IDS.length} tasks done`;
+  }
+
+  // board chips open and scroll to the card
+  document.addEventListener("click",e=>{
+    const go=e.target.closest("[data-go]");
+    if(go){const c=document.getElementById(go.dataset.go);c.open=true;c.scrollIntoView({block:"start"});c.querySelector("summary").focus({preventScroll:true});return}
+    const tab=e.target.closest("[data-tab]");
+    if(tab){const card=tab.closest(".cbody");
+      card.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-selected",String(b===tab)));
+      card.querySelectorAll("[data-panel]").forEach(p=>p.hidden=p.dataset.panel!==tab.dataset.tab);return}
+    const cp=e.target.closest(".copy");
+    if(cp){copy(cp);return}
+    const mk=e.target.closest("[data-mark]");
+    if(mk){toggle(mk.dataset.mark,mk)}
+  });
+
+  async function copy(btn){
+    const text=btn.parentElement.querySelector("code").innerText;
+    let ok=false;
+    try{await navigator.clipboard.writeText(text);ok=true}catch(e){
+      try{const r=document.createRange();r.selectNodeContents(btn.parentElement.querySelector("code"));const s=getSelection();s.removeAllRanges();s.addRange(r);ok=document.execCommand("copy")}catch(e2){}
+    }
+    btn.textContent=ok?"Copied":"Selected: press Ctrl/Cmd+C";
+    setTimeout(()=>btn.textContent="Copy",1800);
+  }
+
+  async function toggle(id,btn){
+    const old=state[id];
+    if(old==="done")delete state[id];else state[id]="done";
+    render();
+    const msg=btn.parentElement.querySelector(".smsg");msg.textContent="";
+    try{await store.set(id,state[id]||"")}catch(err){
+      if(old)state[id]=old;else delete state[id];render();
+      msg.textContent=(err&&(err.code==="not_granted"||err.code==="permission_denied"))?"You can see progress but not change it. Ask the owner for edit access.":"Couldn't save that. Try again in a moment.";
+    }
+  }
+
+  const LS="pitchlens-kickoff-progress";
+  async function init(){
+    try{state=JSON.parse(localStorage.getItem(LS)||"{}")||{}}catch(e){state={}}
+    store={set:async()=>{try{localStorage.setItem(LS,JSON.stringify(state))}catch(e){}}};
+    render();$("#sync").textContent="Progress is saved in this browser.";
+    const h=decodeURIComponent(location.hash.slice(1));
+    if(h&&document.getElementById(h)){const c=document.getElementById(h);if(c.tagName==="DETAILS"){c.open=true;c.scrollIntoView()}}
+    let db=null;
+    try{db=window.claude&&window.claude.use?await window.claude.use("db"):null}catch(e){db=null}
+    if(!db)return;
+    const col=db.collection("kickoff");
+    store={set:async(id,val)=>{const ref=col.doc(id);if(val)await ref.set({s:val,at:new Date().toISOString()});else await ref.delete()}};
+    col.onSnapshot(snap=>{const next={};snap.docs.forEach(d=>{const v=d.data();if(v&&v.s==="done")next[d.id]="done"});state=next;render();
+      $("#sync").textContent="Progress is shared: you both see the same ticks.";},
+      ()=>{$("#sync").textContent="Couldn't load shared progress; showing this browser's copy."});
+  }
+  init();
+})();
+</script>
+</body>
+</html>

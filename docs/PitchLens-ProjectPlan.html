@@ -1,0 +1,3425 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>PitchLens: a football analytics project plan for two</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Schibsted+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #eef2f8;
+        --surface: #ffffff;
+        --ink: #10204a;
+        --muted: #4a5878;
+        --line: #d3dbea;
+        --cobalt: #2346e8;
+        --cobalt-soft: #e3e9ff;
+        --coral: #e8473b;
+        --coral-soft: #ffe6e3;
+        --turf: #0b8c68;
+        --turf-soft: #ddf4ec;
+        --sun: #b88600;
+        --sun-soft: #fff3cc;
+        --violet: #6a4bf0;
+        --violet-soft: #ece7ff;
+        --code-bg: #0f1d45;
+        --code-ink: #e6ecff;
+        --display: 'Unbounded', 'Arial Black', system-ui, sans-serif;
+        --body: 'Schibsted Grotesk', 'Helvetica Neue', Arial, system-ui, sans-serif;
+        --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        color-scheme: light;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme='light']) {
+          --bg: #0a1433;
+          --surface: #111d45;
+          --ink: #eaf0ff;
+          --muted: #a5b2d6;
+          --line: #26366c;
+          --cobalt: #7c93ff;
+          --cobalt-soft: #1b2b66;
+          --coral: #ff7a70;
+          --coral-soft: #3e1c2a;
+          --turf: #38cc9f;
+          --turf-soft: #0f3a3a;
+          --sun: #ffcf3f;
+          --sun-soft: #3a3220;
+          --violet: #a891ff;
+          --violet-soft: #2a2260;
+          --code-bg: #060d26;
+          --code-ink: #e6ecff;
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme='dark'] {
+        --bg: #0a1433;
+        --surface: #111d45;
+        --ink: #eaf0ff;
+        --muted: #a5b2d6;
+        --line: #26366c;
+        --cobalt: #7c93ff;
+        --cobalt-soft: #1b2b66;
+        --coral: #ff7a70;
+        --coral-soft: #3e1c2a;
+        --turf: #38cc9f;
+        --turf-soft: #0f3a3a;
+        --sun: #ffcf3f;
+        --sun-soft: #3a3220;
+        --violet: #a891ff;
+        --violet-soft: #2a2260;
+        --code-bg: #060d26;
+        --code-ink: #e6ecff;
+        color-scheme: dark;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: inherit;
+      }
+      html {
+        scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
+        scroll-behavior: smooth;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--body);
+        font-size: 17px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      img,
+      svg {
+        max-width: 100%;
+      }
+      a {
+        color: var(--cobalt);
+        text-underline-offset: 3px;
+      }
+      a:focus-visible,
+      button:focus-visible,
+      summary:focus-visible {
+        outline: 3px solid var(--cobalt);
+        outline-offset: 3px;
+        border-radius: 4px;
+      }
+      code {
+        font-family: var(--mono);
+        font-size: 0.88em;
+        background: var(--cobalt-soft);
+        padding: 0.1em 0.35em;
+        border-radius: 5px;
+      }
+      strong {
+        font-weight: 700;
+      }
+
+      /* ---------- hero ---------- */
+      .hero {
+        background: #2346e8;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+      }
+      .hero-inner {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 56px 24px 48px;
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 40px;
+        align-items: center;
+      }
+      .hero h1 {
+        font-family: var(--display);
+        font-weight: 700;
+        font-size: clamp(44px, 7vw, 88px);
+        line-height: 0.95;
+        letter-spacing: -0.03em;
+        margin: 0 0 20px;
+      }
+      .hero .lede {
+        font-size: clamp(18px, 2vw, 22px);
+        line-height: 1.45;
+        max-width: 34ch;
+        margin: 0 0 24px;
+        color: #e7ecff;
+      }
+      .hero .meta {
+        font-size: 15px;
+        color: #c8d3ff;
+        max-width: 46ch;
+        margin: 0;
+      }
+      .pitch-wrap {
+        position: relative;
+      }
+      .pitch {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      .pitch .ln {
+        fill: none;
+        stroke: rgba(255, 255, 255, 0.55);
+        stroke-width: 0.35;
+      }
+      .pitch .turf {
+        fill: rgba(255, 255, 255, 0.06);
+      }
+      .shot {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: pop 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.35) both;
+        animation-delay: calc(var(--i) * 80ms + 250ms);
+      }
+      .shot.goal {
+        fill: #ff6b5e;
+        stroke: #fff;
+        stroke-width: 0.3;
+      }
+      .shot.miss {
+        fill: rgba(255, 255, 255, 0.12);
+        stroke: rgba(255, 255, 255, 0.9);
+        stroke-width: 0.3;
+      }
+      @keyframes pop {
+        from {
+          transform: scale(0);
+          opacity: 0;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .shot {
+          animation: none;
+        }
+      }
+      .legend {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+        font-size: 14px;
+        color: #dce3ff;
+        margin-top: 10px;
+      }
+      .legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .legend i {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+      @media (max-width: 820px) {
+        .hero-inner {
+          grid-template-columns: 1fr;
+          padding-top: 40px;
+        }
+        .pitch-wrap {
+          max-width: 420px;
+        }
+      }
+
+      /* ---------- layout ---------- */
+      .layout {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 24px 80px;
+        display: grid;
+        grid-template-columns: 200px minmax(0, 1fr);
+        gap: 48px;
+      }
+      .toc {
+        position: sticky;
+        top: calc(env(safe-area-inset-top, 0px) + 24px);
+        align-self: start;
+        padding-top: 56px;
+        font-size: 14.5px;
+      }
+      .toc p {
+        margin: 0 0 10px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+      .toc ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        border-left: 2px solid var(--line);
+      }
+      .toc li a {
+        display: block;
+        padding: 5px 0 5px 14px;
+        margin-left: -2px;
+        border-left: 2px solid transparent;
+        color: var(--muted);
+        text-decoration: none;
+      }
+      .toc li a:hover {
+        color: var(--ink);
+        border-left-color: var(--cobalt);
+      }
+      main {
+        min-width: 0;
+      }
+      section {
+        padding-top: 56px;
+      }
+      .prose {
+        max-width: 720px;
+      }
+      h2 {
+        font-family: var(--display);
+        font-weight: 700;
+        font-size: clamp(26px, 3.4vw, 36px);
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        margin: 0 0 16px;
+      }
+      h3 {
+        font-family: var(--display);
+        font-weight: 500;
+        font-size: 19px;
+        line-height: 1.3;
+        margin: 32px 0 10px;
+      }
+      p {
+        margin: 0 0 14px;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 18px;
+        max-width: 640px;
+        margin-bottom: 24px;
+      }
+      @media (max-width: 960px) {
+        .layout {
+          grid-template-columns: 1fr;
+          gap: 0;
+        }
+        .toc {
+          display: none;
+        }
+      }
+
+      /* ---------- assumptions strip ---------- */
+      .assume {
+        margin-top: 40px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 18px 22px;
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+      }
+      .assume .dot {
+        flex: none;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--sun);
+        margin-top: 9px;
+      }
+      .assume p {
+        margin: 0;
+        font-size: 15.5px;
+        color: var(--muted);
+      }
+      .assume strong {
+        color: var(--ink);
+      }
+
+      /* ---------- tables ---------- */
+      .scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--surface);
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 15px;
+        min-width: 720px;
+      }
+      th,
+      td {
+        text-align: left;
+        vertical-align: top;
+        padding: 13px 16px;
+        border-bottom: 1px solid var(--line);
+      }
+      th {
+        font-weight: 700;
+        font-size: 14px;
+        color: var(--muted);
+        background: transparent;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      td .name {
+        font-weight: 700;
+        display: block;
+      }
+      tr.pick td {
+        background: var(--cobalt-soft);
+      }
+      tr.pick td:first-child {
+        box-shadow: inset 4px 0 0 var(--cobalt);
+      }
+      .meter {
+        display: inline-flex;
+        gap: 3px;
+        vertical-align: middle;
+      }
+      .meter i {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--line);
+      }
+      .meter.l i.on {
+        background: var(--violet);
+      }
+      .meter.p i.on {
+        background: var(--cobalt);
+      }
+      .meter.s i.on {
+        background: var(--coral);
+      }
+      .mkey {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        font-size: 14px;
+        color: var(--muted);
+        margin: 12px 0 0;
+      }
+      .pill {
+        display: inline-block;
+        font-size: 13px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 999px;
+        white-space: nowrap;
+      }
+      .pill.core {
+        background: var(--cobalt-soft);
+        color: var(--cobalt);
+      }
+      .pill.use {
+        background: var(--turf-soft);
+        color: var(--turf);
+      }
+      .pill.sup {
+        background: var(--sun-soft);
+        color: var(--sun);
+      }
+      .pill.avoid {
+        background: var(--coral-soft);
+        color: var(--coral);
+      }
+      .pill.ess {
+        background: var(--turf-soft);
+        color: var(--turf);
+      }
+      .pill.opt {
+        background: var(--violet-soft);
+        color: var(--violet);
+      }
+      .pill.skip {
+        background: var(--coral-soft);
+        color: var(--coral);
+      }
+
+      /* ---------- pick panel ---------- */
+      .pick-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 2px;
+        background: var(--line);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        margin: 24px 0;
+      }
+      .pick-grid > div {
+        background: var(--surface);
+        padding: 20px 22px;
+      }
+      .pick-grid h3 {
+        margin: 0 0 8px;
+        font-size: 17px;
+      }
+      .pick-grid p {
+        font-size: 15.5px;
+        margin: 0;
+        color: var(--muted);
+      }
+      .pick-grid .bar {
+        width: 36px;
+        height: 5px;
+        border-radius: 3px;
+        margin-bottom: 14px;
+      }
+      @media (max-width: 820px) {
+        .pick-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ---------- MVP mock ---------- */
+      .mock {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--surface);
+        overflow: hidden;
+        margin: 28px 0;
+      }
+      .mock-bar {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--line);
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .mock-bar i {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--line);
+      }
+      .mock-bar span {
+        margin-left: 10px;
+      }
+      .mock-body {
+        padding: 22px;
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 22px;
+      }
+      .score {
+        grid-column: 1/-1;
+        display: flex;
+        align-items: baseline;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+      .score b {
+        font-family: var(--display);
+        font-size: 30px;
+        letter-spacing: -0.02em;
+      }
+      .score .h {
+        color: var(--cobalt);
+      }
+      .score .a {
+        color: var(--coral);
+      }
+      .score small {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px;
+      }
+      .panel h4 {
+        margin: 0 0 8px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .xg-race .home {
+        fill: none;
+        stroke: var(--cobalt);
+        stroke-width: 2.4;
+      }
+      .xg-race .away {
+        fill: none;
+        stroke: var(--coral);
+        stroke-width: 2.4;
+      }
+      .xg-race .grid {
+        stroke: var(--line);
+        stroke-width: 1;
+      }
+      .xg-race text {
+        fill: var(--muted);
+        font-size: 10px;
+        font-family: var(--body);
+      }
+      .stats {
+        width: 100%;
+        min-width: 0;
+        font-size: 14px;
+      }
+      .stats td {
+        padding: 7px 4px;
+      }
+      .stats td:nth-child(1) {
+        color: var(--cobalt);
+        font-weight: 700;
+      }
+      .stats td:nth-child(3) {
+        color: var(--coral);
+        font-weight: 700;
+        text-align: right;
+      }
+      .stats td:nth-child(2) {
+        color: var(--muted);
+        text-align: center;
+      }
+      .ainote {
+        grid-column: 1/-1;
+        border-radius: 12px;
+        padding: 16px 18px;
+        background: var(--violet-soft);
+      }
+      .ainote p {
+        margin: 0 0 8px;
+        font-size: 15px;
+      }
+      .ainote .tag {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--violet);
+      }
+      .mock-cap {
+        font-size: 14px;
+        color: var(--muted);
+        padding: 0 22px 18px;
+        margin: 0;
+      }
+      @media (max-width: 760px) {
+        .mock-body {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ---------- feature lists ---------- */
+      .feat {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin: 18px 0;
+      }
+      .feat div {
+        border-left: 3px solid var(--turf);
+        padding: 4px 0 4px 16px;
+      }
+      .feat.next div {
+        border-left-color: var(--violet);
+      }
+      .feat b {
+        display: block;
+        margin-bottom: 2px;
+      }
+      .feat span {
+        color: var(--muted);
+        font-size: 15.5px;
+      }
+      @media (max-width: 700px) {
+        .feat {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ---------- architecture ---------- */
+      .diagram {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 20px;
+        overflow-x: auto;
+        margin: 20px 0;
+      }
+      pre.mermaid {
+        margin: 0;
+        background: transparent;
+        font-family: var(--body);
+      }
+      .layers {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        margin: 20px 0;
+      }
+      .layers div {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 16px;
+      }
+      .layers b {
+        display: block;
+        font-family: var(--display);
+        font-weight: 500;
+        font-size: 15px;
+        margin-bottom: 6px;
+      }
+      .layers p {
+        font-size: 15px;
+        color: var(--muted);
+        margin: 0;
+      }
+      @media (max-width: 900px) {
+        .layers {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 520px) {
+        .layers {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ---------- AI split ---------- */
+      .split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin: 20px 0;
+      }
+      .split > div {
+        border-radius: 16px;
+        padding: 22px;
+      }
+      .split .ai {
+        background: var(--violet-soft);
+      }
+      .split .conv {
+        background: var(--turf-soft);
+      }
+      .split h3 {
+        margin-top: 0;
+      }
+      .split .ai h3 {
+        color: var(--violet);
+      }
+      .split .conv h3 {
+        color: var(--turf);
+      }
+      .split ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+      .split li {
+        margin-bottom: 10px;
+        font-size: 15.5px;
+      }
+      @media (max-width: 760px) {
+        .split {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ---------- code ---------- */
+      pre.code {
+        background: var(--code-bg);
+        color: var(--code-ink);
+        border-radius: 14px;
+        padding: 18px 20px;
+        overflow-x: auto;
+        font-family: var(--mono);
+        font-size: 13.5px;
+        line-height: 1.55;
+        margin: 18px 0;
+      }
+      pre.code .c {
+        color: #8fa3d9;
+      }
+      pre.code .k {
+        color: #ffb4ac;
+      }
+      pre.code .s {
+        color: #8ee6c4;
+      }
+
+      /* ---------- roadmap ---------- */
+      .road {
+        list-style: none;
+        margin: 24px 0;
+        padding: 0;
+        position: relative;
+      }
+      .road::before {
+        content: '';
+        position: absolute;
+        left: 21px;
+        top: 8px;
+        bottom: 8px;
+        width: 2px;
+        background: var(--line);
+      }
+      .road > li {
+        position: relative;
+        padding: 0 0 30px 64px;
+      }
+      .road .num {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-family: var(--display);
+        font-weight: 700;
+        font-size: 16px;
+        color: #fff;
+        background: var(--cobalt);
+      }
+      .road li:nth-child(2) .num {
+        background: #3557f0;
+      }
+      .road li:nth-child(3) .num {
+        background: var(--violet);
+      }
+      .road li:nth-child(4) .num {
+        background: #8d4fd9;
+      }
+      .road li:nth-child(5) .num {
+        background: #c24aa8;
+      }
+      .road li:nth-child(6) .num {
+        background: var(--coral);
+      }
+      .road li:nth-child(7) .num {
+        background: var(--turf);
+      }
+      .road h3 {
+        margin: 6px 0 4px;
+      }
+      .road .wk {
+        color: var(--muted);
+        font-size: 14.5px;
+        font-weight: 500;
+        margin: 0 0 10px;
+      }
+      .lanes {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin: 10px 0;
+      }
+      .lane {
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 15px;
+      }
+      .lane.a {
+        background: var(--cobalt-soft);
+      }
+      .lane.b {
+        background: var(--coral-soft);
+      }
+      .lane b {
+        display: block;
+        font-size: 13px;
+        margin-bottom: 2px;
+      }
+      .lane.a b {
+        color: var(--cobalt);
+      }
+      .lane.b b {
+        color: var(--coral);
+      }
+      .done {
+        font-size: 15px;
+        margin: 0;
+      }
+      .done b {
+        color: var(--turf);
+      }
+      @media (max-width: 640px) {
+        .lanes {
+          grid-template-columns: 1fr;
+        }
+        .road > li {
+          padding-left: 58px;
+        }
+      }
+
+      /* ---------- people ---------- */
+      .people {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin: 20px 0;
+      }
+      .person {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 22px;
+        border-top: 6px solid var(--cobalt);
+      }
+      .person.b {
+        border-top-color: var(--coral);
+      }
+      .person h3 {
+        margin-top: 0;
+      }
+      .person ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+      .person li {
+        margin-bottom: 8px;
+        font-size: 15.5px;
+      }
+      @media (max-width: 760px) {
+        .people {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ---------- glossary ---------- */
+      dl.gloss {
+        display: grid;
+        grid-template-columns: 190px 1fr;
+        gap: 0;
+        margin: 20px 0;
+        border-top: 1px solid var(--line);
+      }
+      dl.gloss dt,
+      dl.gloss dd {
+        padding: 12px 0;
+        border-bottom: 1px solid var(--line);
+        margin: 0;
+      }
+      dl.gloss dt {
+        font-weight: 700;
+        padding-right: 16px;
+      }
+      dl.gloss dd {
+        color: var(--muted);
+        font-size: 15.5px;
+      }
+      @media (max-width: 600px) {
+        dl.gloss {
+          grid-template-columns: 1fr;
+        }
+        dl.gloss dt {
+          border-bottom: none;
+          padding-bottom: 0;
+        }
+      }
+
+      .callout {
+        border-radius: 14px;
+        padding: 16px 20px;
+        background: var(--sun-soft);
+        margin: 20px 0;
+        font-size: 15.5px;
+      }
+      .callout b {
+        color: var(--ink);
+      }
+
+      .stackmap {
+        display: grid;
+        gap: 8px;
+        margin: 24px 0 0;
+      }
+      .srow {
+        display: grid;
+        grid-template-columns: 170px 1fr;
+        gap: 14px;
+        align-items: start;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-left: 5px solid var(--c);
+        border-radius: 12px;
+        padding: 12px 16px;
+      }
+      .srow.data {
+        --c: var(--violet);
+      }
+      .srow.back {
+        --c: var(--cobalt);
+      }
+      .srow.front {
+        --c: var(--coral);
+      }
+      .srow.ai {
+        --c: var(--sun);
+      }
+      .srow.ops {
+        --c: var(--turf);
+      }
+      .srow.team {
+        --c: var(--muted);
+      }
+      .slbl {
+        font-weight: 700;
+        font-size: 15px;
+        padding-top: 3px;
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .chips span {
+        font-size: 14px;
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+      }
+      .sw {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+        margin-right: 6px;
+        vertical-align: -1px;
+      }
+      .note {
+        font-size: 14.5px;
+        color: var(--muted);
+        margin-top: 10px;
+      }
+      .layers.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      @media (max-width: 760px) {
+        .srow {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+        .layers.three {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .tfilter {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 18px 0 12px;
+        font-size: 14.5px;
+        color: var(--muted);
+      }
+      .tfilter button {
+        font: inherit;
+        font-weight: 500;
+        color: var(--ink);
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 5px 14px;
+        cursor: pointer;
+      }
+      .tfilter button[aria-pressed='true'] {
+        background: var(--ink);
+        color: var(--bg);
+        border-color: var(--ink);
+      }
+      .tscroll {
+        padding: 6px 0;
+      }
+      .tgrid {
+        display: grid;
+        grid-template-columns: 230px repeat(8, minmax(64px, 1fr));
+        min-width: 860px;
+        font-size: 14px;
+      }
+      .tgrid .th {
+        padding: 10px 6px;
+        font-size: 13px;
+        color: var(--muted);
+        border-bottom: 1px solid var(--line);
+        line-height: 1.3;
+      }
+      .tgrid .th b {
+        font-family: var(--display);
+        color: var(--ink);
+        font-size: 14px;
+      }
+      .tgrid .th small {
+        display: block;
+        font-size: 12px;
+      }
+      .tgrid .tlabel {
+        padding: 8px 12px 8px 16px;
+      }
+      .tgrid .th.tlabel {
+        padding-left: 16px;
+      }
+      .tgroup {
+        grid-column: 1 / -1;
+        font-family: var(--display);
+        font-weight: 500;
+        font-size: 14px;
+        padding: 16px 16px 6px;
+        border-top: 1px solid var(--line);
+        margin-top: 4px;
+      }
+      .trow {
+        display: contents;
+      }
+      .trow .tlabel b {
+        display: block;
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .trow .tlabel span {
+        display: block;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+      .tbar {
+        grid-row: auto;
+        align-self: center;
+        height: 26px;
+        border-radius: 999px;
+        margin: 6px 4px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 0 10px;
+        background: var(--soft);
+        border: 1px solid var(--c);
+        transition: opacity 0.2s;
+      }
+      .tbar i {
+        position: absolute;
+        left: 5px;
+        top: 50%;
+        width: 14px;
+        height: 14px;
+        margin-top: -7px;
+        border-radius: 50%;
+        background: var(--c);
+      }
+      .tbar em {
+        font-style: normal;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--c);
+      }
+      .tbar.opt {
+        border-style: dashed;
+        background: transparent;
+      }
+      .tbar.data {
+        --c: var(--violet);
+        --soft: var(--violet-soft);
+      }
+      .tbar.back {
+        --c: var(--cobalt);
+        --soft: var(--cobalt-soft);
+      }
+      .tbar.front {
+        --c: var(--coral);
+        --soft: var(--coral-soft);
+      }
+      .tbar.ai {
+        --c: var(--sun);
+        --soft: var(--sun-soft);
+      }
+      .tbar.ops {
+        --c: var(--turf);
+        --soft: var(--turf-soft);
+      }
+      .tbar.team {
+        --c: var(--muted);
+        --soft: var(--bg);
+      }
+      .trow .tlabel,
+      .trow .tbar {
+        transition: opacity 0.2s;
+      }
+      .tgrid.f-A .trow:not([data-owner*='A']) > *,
+      .tgrid.f-B .trow:not([data-owner*='B']) > * {
+        opacity: 0.22;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .tbar,
+        .trow .tlabel {
+          transition: none;
+        }
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 64px;
+        padding-top: 24px;
+        color: var(--muted);
+        font-size: 14.5px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero-inner">
+        <div>
+          <h1>PitchLens</h1>
+          <p class="lede">
+            An open football analytics lab built by two engineers: your own xG model, match reports anyone can read, and
+            a forecast that keeps score of itself.
+          </p>
+          <p class="meta">
+            A project plan covering ideas, data, architecture, AI, testing, a 16-week roadmap and how to turn it all
+            into two strong portfolios.
+          </p>
+        </div>
+        <div class="pitch-wrap">
+          <svg
+            class="pitch"
+            viewBox="-2 -4 84 66"
+            role="img"
+            aria-label="Illustrative shot map: circles on half a pitch, sized by expected goals, with goals highlighted in coral."
+          >
+            <rect class="turf" x="0" y="0" width="80" height="60" />
+            <rect class="ln" x="0" y="0" width="80" height="60" />
+            <rect class="ln" x="18" y="0" width="44" height="18" />
+            <rect class="ln" x="30" y="0" width="20" height="6" />
+            <rect class="ln" x="36" y="-2" width="8" height="2" />
+            <circle cx="40" cy="12" r=".5" fill="rgba(255,255,255,.7)" />
+            <path class="ln" d="M32 18 A10 10 0 0 0 48 18" />
+            <path class="ln" d="M30 60 A10 10 0 0 1 50 60" />
+            <g>
+              <circle class="shot goal" style="--i: 0" cx="40" cy="11" r="3.9" />
+              <circle class="shot miss" style="--i: 1" cx="46" cy="9" r="2.0" />
+              <circle class="shot miss" style="--i: 2" cx="28" cy="15" r="1.2" />
+              <circle class="shot goal" style="--i: 3" cx="37" cy="7" r="2.5" />
+              <circle class="shot miss" style="--i: 4" cx="52" cy="16" r="1.1" />
+              <circle class="shot miss" style="--i: 5" cx="44" cy="5" r="3.0" />
+              <circle class="shot miss" style="--i: 6" cx="33" cy="20" r="1.0" />
+              <circle class="shot goal" style="--i: 7" cx="40" cy="24" r="1.0" />
+              <circle class="shot miss" style="--i: 8" cx="58" cy="10" r="1.0" />
+              <circle class="shot miss" style="--i: 9" cx="22" cy="26" r=".9" />
+              <circle class="shot goal" style="--i: 10" cx="35" cy="13" r="1.5" />
+              <circle class="shot miss" style="--i: 11" cx="49" cy="22" r="1.0" />
+              <circle class="shot miss" style="--i: 12" cx="60" cy="24" r=".9" />
+              <circle class="shot miss" style="--i: 13" cx="42" cy="17" r="1.3" />
+              <circle class="shot miss" style="--i: 14" cx="30" cy="9" r="1.4" />
+            </g>
+          </svg>
+          <div class="legend">
+            <span><i style="background: #ff6b5e"></i>Goal</span
+            ><span><i style="border: 1.5px solid #fff"></i>No goal</span><span>Circle size = chance quality (xG)</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Contents">
+        <p>Contents</p>
+        <ol>
+          <li><a href="#ideas">Project ideas</a></li>
+          <li><a href="#pick">The recommendation</a></li>
+          <li><a href="#mvp">MVP and beyond</a></li>
+          <li><a href="#data">Data sources</a></li>
+          <li><a href="#arch">Architecture</a></li>
+          <li><a href="#ai">AI vs conventional</a></li>
+          <li><a href="#video">Data from video</a></li>
+          <li><a href="#stack">Technologies</a></li>
+          <li><a href="#tests">Testing and CI/CD</a></li>
+          <li><a href="#roadmap">Roadmap</a></li>
+          <li><a href="#techroad">Technology roadmap</a></li>
+          <li><a href="#split">Splitting the work</a></li>
+          <li><a href="#portfolio">Portfolio</a></li>
+          <li><a href="#tools">AI tools</a></li>
+          <li><a href="#glossary">Glossary</a></li>
+        </ol>
+      </nav>
+
+      <main>
+        <div class="assume">
+          <span class="dot" aria-hidden="true"></span>
+          <p>
+            <strong>Assumptions behind this plan.</strong> Two engineers with roughly 6–10 hours a week each, about 16
+            weeks to a polished launch, Python for data work, a budget close to zero, and a public, non-commercial
+            project. If any of these is off (more time, a specific league you care about, a commercial ambition), the
+            scope and data choices shift; the sections on data and roadmap say where.
+          </p>
+        </div>
+
+        <!-- IDEAS -->
+        <section id="ideas">
+          <h2>Six project ideas, compared</h2>
+          <p class="sub">
+            Each one is buildable with free data. They differ in how much football analysis you'd actually learn, how
+            well they'd read to a recruiter, and how likely they are to blow up in scope.
+          </p>
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 24%">Idea</th>
+                  <th>What you'd build</th>
+                  <th>Learning</th>
+                  <th>Portfolio</th>
+                  <th>Scope risk</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="name">Shot lab: your own xG model</span></td>
+                  <td>
+                    Train an expected-goals model on open event data and benchmark it against a professional one. Alone
+                    it's a strong notebook, a thin product.
+                  </td>
+                  <td>
+                    <span class="meter l"
+                      ><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i
+                    ></span>
+                  </td>
+                  <td>
+                    <span class="meter p"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span>
+                  </td>
+                  <td>
+                    <span class="meter s"><i class="on"></i><i></i><i></i><i></i><i></i></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="name">Automated match reports</span></td>
+                  <td>
+                    Shot maps, xG timelines, pass networks and key numbers for every match, generated from event data.
+                  </td>
+                  <td>
+                    <span class="meter l"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span>
+                  </td>
+                  <td>
+                    <span class="meter p"
+                      ><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i
+                    ></span>
+                  </td>
+                  <td>
+                    <span class="meter s"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="name">Season forecaster</span></td>
+                  <td>
+                    Rate teams from results (Elo or a Poisson model), simulate the rest of the season, and publicly
+                    score your own predictions every week.
+                  </td>
+                  <td>
+                    <span class="meter l"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span>
+                  </td>
+                  <td>
+                    <span class="meter p"
+                      ><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i
+                    ></span>
+                  </td>
+                  <td>
+                    <span class="meter s"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="name">Player similarity scout</span></td>
+                  <td>
+                    "Find players like X" using per-90 profiles and distance metrics. Popular, but open data rarely has
+                    enough full seasons to make it honest.
+                  </td>
+                  <td>
+                    <span class="meter l"
+                      ><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i
+                    ></span>
+                  </td>
+                  <td>
+                    <span class="meter p"
+                      ><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i
+                    ></span>
+                  </td>
+                  <td>
+                    <span class="meter s"
+                      ><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i
+                    ></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="name">Team style fingerprints</span></td>
+                  <td>Cluster teams by how they play (pressing, directness, width) and show the clusters visually.</td>
+                  <td>
+                    <span class="meter l"
+                      ><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i
+                    ></span>
+                  </td>
+                  <td>
+                    <span class="meter p"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span>
+                  </td>
+                  <td>
+                    <span class="meter s"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="name">Tracking-data sandbox</span></td>
+                  <td>
+                    Pitch control and off-ball movement from the few public tracking samples. Impressive, but steep and
+                    data-starved.
+                  </td>
+                  <td>
+                    <span class="meter l"
+                      ><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i
+                    ></span>
+                  </td>
+                  <td>
+                    <span class="meter p"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span>
+                  </td>
+                  <td>
+                    <span class="meter s"
+                      ><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i
+                    ></span>
+                  </td>
+                </tr>
+                <tr class="pick">
+                  <td><span class="name">PitchLens (recommended)</span></td>
+                  <td>
+                    Ideas 1, 2 and 3 combined in layers: a static analytics core, a small live forecasting layer, and a
+                    carefully grounded AI layer on top.
+                  </td>
+                  <td>
+                    <span class="meter l"
+                      ><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i
+                    ></span>
+                  </td>
+                  <td>
+                    <span class="meter p"
+                      ><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i
+                    ></span>
+                  </td>
+                  <td>
+                    <span class="meter s"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mkey">
+            <span
+              ><span class="meter l"><i class="on"></i></span> Learning value</span
+            ><span
+              ><span class="meter p"><i class="on"></i></span> Portfolio impact</span
+            ><span
+              ><span class="meter s"><i class="on"></i></span> Scope risk (more = riskier)</span
+            >
+          </div>
+        </section>
+
+        <!-- PICK -->
+        <section id="pick">
+          <div class="prose">
+            <h2>The recommendation: PitchLens</h2>
+            <p>
+              PitchLens is a public web app and a set of written analyses built on one idea:
+              <strong>show the numbers and show the method</strong>. Every match page explains itself, the xG model is
+              your own and benchmarked in the open, and the weekly forecast publishes its own track record, including
+              the weeks it gets wrong.
+            </p>
+            <p>
+              It's layered on purpose. The core runs on static historical data, so it can never break because an API
+              changed. A thin live layer gives you a real scheduled pipeline to operate. The AI layer sits on top and
+              only ever describes numbers you computed yourselves.
+            </p>
+          </div>
+          <div class="pick-grid">
+            <div>
+              <span class="bar" style="background: var(--cobalt)"></span>
+              <h3>The problem</h3>
+              <p>
+                Most public football stats show numbers without methods, and open advanced data got scarcer in January
+                2026 when FBref had to delete its Opta-powered advanced stats. Learners and fans have few places where
+                the model, the code and its errors are all visible.
+              </p>
+            </div>
+            <div>
+              <span class="bar" style="background: var(--coral)"></span>
+              <h3>Who it's for</h3>
+              <p>
+                First, the two of you, as a structured way to learn. Second, curious fans and amateur writers who want
+                readable match visuals. Third, recruiters and analysts scanning your portfolio. Be honest that the third
+                group matters most.
+              </p>
+            </div>
+            <div>
+              <span class="bar" style="background: var(--turf)"></span>
+              <h3>Why it's interesting</h3>
+              <p>
+                You'll disagree with a professional xG model and have to explain why. Your forecasts will be scored
+                publicly. Those two moments of accountability make far better portfolio stories than another dashboard.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- MVP -->
+        <section id="mvp">
+          <div class="prose">
+            <h2>MVP and follow-on features</h2>
+            <p>
+              The MVP is deliberately the static core only. It's done when a stranger can open a public URL, pick a
+              match, and understand what happened beyond the score.
+            </p>
+          </div>
+          <div class="feat">
+            <div>
+              <b>Reproducible dataset</b
+              ><span
+                >Ingest StatsBomb open data for 2–3 competitions (for example a World Cup, a Euros and one full league
+                season) with one command.</span
+              >
+            </div>
+            <div>
+              <b>xG model v1</b
+              ><span
+                >Logistic regression on distance, angle, body part and play type. Evaluated with log loss, Brier score
+                and a calibration plot, side by side with StatsBomb's own xG.</span
+              >
+            </div>
+            <div>
+              <b>Match page</b
+              ><span
+                >Shot map, cumulative xG timeline, pass network and a small stats table, all drawn from your
+                pipeline.</span
+              >
+            </div>
+            <div>
+              <b>Competition page</b
+              ><span
+                >Team xG for and against, per 90, with a short note on what "per 90" means and why small samples
+                mislead.</span
+              >
+            </div>
+            <div>
+              <b>Methods page</b
+              ><span>A plain-language model card: data used, features, metrics, known blind spots.</span>
+            </div>
+            <div>
+              <b>Deployed with CI</b><span>Tests on every pull request, automatic deploy from main, a public URL.</span>
+            </div>
+          </div>
+
+          <div class="mock" role="figure" aria-label="Mockup of the PitchLens match page">
+            <div class="mock-bar"><i></i><i></i><i></i><span>pitchlens.app/matches/example</span></div>
+            <div class="mock-body">
+              <div class="score">
+                <b class="h">Home FC 2</b><b class="a">1 Away United</b
+                ><small>Illustrative data, not a real match</small>
+              </div>
+              <div class="panel">
+                <h4>Cumulative xG</h4>
+                <svg
+                  class="xg-race"
+                  viewBox="0 0 300 125"
+                  role="img"
+                  aria-label="xG timeline: Home rises to 1.71, Away to 0.95"
+                >
+                  <line class="grid" x1="10" y1="110" x2="290" y2="110" />
+                  <line class="grid" x1="10" y1="60" x2="290" y2="60" stroke-dasharray="3 4" />
+                  <line class="grid" x1="10" y1="10" x2="290" y2="10" stroke-dasharray="3 4" />
+                  <text x="12" y="57">1.0</text>
+                  <text x="12" y="20">2.0</text>
+                  <text x="10" y="123">0'</text>
+                  <text x="142" y="123">45'</text>
+                  <text x="276" y="123">90'</text>
+                  <path class="away" d="M10 110 H25.6 V108 H112.7 V104 H168.7 V66 H227.8 V62.5 H290" />
+                  <path
+                    class="home"
+                    d="M10 110 H47.3 V106 H94 V87.5 H134.4 V84 H206 V45 H252.7 V39 H283.8 V24.5 H290"
+                  />
+                  <circle cx="94" cy="87.5" r="4" fill="var(--cobalt)" />
+                  <circle cx="206" cy="45" r="4" fill="var(--cobalt)" />
+                  <circle cx="168.7" cy="66" r="4" fill="var(--coral)" />
+                </svg>
+              </div>
+              <div class="panel">
+                <h4>Key numbers</h4>
+                <table class="stats">
+                  <tr>
+                    <td>1.71</td>
+                    <td>xG</td>
+                    <td>0.95</td>
+                  </tr>
+                  <tr>
+                    <td>15</td>
+                    <td>Shots</td>
+                    <td>8</td>
+                  </tr>
+                  <tr>
+                    <td>6</td>
+                    <td>On target</td>
+                    <td>3</td>
+                  </tr>
+                  <tr>
+                    <td>0.11</td>
+                    <td>xG per shot</td>
+                    <td>0.12</td>
+                  </tr>
+                  <tr>
+                    <td>58%</td>
+                    <td>Possession</td>
+                    <td>42%</td>
+                  </tr>
+                </table>
+              </div>
+              <div class="ainote">
+                <p>
+                  Home's 1.71 xG came largely from two big chances: a 63rd-minute penalty (0.78 xG) and a close-range
+                  shot in the 27th minute (0.37 xG). Away took 8 shots, but 0.76 of their 0.95 xG came from a single
+                  51st-minute chance, which they scored.
+                </p>
+                <span class="tag"
+                  >Match note written by AI from computed stats; every number checked automatically</span
+                >
+              </div>
+            </div>
+            <p class="mock-cap">
+              The match page at MVP-plus-AI stage. The AI note arrives in phase 5; everything else is MVP.
+            </p>
+          </div>
+
+          <h3>Follow-on features, in rough priority order</h3>
+          <div class="feat next">
+            <div>
+              <b>Weekly forecasts with a track record</b
+              ><span
+                >Dixon-Coles or Elo ratings on a current league, season simulations, and a page that scores every past
+                prediction.</span
+              >
+            </div>
+            <div>
+              <b>AI match notes</b
+              ><span
+                >Short written summaries generated offline from your computed stats, with automated number
+                checking.</span
+              >
+            </div>
+            <div>
+              <b>xG model v2</b
+              ><span
+                >Gradient boosting plus StatsBomb 360 freeze-frame features (defenders between shooter and goal, keeper
+                position). Great write-up material.</span
+              >
+            </div>
+            <div>
+              <b>Player pages</b
+              ><span
+                >Percentile profiles per 90 with sensible minimum-minutes thresholds, limited to competitions with full
+                seasons.</span
+              >
+            </div>
+            <div>
+              <b>Shareable images</b
+              ><span>Export any chart as a PNG with attribution baked in, so fans can share it.</span>
+            </div>
+            <div>
+              <b>Tracking sandbox (stretch)</b
+              ><span>A pitch-control demo on public tracking samples, only if you still have energy after launch.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- DATA -->
+        <section id="data">
+          <h2>Football data sources</h2>
+          <p class="sub">
+            Free football data is narrower than it looks, and licensing matters more for a public project than for a
+            private notebook. Prefer sources that explicitly permit your use; avoid scraping sites whose terms forbid
+            it.
+          </p>
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 18%">Source</th>
+                  <th style="width: 26%">What you get</th>
+                  <th style="width: 22%">Access and cost</th>
+                  <th>Licensing and caveats</th>
+                  <th>Verdict</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="name">StatsBomb open data</span>(Hudl)</td>
+                  <td>
+                    Professional-grade event data: every pass, shot, carry and pressure, roughly 3,400 events per match;
+                    360 freeze frames for some competitions.
+                  </td>
+                  <td>Free JSON on GitHub; <code>statsbombpy</code> loads it without credentials.</td>
+                  <td>
+                    User agreement for research and genuine interest; you must credit StatsBomb and use their logo when
+                    publishing. Coverage is selective (tournaments, some full league seasons, many women's
+                    competitions), not current-season.
+                  </td>
+                  <td><span class="pill core">Core</span></td>
+                </tr>
+                <tr>
+                  <td><span class="name">football-data.org</span></td>
+                  <td>Fixtures, results, standings, squads and scorers for 12 major competitions.</td>
+                  <td>
+                    Free tier forever, 10 requests per minute; scores slightly delayed. Paid tiers add competitions and
+                    stats.
+                  </td>
+                  <td>
+                    No player stats or xG on the free tier. Fine for a weekly batch job; cache everything, never call it
+                    per page view. Read their terms for attribution.
+                  </td>
+                  <td><span class="pill use">Live layer</span></td>
+                </tr>
+                <tr>
+                  <td><span class="name">football-data.co.uk</span></td>
+                  <td>Historical results and closing betting odds as CSVs, going back decades for many leagues.</td>
+                  <td>Free downloads.</td>
+                  <td>
+                    Ideal for training forecast models and for a tough benchmark: can your model beat the bookmakers'
+                    implied probabilities? Check the site's terms before redistributing files.
+                  </td>
+                  <td><span class="pill use">Forecast history</span></td>
+                </tr>
+                <tr>
+                  <td><span class="name">Wyscout public dataset</span>(Pappalardo et al., 2019)</td>
+                  <td>Event data for a full 2017/18 season of five top leagues plus two tournaments.</td>
+                  <td>Free download from the paper's repository.</td>
+                  <td>
+                    Openly licensed for reuse with attribution (check the exact licence on the dataset page). Old, but
+                    full seasons make it the honest choice for player-profile experiments.
+                  </td>
+                  <td><span class="pill sup">Supplement</span></td>
+                </tr>
+                <tr>
+                  <td><span class="name">API-Football</span></td>
+                  <td>Broad league coverage including lineups and some player stats.</td>
+                  <td>Free tier capped at 100 requests per day; paid plans start low.</td>
+                  <td>Useful if you need a league football-data.org lacks. Quality varies outside top leagues.</td>
+                  <td><span class="pill sup">If needed</span></td>
+                </tr>
+                <tr>
+                  <td><span class="name">Public tracking samples</span>(Metrica, SkillCorner)</td>
+                  <td>A handful of matches of player-position data.</td>
+                  <td>Free on GitHub.</td>
+                  <td>Too few matches for general conclusions; perfect for a stretch demo.</td>
+                  <td><span class="pill sup">Stretch</span></td>
+                </tr>
+                <tr>
+                  <td><span class="name">FBref</span></td>
+                  <td>Basic historical stats only since January 2026.</td>
+                  <td>Website.</td>
+                  <td>
+                    Its advanced data was removed after Opta ended the data agreement. Scraping is discouraged and the
+                    advanced numbers you'd want are gone.
+                  </td>
+                  <td><span class="pill avoid">Avoid</span></td>
+                </tr>
+                <tr>
+                  <td><span class="name">Understat, Sofascore, FotMob, WhoScored, Transfermarkt</span></td>
+                  <td>Attractive numbers on websites.</td>
+                  <td>Scraping only.</td>
+                  <td>
+                    Terms generally prohibit scraping and republishing. A public portfolio that redistributes scraped
+                    data is a liability, not an asset.
+                  </td>
+                  <td><span class="pill avoid">Avoid</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout">
+            <b>Practical rule:</b> keep a <code>DATA_SOURCES.md</code> in the repo listing each source, its licence
+            link, the date you last checked it, and the attribution you show. Terms change (FBref is proof), and a
+            recruiter who notices you took licensing seriously will remember it.
+          </div>
+        </section>
+
+        <!-- ARCHITECTURE -->
+        <section id="arch">
+          <div class="prose">
+            <h2>Architecture</h2>
+            <p>
+              Batch everything. Football data changes a few times a week, so there is no need for streaming, queues or
+              per-request computation. Heavy work happens in the pipeline; the API only reads precomputed tables; the
+              frontend only draws.
+            </p>
+          </div>
+          <div class="diagram">
+            <pre class="mermaid">
+flowchart LR
+  subgraph S["Sources"]
+    SB["StatsBomb open data&lt;br/&gt;events and 360"]
+    FD["football-data.org&lt;br/&gt;fixtures and results"]
+    FU["football-data.co.uk&lt;br/&gt;historical CSVs"]
+  end
+  subgraph P["Python pipeline"]
+    ING["Ingest CLI"] --> RAW[("Raw JSON cache")]
+    RAW --> STG["Validated Parquet&lt;br/&gt;pandera contracts"]
+    STG --> DDB[("DuckDB&lt;br/&gt;analysis and training")]
+    DDB --> MOD["xG and forecast models"]
+    MOD --> PUB["Publish job"]
+    PUB --> NOTE["AI match notes&lt;br/&gt;generated offline"]
+  end
+  SB --> ING
+  FD --> ING
+  FU --> ING
+  PUB --> PG[("Postgres&lt;br/&gt;serving tables")]
+  NOTE --> PG
+  PG --> API["FastAPI&lt;br/&gt;read-only, cached"]
+  API --> WEB["React + TypeScript site"]
+  GHA["GitHub Actions&lt;br/&gt;CI, weekly cron, deploy"] -.-> ING
+  GHA -.-> API
+</pre
+            >
+          </div>
+          <div class="layers">
+            <div>
+              <b>Pipeline</b>
+              <p>
+                A Python package with a small CLI (<code>ingest</code>, <code>validate</code>, <code>train</code>,
+                <code>publish</code>). Idempotent: rerunning never duplicates data. Raw files are cached so you never
+                re-download history.
+              </p>
+            </div>
+            <div>
+              <b>Storage</b>
+              <p>
+                Parquet and DuckDB for analysis on your laptops and in CI. Postgres only for the small set of tables the
+                website needs.
+              </p>
+            </div>
+            <div>
+              <b>Backend</b>
+              <p>
+                FastAPI, read-only endpoints such as <code>/matches/{id}/shots</code>. Typed with Pydantic, which gives
+                you an OpenAPI spec the frontend can generate types from.
+              </p>
+            </div>
+            <div>
+              <b>Frontend and deploy</b>
+              <p>
+                Static React build on Vercel. API as one Docker container on Google Cloud Run, scaling to zero. Running
+                cost: about €0 a month plus a few euros of AI usage.
+              </p>
+            </div>
+          </div>
+          <div class="prose">
+            <h3>Deployment that fits a side project</h3>
+            <p>
+              Frontend on Vercel, API as a Docker container on Google Cloud Run, Postgres on Supabase, scheduling in
+              GitHub Actions. Every piece has a free tier that fits a portfolio, and the API scales to zero so an idle
+              site costs nothing. The <a href="#stack">technologies section</a> covers the setup, costs and catches in
+              detail.
+            </p>
+            <p>
+              Plan for the end, too. Before you move on to other things, add an "archive mode": export the serving
+              tables to static JSON so the site keeps working on static hosting with no database, no API and no bills. A
+              portfolio link that 404s in two years undoes all the work.
+            </p>
+          </div>
+        </section>
+
+        <!-- AI -->
+        <section id="ai">
+          <div class="prose">
+            <h2>Where AI helps, and where it shouldn't touch the numbers</h2>
+            <p>
+              The rule is simple:
+              <strong
+                >conventional methods produce every number; language models only describe numbers that already
+                exist.</strong
+              >
+              Language models are fluent and confidently wrong about statistics, and a sports analytics portfolio lives
+              or dies on getting numbers right.
+            </p>
+          </div>
+          <div class="split">
+            <div class="ai">
+              <h3>AI adds genuine value</h3>
+              <ul>
+                <li>
+                  <strong>Match notes.</strong> Feed the model a JSON of computed stats for one match; ask for 80 words.
+                  Generate offline in the pipeline, store the result, and never call the model on a page view. That
+                  keeps costs to a few euros and lets you review output.
+                </li>
+                <li>
+                  <strong>Explaining charts to beginners.</strong> Short "how to read this" text for each chart type,
+                  written once with AI help and edited by you.
+                </li>
+                <li>
+                  <strong>Your own learning.</strong> Asking an assistant why your calibration curve bends, or what a
+                  feature leak looks like, is one of the fastest ways to learn analytics.
+                </li>
+                <li>
+                  <strong>Building faster.</strong> Scaffolding, tests, CI configs and refactors with a coding agent.
+                </li>
+              </ul>
+            </div>
+            <div class="conv">
+              <h3>Conventional analysis is more reliable</h3>
+              <ul>
+                <li>
+                  <strong>xG and any probability.</strong> Logistic regression and gradient boosting are transparent,
+                  calibratable and testable.
+                </li>
+                <li>
+                  <strong>Forecasts.</strong> Poisson models and Elo ratings are the honest baselines; an LLM
+                  "predicting" a score is a coin flip in a suit.
+                </li>
+                <li>
+                  <strong>Rankings and comparisons.</strong> Percentiles and per-90 numbers must be computed, never
+                  generated.
+                </li>
+                <li>
+                  <strong>Data cleaning.</strong> Deterministic code with tests. Ambiguous cases get a rule, not a
+                  guess.
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="prose">
+            <h3>Making AI output trustworthy</h3>
+            <p>
+              Write a faithfulness test: extract every number from a generated note and assert each one appears in (or
+              is directly derivable from) the input JSON. Ask the model for structured output with the claims it makes,
+              so the check is easy. Notes that fail are regenerated or dropped, and each published note is labelled as
+              AI-written. This single test is a better portfolio talking point than most AI features.
+            </p>
+            <p>
+              "Ask the data in plain English" (text-to-SQL) is tempting. Treat it as an optional experiment, run against
+              a read-only database role, and only after everything else works.
+            </p>
+          </div>
+        </section>
+
+        <!-- VIDEO -->
+        <section id="video">
+          <div class="prose">
+            <h2>Getting player data from your own match video</h2>
+            <p>
+              Yes, you can, and it fits the name: this is the "lens" in PitchLens. Computer vision can turn match
+              footage into per-player positions and movement. What it can't do cheaply is produce a full StatsBomb-style
+              event log. Knowing that difference up front keeps the scope sane.
+            </p>
+          </div>
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 26%">What you want per player</th>
+                  <th>How hard from video</th>
+                  <th style="width: 16%">Realistic?</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>Position over time, heatmap</b></td>
+                  <td>
+                    Detect players each frame, track them across frames, map pixels to pitch coordinates using the pitch
+                    lines.
+                  </td>
+                  <td><span class="pill use">Yes</span></td>
+                </tr>
+                <tr>
+                  <td><b>Distance covered, speed, sprints</b></td>
+                  <td>
+                    Falls out of the positions once the pitch mapping is good. Errors grow with distance from the
+                    camera.
+                  </td>
+                  <td><span class="pill use">Yes</span></td>
+                </tr>
+                <tr>
+                  <td><b>Team shape and average positions</b></td>
+                  <td>
+                    Split players into teams by shirt colour (simple clustering), then average positions per phase.
+                  </td>
+                  <td><span class="pill use">Yes</span></td>
+                </tr>
+                <tr>
+                  <td><b>Who is who (names)</b></td>
+                  <td>
+                    Reading shirt numbers is unreliable at amateur resolution. Easiest fix: a person assigns names to
+                    track IDs in a small review screen.
+                  </td>
+                  <td><span class="pill sup">With help</span></td>
+                </tr>
+                <tr>
+                  <td><b>Ball position</b></td>
+                  <td>Small, fast and often hidden. Expect gaps you interpolate or fill by hand.</td>
+                  <td><span class="pill sup">Partly</span></td>
+                </tr>
+                <tr>
+                  <td><b>Passes, shots, tackles per player</b></td>
+                  <td>
+                    Needs reliable ball tracking plus action recognition. A research problem; semi-manual tagging is the
+                    honest route.
+                  </td>
+                  <td><span class="pill avoid">Not yet</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="prose">
+            <h3>The footage matters more than the model</h3>
+            <p>
+              Film your own games, or a local club's with permission, from a
+              <strong>single fixed, elevated, wide camera</strong> that sees most of the pitch: a tripod on a stand, or
+              a panoramic sports camera. TV broadcasts are much harder (zooms, camera cuts, replays) and copyrighted, so
+              you can't publish data or clips derived from them. Your own footage is clean legally and technically. If
+              other people appear, get their consent before publishing anything, and consider showing initials or
+              anonymised IDs.
+            </p>
+            <h3>How the pipeline would look</h3>
+            <p>
+              Frames go through a player detector (a YOLO-family model, fine-tuned on a few hundred labelled frames from
+              your camera), a multi-object tracker such as ByteTrack, a pitch keypoint model or manually clicked corner
+              points to compute a homography, then team assignment by shirt colour. The output is a table of
+              <code>frame, track_id, team, x, y</code> in the same pitch coordinates as the rest of PitchLens, so your
+              existing charts and metrics work on it unchanged. Open-source examples (Roboflow's sports repository, the
+              SoccerNet research datasets) are good starting points.
+            </p>
+            <h3>Compute and scope</h3>
+            <p>
+              This needs a GPU. Process videos offline as a batch job on a free notebook GPU or a rented one, never
+              inside your web API. Start with a 5-minute clip, not a full match. Measure accuracy honestly by
+              hand-labelling 100 frames and reporting error in metres; that evaluation is what makes it a portfolio
+              piece rather than a demo.
+            </p>
+          </div>
+          <div class="callout">
+            <b>Where it goes in the roadmap:</b> after launch, as phase 7 (about 4–6 weeks). It's the most impressive AI
+            feature in the project and the one most likely to swallow everything else, so it waits until the core is
+            public. A good first milestone: upload a clip of your own 7-a-side game and get a heatmap and distance
+            covered for every player.
+          </div>
+        </section>
+
+        <!-- STACK -->
+        <section id="stack">
+          <div class="prose">
+            <h2>Technologies: the full stack</h2>
+            <p>
+              One pick per job, chosen for learning value and boringness in equal measure. Everything below runs for €0
+              a month at portfolio traffic, apart from a few euros of Claude API usage and an optional domain.
+            </p>
+          </div>
+
+          <div class="stackmap" role="list" aria-label="PitchLens stack by layer">
+            <div class="srow data" role="listitem">
+              <div class="slbl">Analysis and models</div>
+              <div class="chips">
+                <span>Python 3.12+</span><span>uv</span><span>pandas</span><span>DuckDB</span
+                ><span>Parquet (pyarrow)</span><span>scikit-learn</span><span>statsmodels</span><span>LightGBM</span
+                ><span>Jupyter</span>
+              </div>
+            </div>
+            <div class="srow data" role="listitem">
+              <div class="slbl">Football libraries</div>
+              <div class="chips">
+                <span>statsbombpy</span><span>mplsoccer</span><span>socceraction</span><span>penaltyblog</span>
+              </div>
+            </div>
+            <div class="srow data" role="listitem">
+              <div class="slbl">Pipeline</div>
+              <div class="chips">
+                <span>Typer (CLI)</span><span>httpx + tenacity</span><span>pandera</span><span>pydantic-settings</span>
+              </div>
+            </div>
+            <div class="srow back" role="listitem">
+              <div class="slbl">Backend</div>
+              <div class="chips">
+                <span>FastAPI</span><span>Pydantic v2</span><span>SQLAlchemy 2</span><span>Alembic</span
+                ><span>Uvicorn</span>
+              </div>
+            </div>
+            <div class="srow back" role="listitem">
+              <div class="slbl">Database</div>
+              <div class="chips"><span>Postgres (Supabase)</span><span>DuckDB for analysis</span></div>
+            </div>
+            <div class="srow front" role="listitem">
+              <div class="slbl">Frontend</div>
+              <div class="chips">
+                <span>React</span><span>TypeScript</span><span>Vite</span><span>pnpm</span><span>React Router</span
+                ><span>TanStack Query</span><span>D3</span><span>Observable Plot</span><span>openapi-typescript</span
+                ><span>CSS Modules + CSS variables</span>
+              </div>
+            </div>
+            <div class="srow ai" role="listitem">
+              <div class="slbl">AI</div>
+              <div class="chips">
+                <span>Claude API (Anthropic SDK)</span><span>Structured outputs</span
+                ><span>Later, video lab: Ultralytics YOLO, ByteTrack, OpenCV, supervision</span>
+              </div>
+            </div>
+            <div class="srow ops" role="listitem">
+              <div class="slbl">Quality and tests</div>
+              <div class="chips">
+                <span>ruff</span><span>mypy</span><span>pytest</span><span>Hypothesis</span><span>Biome</span
+                ><span>Vitest</span><span>Testing Library</span><span>Playwright</span><span>pre-commit</span>
+              </div>
+            </div>
+            <div class="srow ops" role="listitem">
+              <div class="slbl">Build and delivery</div>
+              <div class="chips">
+                <span>GitHub</span><span>GitHub Actions</span><span>Dependabot</span><span>Docker</span
+                ><span>Docker Compose</span><span>Google Artifact Registry</span>
+              </div>
+            </div>
+            <div class="srow ops" role="listitem">
+              <div class="slbl">Hosting</div>
+              <div class="chips">
+                <span>Vercel (frontend)</span><span>Google Cloud Run (API)</span><span>Supabase (Postgres)</span
+                ><span>GitHub Actions cron (scheduler)</span>
+              </div>
+            </div>
+            <div class="srow ops" role="listitem">
+              <div class="slbl">Observability</div>
+              <div class="chips">
+                <span>/health endpoint</span><span>Cloud Run logs</span><span>Actions failure emails</span
+                ><span>Sentry (optional)</span>
+              </div>
+            </div>
+            <div class="srow team" role="listitem">
+              <div class="slbl">Collaboration</div>
+              <div class="chips">
+                <span>GitHub Issues and Projects</span><span>Claude Project</span><span>Claude Code</span>
+              </div>
+            </div>
+          </div>
+          <div class="mkey">
+            <span><i class="sw" style="background: var(--violet)"></i>Data</span
+            ><span><i class="sw" style="background: var(--cobalt)"></i>Backend</span
+            ><span><i class="sw" style="background: var(--coral)"></i>Frontend</span
+            ><span><i class="sw" style="background: var(--sun)"></i>AI</span
+            ><span><i class="sw" style="background: var(--turf)"></i>Delivery and ops</span>
+          </div>
+
+          <h3>Every choice, and what it beat</h3>
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 17%">Job</th>
+                  <th style="width: 21%">Pick</th>
+                  <th style="width: 21%">Instead of</th>
+                  <th>Why</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>Python environments</b></td>
+                  <td>uv</td>
+                  <td>pip + venv, Poetry, conda</td>
+                  <td>
+                    One fast tool for Python versions, dependencies and the lockfile. Same command on both laptops, in
+                    CI and in Docker.
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>Dataframes</b></td>
+                  <td>pandas</td>
+                  <td>Polars</td>
+                  <td>
+                    Nearly every football tutorial and library (statsbombpy, mplsoccer, socceraction) speaks pandas.
+                    Your data is small; speed isn't the bottleneck.
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>Analytical storage</b></td>
+                  <td>Parquet + DuckDB</td>
+                  <td>A data warehouse</td>
+                  <td>
+                    SQL over local files, zero servers, fast enough for millions of events. Works the same in notebooks
+                    and CI.
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>Data contracts</b></td>
+                  <td>pandera</td>
+                  <td>Great Expectations</td>
+                  <td>Schemas as Python code next to the transforms, tiny learning curve.</td>
+                </tr>
+                <tr>
+                  <td><b>Pipeline runner</b></td>
+                  <td>A Typer CLI + GitHub Actions cron</td>
+                  <td>Airflow, Dagster, Prefect</td>
+                  <td>
+                    Four commands and two schedules don't need an orchestrator. Revisit only if you have many
+                    interdependent jobs.
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>Modelling</b></td>
+                  <td>scikit-learn, statsmodels, LightGBM</td>
+                  <td>Deep learning frameworks</td>
+                  <td>
+                    Tabular problems with a few thousand shots: interpretable models win. Deep learning only appears in
+                    the video lab, through pretrained models.
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>API</b></td>
+                  <td>FastAPI + Pydantic v2</td>
+                  <td>Django, Flask, Node</td>
+                  <td>Typed, async, auto-generated OpenAPI. Stays in Python, so João can contribute endpoints.</td>
+                </tr>
+                <tr>
+                  <td><b>Database access</b></td>
+                  <td>SQLAlchemy 2 + Alembic</td>
+                  <td>Raw SQL only, an ORM-free stack</td>
+                  <td>
+                    Real migrations from day one. Use SQLAlchemy Core-style queries for the read endpoints; you don't
+                    need heavy ORM models.
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>Serving database</b></td>
+                  <td>Postgres on Supabase</td>
+                  <td>Neon, Railway, self-hosted</td>
+                  <td>
+                    Managed Postgres with a usable free tier and a Claude connector. You only use the database, not
+                    Supabase's auth or browser SDK.
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>Frontend framework</b></td>
+                  <td>React + Vite (single-page app)</td>
+                  <td>Next.js, SvelteKit</td>
+                  <td>
+                    The site is read-only data pages behind a separate API; you don't need server rendering. A static
+                    build is simpler to host and to reason about.
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>Data fetching and types</b></td>
+                  <td>TanStack Query + openapi-typescript</td>
+                  <td>Hand-written fetch code and types</td>
+                  <td>
+                    Caching and loading states for free; types generated from the API so a backend change breaks the
+                    frontend build, not the user.
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>Charts</b></td>
+                  <td>D3 for pitch graphics, Observable Plot for standard charts</td>
+                  <td>Recharts, Chart.js, Plotly</td>
+                  <td>
+                    Pitches need custom SVG geometry; D3 scales and shapes give full control. Plot covers bar and line
+                    charts with little code.
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>Styling</b></td>
+                  <td>CSS Modules + design tokens in CSS variables</td>
+                  <td>Tailwind, component kits</td>
+                  <td>No extra tooling, easy light and dark themes, and a distinctive look instead of a template.</td>
+                </tr>
+                <tr>
+                  <td><b>Lint and format</b></td>
+                  <td>ruff (Python), Biome (TypeScript)</td>
+                  <td>flake8 + black + isort, ESLint + Prettier</td>
+                  <td>One fast tool per language instead of three.</td>
+                </tr>
+                <tr>
+                  <td><b>Frontend hosting</b></td>
+                  <td>Vercel (Hobby)</td>
+                  <td>Cloudflare Pages, Netlify</td>
+                  <td>
+                    Git-connected builds and a preview URL for every pull request. Free for personal, non-commercial
+                    projects, which PitchLens is.
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>API hosting</b></td>
+                  <td>Google Cloud Run</td>
+                  <td>Fly.io, Render, a VPS</td>
+                  <td>
+                    Runs your Docker image, scales to zero, and the free tier covers portfolio traffic. Teaches you a
+                    mainstream cloud without Kubernetes.
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>Infrastructure as code</b></td>
+                  <td>None at first; a short setup doc</td>
+                  <td>Terraform</td>
+                  <td>
+                    Three managed services set up once. Write the clicks down in <code>docs/deploy.md</code>; add
+                    Terraform later only if you want to learn it.
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>LLM</b></td>
+                  <td>Claude API with structured outputs</td>
+                  <td>Self-hosted models</td>
+                  <td>
+                    Called a few hundred times in total, offline, from the pipeline. Structured output makes the number
+                    check straightforward.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Docker: where it earns its place</h3>
+          <div class="split">
+            <div class="conv">
+              <h3>Use Docker for</h3>
+              <ul>
+                <li>
+                  <strong>The API image.</strong> It's the deploy unit for Cloud Run, and the exact same image runs
+                  locally and in CI.
+                </li>
+                <li>
+                  <strong>Local Postgres.</strong> Compose gives both of you an identical database in one command.
+                </li>
+                <li>
+                  <strong>CI test database.</strong> A Postgres service container in GitHub Actions for API tests.
+                </li>
+                <li>
+                  <strong>The video lab, later.</strong> A CUDA-based image so the GPU job runs the same on any rented
+                  machine.
+                </li>
+              </ul>
+            </div>
+            <div class="ai">
+              <h3>Skip Docker for</h3>
+              <ul>
+                <li><strong>The frontend.</strong> Vercel builds and serves the static files itself.</li>
+                <li>
+                  <strong>The pipeline and notebooks.</strong> <code>uv</code> already gives reproducible environments;
+                  a container adds friction to exploration.
+                </li>
+                <li><strong>Orchestration.</strong> No Kubernetes, no Swarm. One container, one service.</li>
+              </ul>
+            </div>
+          </div>
+          <pre
+            class="code"
+            aria-label="API Dockerfile"
+          ><span class="c"># api/Dockerfile: small image, fast cold starts on Cloud Run</span>
+<span class="k">FROM</span> python:3.12-slim <span class="k">AS</span> build
+<span class="k">COPY</span> --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv   <span class="c"># pin a version in practice</span>
+<span class="k">WORKDIR</span> /app
+<span class="k">COPY</span> pyproject.toml uv.lock ./
+<span class="k">RUN</span> uv sync --frozen --no-dev --no-install-project
+<span class="k">COPY</span> api/ ./api/
+<span class="k">RUN</span> uv sync --frozen --no-dev
+
+<span class="k">FROM</span> python:3.12-slim
+<span class="k">RUN</span> useradd --create-home app
+<span class="k">WORKDIR</span> /app
+<span class="k">COPY</span> --from=build /app /app
+<span class="k">ENV</span> PATH=<span class="s">"/app/.venv/bin:$PATH"</span> PYTHONUNBUFFERED=1
+<span class="k">USER</span> app
+<span class="k">CMD</span> uvicorn api.main:app --host 0.0.0.0 --port ${PORT:-8080}</pre>
+          <pre class="code" aria-label="Docker Compose file"><span class="c"># compose.yaml: local development</span>
+<span class="k">services:</span>
+  <span class="k">db:</span>
+    <span class="k">image:</span> postgres:16
+    <span class="k">environment:</span> { POSTGRES_USER: pitchlens, POSTGRES_PASSWORD: pitchlens, POSTGRES_DB: pitchlens }
+    <span class="k">ports:</span> [<span class="s">"5432:5432"</span>]
+    <span class="k">volumes:</span> [<span class="s">"pgdata:/var/lib/postgresql/data"</span>]
+  <span class="k">api:</span>
+    <span class="k">build:</span> { context: ., dockerfile: api/Dockerfile }
+    <span class="k">environment:</span> { DATABASE_URL: <span class="s">postgresql+psycopg://pitchlens:pitchlens@db:5432/pitchlens</span> }
+    <span class="k">ports:</span> [<span class="s">"8080:8080"</span>]
+    <span class="k">depends_on:</span> [db]
+<span class="k">volumes:</span>
+  <span class="k">pgdata:</span>
+<span class="c"># frontend: pnpm dev in web/, with Vite proxying /api to localhost:8080</span></pre>
+
+          <h3>Hosting, costs and the catches</h3>
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 17%">Service</th>
+                  <th style="width: 22%">Runs</th>
+                  <th style="width: 16%">Cost</th>
+                  <th>Watch out for</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>Vercel Hobby</b></td>
+                  <td>The React build, plus a preview URL per pull request</td>
+                  <td>€0</td>
+                  <td>
+                    Personal, non-commercial use only: no ads, sponsorships or donation buttons. One seat, so one of you
+                    owns the project; keep the repo public (or deploy through Actions with the Vercel CLI) so the
+                    other's commits deploy too. Hitting a usage cap pauses the site rather than billing you.
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>Google Cloud Run</b></td>
+                  <td>The API container, scaling to zero when idle</td>
+                  <td>€0 at portfolio traffic</td>
+                  <td>
+                    Needs a billing account: set a budget alert and cap max instances at 2. Expect a short cold start on
+                    the first request after idle; keep the image small and avoid heavy imports at startup.
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>Artifact Registry</b></td>
+                  <td>Your API images</td>
+                  <td>Cents, if anything</td>
+                  <td>Add a cleanup policy that keeps the last few images.</td>
+                </tr>
+                <tr>
+                  <td><b>Supabase Free</b></td>
+                  <td>Postgres serving tables</td>
+                  <td>€0</td>
+                  <td>
+                    500 MB per project and two free projects (use them for dev and prod). Projects pause after 7 days
+                    without activity; the twice-weekly forecast job keeps prod awake. Keep event-level data in Parquet;
+                    only aggregates and shots go to Postgres.
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>GitHub Actions</b></td>
+                  <td>CI, deploys, scheduled jobs</td>
+                  <td>€0 for public repos</td>
+                  <td>
+                    Scheduled workflows in a repo with no activity for 60 days get disabled; a re-enable is one click.
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>Claude API</b></td>
+                  <td>Match notes, generated offline</td>
+                  <td>A few euros in total</td>
+                  <td>Set a monthly spend limit in the console. Key lives only in GitHub secrets.</td>
+                </tr>
+                <tr>
+                  <td><b>Domain</b> (optional)</td>
+                  <td>A memorable URL</td>
+                  <td>About €10–15 a year</td>
+                  <td>Point it at Vercel; the API can stay on its Cloud Run URL behind a rewrite.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="note">
+            Free tiers and terms change; these reflect published plans as of mid-2026. Recheck when you set up and
+            record the date in <code>docs/deploy.md</code>.
+          </p>
+
+          <h3>Environments and deploy flow</h3>
+          <div class="layers three">
+            <div>
+              <b>Local</b>
+              <p>
+                Postgres and API from Compose, pipeline with <code>uv run pitchlens ...</code>, frontend with
+                <code>pnpm dev</code>. Seeded from the committed fixture matches.
+              </p>
+            </div>
+            <div>
+              <b>Preview</b>
+              <p>
+                Vercel builds every pull request. Previews call the production API, which is safe because it's
+                read-only.
+              </p>
+            </div>
+            <div>
+              <b>Production</b>
+              <p>
+                Merge to main: CI passes, the API image is built and deployed to Cloud Run, Vercel publishes the
+                frontend, Playwright smoke-tests the live site.
+              </p>
+            </div>
+          </div>
+          <div class="diagram">
+            <pre class="mermaid">
+flowchart LR
+  PR["Pull request"] --> CI["ci.yml&lt;br/&gt;lint, types, tests, image build"]
+  CI --> PV["Vercel preview URL"]
+  CI --> MG["Merge to main"]
+  MG --> IMG["Build API image"] --> AR[("Artifact Registry")] --> CR["Cloud Run&lt;br/&gt;new revision"]
+  MG --> VP["Vercel production build"]
+  CR --> SM["Playwright smoke test&lt;br/&gt;against live site"]
+  VP --> SM
+</pre
+            >
+          </div>
+          <div class="prose">
+            <p>
+              <strong>Connecting frontend and API.</strong> Add a rewrite in <code>vercel.json</code> that sends
+              <code>/api/*</code> to the Cloud Run URL. The browser only ever talks to one origin, so there's no CORS
+              setup, and you can move the API later without touching frontend code. Because data changes at most twice a
+              week, send <code>Cache-Control</code> headers from the API generously.
+            </p>
+            <p>
+              <strong>Secrets, and where each one lives.</strong> <code>FOOTBALL_DATA_TOKEN</code>,
+              <code>ANTHROPIC_API_KEY</code> and the writer <code>DATABASE_URL</code> exist only as GitHub Actions
+              secrets, because only the pipeline needs them. Cloud Run gets a separate, read-only database role. GitHub
+              authenticates to Google Cloud with Workload Identity Federation, so there's no long-lived JSON key to
+              leak. Nothing secret ever reaches the frontend, and the browser never talks to Supabase directly.
+            </p>
+          </div>
+
+          <pre
+            class="code"
+            aria-label="Repository layout"
+          ><span class="c"># one repository, three apps that share a contract</span>
+pitchlens/
+  pipeline/          <span class="c"># Python package: ingest, transform, models, publish, CLI</span>
+  api/               <span class="c"># FastAPI app + Dockerfile</span>
+  web/               <span class="c"># React + Vite app, vercel.json</span>
+  notebooks/         <span class="c"># exploration, numbered by date</span>
+  docs/              <span class="c"># ADRs, model cards, deploy.md, DATA_SOURCES.md, diagrams</span>
+  tests/fixtures/    <span class="c"># two real matches of StatsBomb JSON, committed</span>
+  .github/workflows/ <span class="c"># ci.yml, deploy.yml, forecast.yml</span>
+  pyproject.toml  uv.lock  compose.yaml  CLAUDE.md</pre>
+        </section>
+
+        <!-- TESTS -->
+        <section id="tests">
+          <div class="prose">
+            <h2>Meaningful tests and GitHub Actions</h2>
+            <p>
+              The tests that matter in sports analytics are the ones that catch silently wrong numbers. A broken page is
+              obvious; a flipped coordinate axis that puts every shot on the wrong wing can survive for months.
+            </p>
+          </div>
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 18%">Layer</th>
+                  <th>What to test</th>
+                  <th style="width: 26%">Tools</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>Transforms</b></td>
+                  <td>
+                    Coordinate conversion (StatsBomb pitches are 120 × 80 with the origin top-left), shot angle and
+                    distance against hand-calculated cases, own goals and penalties handled correctly, extra time not
+                    double-counted.
+                  </td>
+                  <td>pytest with small, named example cases</td>
+                </tr>
+                <tr>
+                  <td><b>Invariants</b></td>
+                  <td>
+                    xG always between 0 and 1; forecast probabilities for home, draw and away sum to 1; team totals
+                    equal the sum of player totals.
+                  </td>
+                  <td>Hypothesis (property-based tests)</td>
+                </tr>
+                <tr>
+                  <td><b>Data contracts</b></td>
+                  <td>
+                    Every staged table has the expected columns, types, ranges and no duplicate event IDs. Fails loudly
+                    when a source changes format.
+                  </td>
+                  <td>pandera schemas</td>
+                </tr>
+                <tr>
+                  <td><b>Pipeline end to end</b></td>
+                  <td>
+                    Run ingest-to-publish on the two committed fixture matches and compare outputs with a snapshot.
+                  </td>
+                  <td>pytest + snapshot files</td>
+                </tr>
+                <tr>
+                  <td><b>Model quality</b></td>
+                  <td>
+                    Train on a fixed sample with a fixed seed; fail if log loss gets worse than the recorded baseline by
+                    more than a small tolerance. Catches accidental feature leaks and regressions.
+                  </td>
+                  <td>pytest, metrics stored in repo</td>
+                </tr>
+                <tr>
+                  <td><b>API</b></td>
+                  <td>
+                    Status codes, response schemas, 404s for unknown matches, query performance on indexed columns.
+                  </td>
+                  <td>pytest + httpx TestClient, test Postgres in Docker</td>
+                </tr>
+                <tr>
+                  <td><b>Frontend</b></td>
+                  <td>
+                    Pitch scaling functions, chart components rendering given data, and one smoke test that loads a
+                    match page.
+                  </td>
+                  <td>Vitest, Testing Library, Playwright</td>
+                </tr>
+                <tr>
+                  <td><b>AI notes</b></td>
+                  <td>
+                    Faithfulness check on every generated note; prompt changes run against a small set of stored example
+                    matches.
+                  </td>
+                  <td>pytest with a mocked client in CI</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="prose">
+            <h3>Three workflows are enough</h3>
+            <p>
+              <strong>ci.yml</strong> runs on every pull request: lint and type-check both apps, run the Python and
+              frontend tests, build the Docker image, and fail if the generated TypeScript API types are out of date
+              with the backend. <strong>deploy.yml</strong> runs on merge to main: push the image, deploy the API, let
+              the static host build the frontend, then run the Playwright smoke test against production.
+              <strong>forecast.yml</strong> runs on a schedule after each round of matches. Add Dependabot for
+              dependency updates and require one review per pull request, which also forces the two of you to read each
+              other's code.
+            </p>
+          </div>
+          <pre
+            class="code"
+            aria-label="Example scheduled workflow"
+          ><span class="c"># .github/workflows/forecast.yml</span>
+<span class="k">name:</span> weekly-forecast
+<span class="k">on:</span>
+  <span class="k">schedule:</span>
+    - <span class="k">cron:</span> <span class="s">"0 6 * * 2,5"</span>   <span class="c"># Tue and Fri 06:00 UTC, after weekend and midweek rounds</span>
+  <span class="k">workflow_dispatch:</span>            <span class="c"># manual re-run button</span>
+<span class="k">jobs:</span>
+  <span class="k">forecast:</span>
+    <span class="k">runs-on:</span> ubuntu-latest
+    <span class="k">steps:</span>
+      - <span class="k">uses:</span> actions/checkout@v4
+      - <span class="k">uses:</span> astral-sh/setup-uv@v6
+      - <span class="k">run:</span> uv sync --frozen
+      - <span class="k">run:</span> uv run pitchlens ingest results --source football-data-org
+        <span class="k">env:</span> { FOOTBALL_DATA_TOKEN: <span class="s">${{ secrets.FOOTBALL_DATA_TOKEN }}</span> }
+      - <span class="k">run:</span> uv run pitchlens validate
+      - <span class="k">run:</span> uv run pitchlens forecast update --score-last-round
+      - <span class="k">run:</span> uv run pitchlens publish forecasts
+        <span class="k">env:</span> { DATABASE_URL: <span class="s">${{ secrets.DATABASE_URL }}</span> }</pre>
+        </section>
+
+        <!-- ROADMAP -->
+        <section id="roadmap">
+          <div class="prose">
+            <h2>A 16-week roadmap</h2>
+            <p>
+              Each phase ends with something you can show. Each lane has a lead, and the other person pairs on the work
+              and reviews it before the phase is accepted. If life gets in the way, stop after phase 3 and you still
+              have a complete, deployed portfolio project.
+            </p>
+          </div>
+          <ol class="road">
+            <li>
+              <span class="num">0</span>
+              <h3>Foundations</h3>
+              <p class="wk">Week 1</p>
+              <div class="lanes">
+                <div class="lane a">
+                  <b>João Meira</b>Register for StatsBomb open data, read the event specification, load one match in a
+                  notebook and draw a shot map with mplsoccer.
+                </div>
+                <div class="lane b">
+                  <b>Guilherme Azeredo</b>Monorepo, uv, pre-commit, CI skeleton, Docker Compose, a first mockup of the
+                  match page.
+                </div>
+              </div>
+              <p class="done"><b>Done when</b> both can run the repo locally and CI is green on an empty test suite.</p>
+            </li>
+            <li>
+              <span class="num">1</span>
+              <h3>Data foundations</h3>
+              <p class="wk">Weeks 2–3</p>
+              <div class="lanes">
+                <div class="lane a">
+                  <b>João Meira</b>Ingest 2–3 competitions to Parquet, pandera contracts, fixture matches, notebook
+                  exploring shots.
+                </div>
+                <div class="lane b">
+                  <b>Guilherme Azeredo</b>Pipeline CLI, raw-file caching, DuckDB views, end-to-end fixture test in CI.
+                </div>
+              </div>
+              <p class="done"><b>Done when</b> one command rebuilds the whole dataset and CI validates it.</p>
+            </li>
+            <li>
+              <span class="num">2</span>
+              <h3>Your first xG model</h3>
+              <p class="wk">Weeks 4–6</p>
+              <div class="lanes">
+                <div class="lane a">
+                  <b>João Meira</b>Feature engineering, logistic regression, evaluation against StatsBomb xG,
+                  calibration plot, model card.
+                </div>
+                <div class="lane b">
+                  <b>Guilherme Azeredo</b>Model training as a pipeline step, metrics regression test, Postgres schema
+                  and migrations for serving tables.
+                </div>
+              </div>
+              <p class="done"><b>Done when</b> write-up #1 is drafted: "Our xG model vs a professional one".</p>
+            </li>
+            <li>
+              <span class="num">3</span>
+              <h3>App MVP, deployed</h3>
+              <p class="wk">Weeks 7–9</p>
+              <div class="lanes">
+                <div class="lane a">
+                  <b>João Meira</b>Pass networks and per-90 team tables in the pipeline; builds the competition page
+                  frontend.
+                </div>
+                <div class="lane b">
+                  <b>Guilherme Azeredo</b>FastAPI endpoints, generated TS types, match page with SVG shot map and xG
+                  timeline, deploy workflow.
+                </div>
+              </div>
+              <p class="done"><b>Done when</b> there's a public URL. This is your safe stopping point.</p>
+            </li>
+            <li>
+              <span class="num">4</span>
+              <h3>Live forecasts</h3>
+              <p class="wk">Weeks 10–11</p>
+              <div class="lanes">
+                <div class="lane a">
+                  <b>João Meira</b>Elo baseline, then Dixon-Coles; backtest on historical seasons; compare with
+                  bookmaker odds.
+                </div>
+                <div class="lane b">
+                  <b>Guilherme Azeredo</b>football-data.org client with rate limiting, scheduled workflow, forecast and
+                  track-record pages.
+                </div>
+              </div>
+              <p class="done"><b>Done when</b> the cron has run twice unattended and write-up #2 is started.</p>
+            </li>
+            <li>
+              <span class="num">5</span>
+              <h3>AI match notes</h3>
+              <p class="wk">Weeks 12–13</p>
+              <div class="lanes">
+                <div class="lane a">
+                  <b>João Meira</b>Defines which stats feed the prompt, reviews notes for analytical accuracy, writes
+                  the "how to read this" texts.
+                </div>
+                <div class="lane b">
+                  <b>Guilherme Azeredo</b>Generation step, structured output, faithfulness test, labelling in the UI.
+                </div>
+              </div>
+              <p class="done"><b>Done when</b> every published note passes the number check.</p>
+            </li>
+            <li>
+              <span class="num">6</span>
+              <h3>Polish and launch</h3>
+              <p class="wk">Weeks 14–16</p>
+              <div class="lanes">
+                <div class="lane a">
+                  <b>João Meira</b>xG v2 with 360 features or player percentile pages; final write-ups.
+                </div>
+                <div class="lane b">
+                  <b>Guilherme Azeredo</b>Accessibility, performance, mobile, share images, README, demo video,
+                  archive-mode export.
+                </div>
+              </div>
+              <p class="done"><b>Done when</b> you'd happily send the link to a hiring manager at a club.</p>
+            </li>
+            <li>
+              <span class="num" style="background: var(--sun)">7</span>
+              <h3>Video lab (optional)</h3>
+              <p class="wk">Weeks 17–22, after launch</p>
+              <div class="lanes">
+                <div class="lane a">
+                  <b>João Meira</b>Labels frames, evaluates position error in metres, builds heatmaps and physical
+                  metrics from tracks.
+                </div>
+                <div class="lane b">
+                  <b>Guilherme Azeredo</b>Detection, tracking and homography as an offline GPU batch job; clip upload
+                  and track-naming screen.
+                </div>
+              </div>
+              <p class="done">
+                <b>Done when</b> a 5-minute clip of your own game produces per-player heatmaps and distances with a
+                published accuracy figure.
+              </p>
+            </li>
+          </ol>
+          <div class="callout">
+            <b>Ongoing maintenance, honestly:</b> about an hour a week while the forecast runs (check the job, merge
+            Dependabot updates), plus a few hours each August when seasons roll over. Decide up front how long you'll
+            keep the live layer running, then switch to archive mode deliberately rather than letting it rot.
+          </div>
+        </section>
+
+        <!-- TECH ROADMAP -->
+        <section id="techroad">
+          <div class="prose">
+            <h2>Technology roadmap</h2>
+            <p>
+              When each technology enters the project, who leads it, and how long it stays in use. Introduce one or two
+              new tools per phase, never five: each tool should arrive the moment a real task needs it.
+            </p>
+            <p>
+              <a href="https://claude.ai/artifact/BWMciBjn9fVaKR66Rgsrs7" target="_blank" rel="noopener"
+                ><strong>Open the interactive learning roadmap</strong></a
+              >: click any topic or track for what to learn, pitfalls, a finish line and resources, and tick topics off
+              as you go.
+            </p>
+          </div>
+          <div class="tfilter" role="group" aria-label="Highlight by owner">
+            <span>Highlight</span><button type="button" data-f="all" aria-pressed="true">Everyone</button
+            ><button type="button" data-f="A" aria-pressed="false">João Meira</button
+            ><button type="button" data-f="B" aria-pressed="false">Guilherme Azeredo</button>
+          </div>
+          <div class="scroll tscroll">
+            <div class="tgrid" id="tgrid">
+              <div class="th tlabel">Technology</div>
+              <div class="th"><b>0</b> Setup<small>Wk 1</small></div>
+              <div class="th"><b>1</b> Data<small>Wk 2–3</small></div>
+              <div class="th"><b>2</b> xG model<small>Wk 4–6</small></div>
+              <div class="th"><b>3</b> App MVP<small>Wk 7–9</small></div>
+              <div class="th"><b>4</b> Forecasts<small>Wk 10–11</small></div>
+              <div class="th"><b>5</b> AI notes<small>Wk 12–13</small></div>
+              <div class="th"><b>6</b> Launch<small>Wk 14–16</small></div>
+              <div class="th"><b>7</b> Video lab<small>Wk 17–22</small></div>
+              <div class="tgroup">Foundations and collaboration</div>
+              <div class="trow" data-owner="AB">
+                <div class="tlabel">
+                  <b>Python, uv, ruff, mypy</b><span>Monorepo tooling both of you use daily</span>
+                </div>
+                <div class="tbar ops" style="grid-column: 2 / 10"><i></i><em>A + B</em></div>
+              </div>
+              <div class="trow" data-owner="AB">
+                <div class="tlabel">
+                  <b>GitHub Projects, Claude Project, Claude Code</b><span>Board, shared context, coding agent</span>
+                </div>
+                <div class="tbar team" style="grid-column: 2 / 10"><i></i><em>A + B</em></div>
+              </div>
+              <div class="trow" data-owner="B">
+                <div class="tlabel">
+                  <b>GitHub Actions CI + Dependabot</b><span>Lint, types and tests on every pull request</span>
+                </div>
+                <div class="tbar ops" style="grid-column: 2 / 10"><i></i><em>B</em></div>
+              </div>
+              <div class="trow" data-owner="B">
+                <div class="tlabel">
+                  <b>Docker Compose (local Postgres)</b><span>Identical database on both laptops</span>
+                </div>
+                <div class="tbar back" style="grid-column: 2 / 10"><i></i><em>B</em></div>
+              </div>
+              <div class="tgroup">Data and models</div>
+              <div class="trow" data-owner="A">
+                <div class="tlabel">
+                  <b>statsbombpy, mplsoccer, Jupyter</b><span>First shot map, then ongoing exploration</span>
+                </div>
+                <div class="tbar data" style="grid-column: 2 / 10"><i></i><em>A</em></div>
+              </div>
+              <div class="trow" data-owner="A">
+                <div class="tlabel"><b>pandas, Parquet, DuckDB</b><span>Staged dataset and analysis SQL</span></div>
+                <div class="tbar data" style="grid-column: 3 / 10"><i></i><em>A</em></div>
+              </div>
+              <div class="trow" data-owner="A">
+                <div class="tlabel"><b>pandera contracts</b><span>Schemas that fail loudly on bad data</span></div>
+                <div class="tbar data" style="grid-column: 3 / 10"><i></i><em>A</em></div>
+              </div>
+              <div class="trow" data-owner="B">
+                <div class="tlabel"><b>Typer CLI</b><span>ingest, validate, train, publish</span></div>
+                <div class="tbar data" style="grid-column: 3 / 10"><i></i><em>B</em></div>
+              </div>
+              <div class="trow" data-owner="AB">
+                <div class="tlabel"><b>pytest + Hypothesis</b><span>Transform tests and invariants</span></div>
+                <div class="tbar ops" style="grid-column: 3 / 10"><i></i><em>A + B</em></div>
+              </div>
+              <div class="trow" data-owner="A">
+                <div class="tlabel">
+                  <b>scikit-learn, statsmodels</b><span>xG model v1, calibration, evaluation</span>
+                </div>
+                <div class="tbar data" style="grid-column: 4 / 10"><i></i><em>A</em></div>
+              </div>
+              <div class="trow" data-owner="AB">
+                <div class="tlabel">
+                  <b>Elo, Dixon-Coles (penaltyblog)</b><span>Team ratings and season simulation</span>
+                </div>
+                <div class="tbar data" style="grid-column: 6 / 10"><i></i><em>A + B</em></div>
+              </div>
+              <div class="trow" data-owner="B">
+                <div class="tlabel"><b>httpx + tenacity</b><span>Rate-limited football-data.org client</span></div>
+                <div class="tbar data" style="grid-column: 6 / 10"><i></i><em>B</em></div>
+              </div>
+              <div class="trow" data-owner="A">
+                <div class="tlabel"><b>LightGBM + 360 features</b><span>xG model v2</span></div>
+                <div class="tbar data opt" style="grid-column: 8 / 10"><i></i><em>A</em></div>
+              </div>
+              <div class="trow" data-owner="A">
+                <div class="tlabel"><b>socceraction (xT, VAEP)</b><span>Possession-value experiments</span></div>
+                <div class="tbar data opt" style="grid-column: 8 / 10"><i></i><em>A</em></div>
+              </div>
+              <div class="tgroup">Backend and data serving</div>
+              <div class="trow" data-owner="B">
+                <div class="tlabel"><b>Supabase Postgres</b><span>Dev project in phase 2, prod from phase 3</span></div>
+                <div class="tbar back" style="grid-column: 4 / 10"><i></i><em>B</em></div>
+              </div>
+              <div class="trow" data-owner="B">
+                <div class="tlabel"><b>SQLAlchemy 2 + Alembic</b><span>Serving schema and migrations</span></div>
+                <div class="tbar back" style="grid-column: 4 / 10"><i></i><em>B</em></div>
+              </div>
+              <div class="trow" data-owner="B">
+                <div class="tlabel"><b>FastAPI + Pydantic v2</b><span>Read-only endpoints, OpenAPI spec</span></div>
+                <div class="tbar back" style="grid-column: 5 / 10"><i></i><em>B</em></div>
+              </div>
+              <div class="tgroup">Frontend</div>
+              <div class="trow" data-owner="AB">
+                <div class="tlabel"><b>React, TypeScript, Vite, pnpm, Biome</b><span>App shell and pages</span></div>
+                <div class="tbar front" style="grid-column: 5 / 10"><i></i><em>A + B</em></div>
+              </div>
+              <div class="trow" data-owner="B">
+                <div class="tlabel"><b>TanStack Query + openapi-typescript</b><span>Typed data fetching</span></div>
+                <div class="tbar front" style="grid-column: 5 / 10"><i></i><em>B</em></div>
+              </div>
+              <div class="trow" data-owner="AB">
+                <div class="tlabel"><b>D3 + Observable Plot</b><span>Pitch graphics and standard charts</span></div>
+                <div class="tbar front" style="grid-column: 5 / 10"><i></i><em>A + B</em></div>
+              </div>
+              <div class="trow" data-owner="B">
+                <div class="tlabel"><b>Vitest + Playwright</b><span>Component tests and live smoke test</span></div>
+                <div class="tbar ops" style="grid-column: 5 / 10"><i></i><em>B</em></div>
+              </div>
+              <div class="tgroup">Delivery and hosting</div>
+              <div class="trow" data-owner="B">
+                <div class="tlabel"><b>Docker API image + Artifact Registry</b><span>The deploy unit</span></div>
+                <div class="tbar ops" style="grid-column: 5 / 10"><i></i><em>B</em></div>
+              </div>
+              <div class="trow" data-owner="B">
+                <div class="tlabel">
+                  <b>Google Cloud Run + Workload Identity</b><span>API hosting, keyless deploys</span>
+                </div>
+                <div class="tbar ops" style="grid-column: 5 / 10"><i></i><em>B</em></div>
+              </div>
+              <div class="trow" data-owner="B">
+                <div class="tlabel"><b>Vercel</b><span>Frontend hosting and PR previews</span></div>
+                <div class="tbar ops" style="grid-column: 5 / 10"><i></i><em>B</em></div>
+              </div>
+              <div class="trow" data-owner="B">
+                <div class="tlabel"><b>Scheduled workflows (cron)</b><span>Twice-weekly forecast job</span></div>
+                <div class="tbar ops" style="grid-column: 6 / 10"><i></i><em>B</em></div>
+              </div>
+              <div class="trow" data-owner="B">
+                <div class="tlabel">
+                  <b>Sentry, archive-mode export</b><span>Monitoring and a static fallback</span>
+                </div>
+                <div class="tbar ops opt" style="grid-column: 8 / 10"><i></i><em>B</em></div>
+              </div>
+              <div class="tgroup">AI</div>
+              <div class="trow" data-owner="B">
+                <div class="tlabel">
+                  <b>Claude API + structured outputs</b><span>Offline match-note generation</span>
+                </div>
+                <div class="tbar ai" style="grid-column: 7 / 10"><i></i><em>B</em></div>
+              </div>
+              <div class="trow" data-owner="AB">
+                <div class="tlabel"><b>Faithfulness tests</b><span>Every number checked against input</span></div>
+                <div class="tbar ai" style="grid-column: 7 / 10"><i></i><em>A + B</em></div>
+              </div>
+              <div class="trow" data-owner="AB">
+                <div class="tlabel">
+                  <b>YOLO, ByteTrack, OpenCV, GPU job</b><span>Video lab tracking pipeline</span>
+                </div>
+                <div class="tbar ai opt" style="grid-column: 9 / 10"><i></i><em>A + B</em></div>
+              </div>
+            </div>
+          </div>
+          <div class="mkey">
+            <span
+              ><i class="sw" style="background: var(--ink); border-radius: 50%"></i>Phase where you set it up and learn
+              it</span
+            ><span
+              ><i class="sw" style="background: var(--cobalt-soft); border: 1px solid var(--cobalt)"></i>In use</span
+            ><span><i class="sw" style="border: 1.5px dashed var(--muted)"></i>Optional</span
+            ><span
+              >Lead labels: A = João Meira; B = Guilherme Azeredo. The other person pairs and reviews; A + B means
+              shared lead.</span
+            >
+          </div>
+          <h3>Phase by phase: what's new, and what it leaves behind</h3>
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 13%">Phase</th>
+                  <th style="width: 29%">New technology</th>
+                  <th style="width: 29%">Football analytics skill</th>
+                  <th>Leaves behind</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>0 Setup</b><br /><small>Week 1</small></td>
+                  <td>uv, ruff, mypy, pre-commit, GitHub Actions, Docker Compose, statsbombpy, mplsoccer</td>
+                  <td>Reading the StatsBomb event spec; what an event, a possession and a freeze frame are</td>
+                  <td>Green CI, a shot map notebook, a match-page mockup, ADR 0001</td>
+                </tr>
+                <tr>
+                  <td><b>1 Data</b><br /><small>Weeks 2–3</small></td>
+                  <td>pandas, Parquet, DuckDB, pandera, Typer, Hypothesis</td>
+                  <td>Pitch coordinates, possession chains, why open data is a biased sample</td>
+                  <td>
+                    <code>pitchlens ingest</code> rebuilds everything; data contracts in CI;
+                    <code>DATA_SOURCES.md</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>2 xG model</b><br /><small>Weeks 4–6</small></td>
+                  <td>scikit-learn, statsmodels, SQLAlchemy, Alembic, Supabase (dev)</td>
+                  <td>xG, log loss, Brier score, calibration, leakage, benchmarking against StatsBomb xG</td>
+                  <td>Model card, metrics regression test, write-up #1 draft</td>
+                </tr>
+                <tr>
+                  <td><b>3 App MVP</b><br /><small>Weeks 7–9</small></td>
+                  <td>
+                    FastAPI, React, Vite, TanStack Query, openapi-typescript, D3, Observable Plot, Docker image, Cloud
+                    Run, Vercel, Playwright
+                  </td>
+                  <td>Pass networks, per-90 tables, minimum-minutes thresholds, explaining charts to non-experts</td>
+                  <td>A public URL; this is the safe stopping point</td>
+                </tr>
+                <tr>
+                  <td><b>4 Forecasts</b><br /><small>Weeks 10–11</small></td>
+                  <td>httpx + tenacity, scheduled workflows, penaltyblog</td>
+                  <td>Elo, Poisson and Dixon-Coles models, ranked probability score, beating bookmaker odds</td>
+                  <td>Forecast and track-record pages; the cron has run twice unattended</td>
+                </tr>
+                <tr>
+                  <td><b>5 AI notes</b><br /><small>Weeks 12–13</small></td>
+                  <td>Claude API, structured outputs, faithfulness tests</td>
+                  <td>Which numbers actually tell a match's story</td>
+                  <td>Every published note passes the number check</td>
+                </tr>
+                <tr>
+                  <td><b>6 Launch</b><br /><small>Weeks 14–16</small></td>
+                  <td>LightGBM, 360 features or percentile pages, Sentry, archive-mode export</td>
+                  <td>Chance quality with defender positions, or player profiling done honestly</td>
+                  <td>Write-ups, demo video, README, case studies</td>
+                </tr>
+                <tr>
+                  <td><b>7 Video lab</b><br /><small>Weeks 17–22</small></td>
+                  <td>YOLO, ByteTrack, OpenCV, homography, a CUDA Docker image on a rented GPU</td>
+                  <td>Tracking data, physical metrics, measuring position error in metres</td>
+                  <td>Heatmaps and distances from your own clip, with a published accuracy figure</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout">
+            <b>Rule of thumb:</b> if a phase asks you to learn more than two unfamiliar tools at once (phase 3 is the
+            danger zone), split it: get the API and a bare page deployed first, then add charts. Shipping something ugly
+            to a real URL early beats a beautiful page on localhost.
+          </div>
+        </section>
+
+        <!-- SPLIT -->
+        <section id="split">
+          <div class="prose">
+            <h2>Dividing the work between two people</h2>
+            <p>
+              Divide work by task lead, not by silo. Every issue has one lead and one pairing/review partner; switch
+              leads on crossovers so both of you build and review data, models, API, frontend, tests, and delivery. Both
+              of you approve phase exits and anything published.
+            </p>
+          </div>
+          <div class="people">
+            <div class="person">
+              <h3>João Meira: data and analysis lead</h3>
+              <ul>
+                <li>
+                  Leads ingestion, data contracts, xG and football analysis, model evaluation, and analytical write-ups.
+                </li>
+                <li>Also leads the competition page and pairs with Guilherme on the API and release workflow.</li>
+                <li>Pairs on and reviews Guilherme's platform work; both approve the methods and published results.</li>
+              </ul>
+            </div>
+            <div class="person b">
+              <h3>Guilherme Azeredo: platform and product lead</h3>
+              <ul>
+                <li>Leads the pipeline CLI, API, match experience, CI/CD, deployment, and AI integration.</li>
+                <li>Also leads the Elo baseline and co-writes an analysis with João.</li>
+                <li>Pairs on and reviews João's data and model work; both approve phase exits and releases.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="prose">
+            <h3>Working rhythm</h3>
+            <p>
+              Agree the API contract first (OpenAPI spec plus example JSON), so the frontend can be built against mock
+              data while the pipeline catches up. Keep a GitHub Projects board with small issues. Hold one 30-minute
+              call a week to demo what changed and pick next week's issues; do everything else asynchronously in pull
+              requests. Give every issue one lead and one reviewer, and alternate who leads cross-discipline tasks. Pair
+              on coordinate systems, model evaluation, API contracts, and the AI faithfulness test. Record decisions as
+              short ADRs in <code>docs/</code>, which doubles as evidence of engineering judgement.
+            </p>
+          </div>
+        </section>
+
+        <!-- PORTFOLIO -->
+        <section id="portfolio">
+          <div class="prose">
+            <h2>Presenting it in your portfolios</h2>
+            <p>
+              Analytics hiring managers read your thinking more than your code. Give them both, and make your
+              limitations visible: admitting what your model misses reads as competence.
+            </p>
+            <h3>The shared project</h3>
+            <p>
+              A README that opens with a 20-second GIF, the live link and a one-paragraph pitch, followed by the
+              architecture diagram, how to run it, data attribution and a "what we learned" section. A methods page and
+              model cards on the site itself. A 90-second demo video walking through one match.
+            </p>
+            <h3>Two or three written analyses</h3>
+            <p>
+              These carry more weight than the app. Good candidates: "We built an xG model and compared it with a
+              professional one: here's where we disagree and why"; "Scoring our league forecasts after ten rounds";
+              "What 360 data changes about chance quality". Publish on a blog or the site's own notes section, share
+              charts with StatsBomb attribution, and post in the football analytics community, where open work gets
+              noticed.
+            </p>
+            <h3>Your individual case studies</h3>
+            <p>
+              Each of you writes a short "my role" page: the problem you owned, two or three decisions with trade-offs,
+              links to your key pull requests, and one thing you'd do differently. On a CV, be specific: "Built and
+              benchmarked an expected-goals model (logistic regression, 360 features) on 3,000+ shots; published
+              methodology and calibration analysis" beats "Worked on a football analytics app". Later, research
+              competitions such as Hudl's annual Performance Insights call are a natural next step for the strongest
+              analysis.
+            </p>
+          </div>
+        </section>
+
+        <!-- TOOLS -->
+        <section id="tools">
+          <h2>AI tools, plugins and connectors</h2>
+          <p class="sub">
+            A short list that maps onto the workflow above. Where two tools do the same job, pick one. Several of these
+            connectors are already linked to your Claude account.
+          </p>
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 22%">Tool</th>
+                  <th>What you'd use it for</th>
+                  <th style="width: 13%">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>Claude Code</b></td>
+                  <td>
+                    Your main coding agent in the repo: scaffolding the monorepo, writing tests and fixtures, CI
+                    workflows, refactors, reviewing diffs. Keep a <code>CLAUDE.md</code> with your conventions, such as
+                    the coordinate system and "never generate numbers in prompts".
+                  </td>
+                  <td><span class="pill ess">Essential</span></td>
+                </tr>
+                <tr>
+                  <td><b>Claude chat, with a shared Project</b></td>
+                  <td>
+                    Learning analytics concepts, sanity-checking evaluation choices, drafting write-ups and the methods
+                    page. Put the StatsBomb spec, your ADRs and model cards in the project knowledge.
+                  </td>
+                  <td><span class="pill ess">Essential</span></td>
+                </tr>
+                <tr>
+                  <td><b>GitHub</b> (Issues, Projects, pull requests, Actions)</td>
+                  <td>
+                    All coordination, reviews, CI/CD and scheduling. You don't need Jira, Linear, Notion or Slack on
+                    top.
+                  </td>
+                  <td><span class="pill ess">Essential</span></td>
+                </tr>
+                <tr>
+                  <td><b>Mermaid diagrams in the repo</b></td>
+                  <td>
+                    Architecture and pipeline diagrams as code, rendered by GitHub and easy for Claude to draft and
+                    update. Stays in sync with the code because it lives next to it.
+                  </td>
+                  <td><span class="pill ess">Essential</span></td>
+                </tr>
+                <tr>
+                  <td><b>Context7 connector</b></td>
+                  <td>
+                    Pulls current documentation for FastAPI, TanStack, mplsoccer and friends into Claude, so generated
+                    code doesn't use outdated APIs.
+                  </td>
+                  <td><span class="pill opt">Recommended</span></td>
+                </tr>
+                <tr>
+                  <td><b>Claude Design or Figma</b> (with the Figma connector)</td>
+                  <td>
+                    Mockups of the match page, colour and type decisions, share-image templates. Claude Design is
+                    quickest for exploring; Figma suits you if one of you wants to build a proper design system and use
+                    design-to-code. Choose one.
+                  </td>
+                  <td><span class="pill opt">Optional</span></td>
+                </tr>
+                <tr>
+                  <td><b>Supabase connector</b></td>
+                  <td>
+                    Inspecting schemas, checking query plans and reviewing migrations with Claude. Connect it to a
+                    development project, not production.
+                  </td>
+                  <td><span class="pill opt">Optional</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <b>Claude skills and plugins</b> (system design, testing strategy, data visualisation, spec writing)
+                  </td>
+                  <td>
+                    Structured help at specific moments: writing the MVP spec, planning the test strategy in phase 0,
+                    reviewing chart choices before launch.
+                  </td>
+                  <td><span class="pill opt">Optional</span></td>
+                </tr>
+                <tr>
+                  <td><b>Google Drive and Calendar connectors</b></td>
+                  <td>Co-editing write-up drafts and scheduling the weekly call, if that's where you already work.</td>
+                  <td><span class="pill opt">Optional</span></td>
+                </tr>
+                <tr>
+                  <td><b>Claude API</b></td>
+                  <td>Generating match notes inside the pipeline (phase 5). Budget a few euros in total.</td>
+                  <td><span class="pill ess">Phase 5</span></td>
+                </tr>
+                <tr>
+                  <td><b>A second coding assistant</b> (Copilot, Cursor)</td>
+                  <td>Overlaps with Claude Code and splits your conventions across two tools.</td>
+                  <td><span class="pill skip">Skip</span></td>
+                </tr>
+                <tr>
+                  <td><b>AI image generators</b></td>
+                  <td>
+                    Not needed: your strongest visuals are your own charts. A simple wordmark in the display typeface
+                    does the job.
+                  </td>
+                  <td><span class="pill skip">Skip</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- GLOSSARY -->
+        <section id="glossary">
+          <div class="prose">
+            <h2>Analytics glossary for the first month</h2>
+            <p>The handful of terms you'll meet on day one, in plain words.</p>
+          </div>
+          <dl class="gloss">
+            <dt>Event data</dt>
+            <dd>
+              A log of on-ball actions (pass, shot, tackle) with time, location and players. What StatsBomb open data
+              contains.
+            </dd>
+            <dt>Tracking data</dt>
+            <dd>
+              Positions of all 22 players and the ball many times per second. Rare and expensive; a few public samples
+              exist.
+            </dd>
+            <dt>xG (expected goals)</dt>
+            <dd>
+              The probability a shot becomes a goal, estimated from similar past shots. A penalty is about 0.76–0.79; a
+              shot from 30 metres is about 0.02–0.04.
+            </dd>
+            <dt>Per 90</dt>
+            <dd>
+              A stat scaled to a full match, so players with different minutes compare fairly. Unreliable below roughly
+              900 minutes.
+            </dd>
+            <dt>Pass network</dt>
+            <dd>Players drawn at their average position, linked by how often they passed to each other.</dd>
+            <dt>PPDA</dt>
+            <dd>
+              Passes allowed per defensive action: a common pressing measure. Lower means more aggressive pressing.
+            </dd>
+            <dt>Calibration</dt>
+            <dd>Whether predicted probabilities match reality: of shots rated 0.2, about 20% should go in.</dd>
+            <dt>Brier score and log loss</dt>
+            <dd>
+              Ways of scoring probability predictions. Lower is better for both; log loss punishes confident mistakes
+              harder.
+            </dd>
+            <dt>Ranked probability score</dt>
+            <dd>The standard way to score home, draw and away forecasts, rewarding being close even when wrong.</dd>
+            <dt>Elo and Dixon-Coles</dt>
+            <dd>
+              Two classic ways of rating teams from results. Elo updates after each match; Dixon-Coles models goals
+              scored as Poisson with a tweak for low scores.
+            </dd>
+          </dl>
+        </section>
+
+        <footer>
+          Plan written in October 2026. Data-source terms, free tiers and pricing change, so recheck each source before
+          you launch. Remember StatsBomb attribution on anything you publish with their data.
+        </footer>
+      </main>
+    </div>
+    <script>
+      (function () {
+        var g = document.getElementById('tgrid');
+        var btns = document.querySelectorAll('.tfilter button');
+        btns.forEach(function (b) {
+          b.addEventListener('click', function () {
+            btns.forEach(function (x) {
+              x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
+            });
+            g.classList.remove('f-A', 'f-B');
+            if (b.dataset.f !== 'all') {
+              g.classList.add('f-' + b.dataset.f);
+            }
+          });
+        });
+      })();
+    </script>
+
+    <!--claude-mermaid-runtime-begin:3477-->
+    <style>
+      .mermaid-diagram {
+        margin-block: 4px;
+      }
+      .mermaid-diagram svg {
+        display: block;
+        margin: 0 auto;
+        max-width: 100%;
+        height: auto;
+      }
+    </style>
+    <script src="/_runtime/mermaid-11.16.1.min.js"></script>
+    <script>
+      (function () {
+        var CFG = {
+          palettes: {
+            light: { surface: '#f4efe4', text: '#42392e', line: '#8a7f6d', border: '#7a6c52', bg: '#fffdf8' },
+            dark: { surface: '#262b34', text: '#f2f3f5', line: '#a8adb8', border: '#9aa4b8', bg: '#1f232b' },
+          },
+        };
+        if (typeof mermaid === 'undefined') return;
+        var pres = Array.prototype.slice.call(document.querySelectorAll('pre.mermaid')).filter(function (p) {
+          if (p.hasAttribute('data-claude-mermaid-claimed')) return false;
+          p.setAttribute('data-claude-mermaid-claimed', '1');
+          return true;
+        });
+        if (!pres.length) return;
+        var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+        var root = document.documentElement;
+        var items = pres.map(function (pre) {
+          var mount = document.createElement('div');
+          mount.className = 'mermaid-diagram';
+          return { pre: pre, mount: mount, src: pre.textContent || '' };
+        });
+        var seq = 0;
+        var renderGen = 0;
+        var lastKey = '';
+        function pageBg(fallback) {
+          var els = [document.body, document.documentElement];
+          for (var i = 0; i < els.length; i++) {
+            var c = els[i] && getComputedStyle(els[i]).backgroundColor;
+            if (c && c !== 'transparent' && c !== 'rgba(0, 0, 0, 0)') return c;
+          }
+          return fallback;
+        }
+        function render() {
+          var theme = root.getAttribute('data-theme');
+          var dark = theme === 'dark' || (!!(mq && mq.matches) && theme !== 'light');
+          var pal = dark ? CFG.palettes.dark : CFG.palettes.light;
+          var bg = pageBg(pal.bg);
+          var key = (dark ? 'd' : 'l') + '|' + bg;
+          if (key === lastKey) return;
+          lastKey = key;
+          var gen = ++renderGen;
+          var font = getComputedStyle(document.body).fontFamily || 'sans-serif';
+          var nat = { useMaxWidth: false };
+          mermaid.initialize({
+            startOnLoad: false,
+            securityLevel: 'strict',
+            theme: 'base',
+            flowchart: nat,
+            sequence: nat,
+            er: nat,
+            state: nat,
+            class: nat,
+            pie: nat,
+            gantt: nat,
+            journey: nat,
+            timeline: nat,
+            gitGraph: nat,
+            mindmap: nat,
+            xyChart: nat,
+            quadrantChart: nat,
+            sankey: nat,
+            c4: nat,
+            requirement: nat,
+            block: nat,
+            packet: nat,
+            kanban: nat,
+            architecture: nat,
+            radar: nat,
+            themeVariables: {
+              background: bg,
+              mainBkg: pal.surface,
+              primaryColor: pal.surface,
+              primaryTextColor: pal.text,
+              lineColor: pal.line,
+              primaryBorderColor: pal.border,
+              nodeBorder: pal.border,
+              clusterBorder: pal.border,
+              edgeLabelBackground: bg,
+              clusterBkg: 'rgba(127,127,127,0.07)',
+              titleColor: pal.text,
+              darkMode: dark,
+              rowOdd: bg,
+              rowEven: 'rgba(127,127,127,0.07)',
+              attributeBackgroundColorOdd: bg,
+              attributeBackgroundColorEven: 'rgba(127,127,127,0.07)',
+              fontSize: '16px',
+              fontFamily: font,
+            },
+            themeCSS: '.node rect, .node circle, .node polygon, .node path, .cluster rect { stroke-width: 2px; }',
+          });
+          items.forEach(function (it) {
+            var id = 'claude-mermaid-' + seq++;
+            mermaid.render(id, it.src).then(
+              function (r) {
+                if (gen !== renderGen) return;
+                var prev = it.pre.previousElementSibling;
+                if (prev && prev.className === 'mermaid-diagram' && prev !== it.mount) return;
+                it.mount.innerHTML = r.svg;
+                if (!it.mount.parentNode) it.pre.parentNode.insertBefore(it.mount, it.pre);
+                it.pre.style.display = 'none';
+              },
+              function () {
+                var scratch = document.getElementById(id);
+                if (scratch) scratch.parentNode.removeChild(scratch);
+                scratch = document.getElementById('d' + id);
+                if (scratch) scratch.parentNode.removeChild(scratch);
+                if (gen !== renderGen) return;
+                if (it.mount.parentNode) it.mount.parentNode.removeChild(it.mount);
+                it.pre.style.display = '';
+              },
+            );
+          });
+        }
+        render();
+        if (mq && mq.addEventListener) mq.addEventListener('change', render);
+        if (typeof MutationObserver !== 'undefined')
+          new MutationObserver(render).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+      })();
+    </script>
+    <!--claude-mermaid-runtime-end-->
+  </body>
+</html>

@@ -1,0 +1,2159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>PitchLens learning roadmap</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Schibsted+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #eef2f8;
+        --surface: #ffffff;
+        --ink: #10204a;
+        --muted: #4a5878;
+        --line: #cdd6e8;
+        --cobalt: #2346e8;
+        --cobalt-soft: #e3e9ff;
+        --coral: #e8473b;
+        --coral-soft: #ffe6e3;
+        --turf: #0b8c68;
+        --turf-soft: #ddf4ec;
+        --sun: #a87a00;
+        --sun-soft: #fff1c7;
+        --violet: #6a4bf0;
+        --violet-soft: #ece7ff;
+        --magenta: #b8399d;
+        --magenta-soft: #fbe4f5;
+        --display: 'Unbounded', 'Arial Black', system-ui, sans-serif;
+        --body: 'Schibsted Grotesk', 'Helvetica Neue', Arial, system-ui, sans-serif;
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        color-scheme: light;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme='light']) {
+          --bg: #0a1433;
+          --surface: #111d45;
+          --ink: #eaf0ff;
+          --muted: #a5b2d6;
+          --line: #2a3b74;
+          --cobalt: #7c93ff;
+          --cobalt-soft: #1b2b66;
+          --coral: #ff7a70;
+          --coral-soft: #3e1c2a;
+          --turf: #38cc9f;
+          --turf-soft: #0f3a3a;
+          --sun: #ffcf3f;
+          --sun-soft: #3a3220;
+          --violet: #a891ff;
+          --violet-soft: #2a2260;
+          --magenta: #f07fd6;
+          --magenta-soft: #3d1838;
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme='dark'] {
+        --bg: #0a1433;
+        --surface: #111d45;
+        --ink: #eaf0ff;
+        --muted: #a5b2d6;
+        --line: #2a3b74;
+        --cobalt: #7c93ff;
+        --cobalt-soft: #1b2b66;
+        --coral: #ff7a70;
+        --coral-soft: #3e1c2a;
+        --turf: #38cc9f;
+        --turf-soft: #0f3a3a;
+        --sun: #ffcf3f;
+        --sun-soft: #3a3220;
+        --violet: #a891ff;
+        --violet-soft: #2a2260;
+        --magenta: #f07fd6;
+        --magenta-soft: #3d1838;
+        color-scheme: dark;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: inherit;
+      }
+      html {
+        scroll-padding-top: env(safe-area-inset-top, 0px);
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--body);
+        font-size: 16px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+      body.locked {
+        overflow: hidden;
+      }
+      a {
+        color: var(--cobalt);
+        text-underline-offset: 3px;
+      }
+      button {
+        font: inherit;
+        color: inherit;
+      }
+      :focus-visible {
+        outline: 3px solid var(--cobalt);
+        outline-offset: 2px;
+        border-radius: 6px;
+      }
+
+      /* header */
+      .top {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 36px 24px 8px;
+      }
+      .back {
+        font-size: 14.5px;
+      }
+      h1 {
+        font-family: var(--display);
+        font-weight: 700;
+        font-size: clamp(34px, 5.5vw, 60px);
+        line-height: 1;
+        letter-spacing: -0.03em;
+        margin: 18px 0 12px;
+      }
+      .intro {
+        max-width: 62ch;
+        color: var(--muted);
+        font-size: 17px;
+        margin: 0 0 22px;
+      }
+      .prog {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 6px;
+      }
+      .bar {
+        flex: 1 1 260px;
+        max-width: 520px;
+        height: 12px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .bar span {
+        display: block;
+        height: 100%;
+        width: 0;
+        background: var(--turf);
+        border-radius: 999px;
+        transition: width 0.4s;
+      }
+      .prog b {
+        font-family: var(--display);
+        font-weight: 500;
+        font-size: 15px;
+      }
+      .sync {
+        font-size: 13.5px;
+        color: var(--muted);
+        margin: 4px 0 0;
+      }
+      .tracks {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 22px 0 4px;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1.5px solid var(--line);
+        background: var(--surface);
+        border-radius: 999px;
+        padding: 7px 14px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 14.5px;
+      }
+      .chip i {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--c);
+      }
+      .chip small {
+        color: var(--muted);
+        font-weight: 400;
+      }
+      .chip[aria-pressed='true'] {
+        border-color: var(--c);
+        background: var(--soft);
+      }
+      .chip.all {
+        --c: var(--ink);
+        --soft: var(--bg);
+      }
+      .howto {
+        font-size: 14px;
+        color: var(--muted);
+        margin: 10px 0 0;
+      }
+
+      /* map */
+      .map {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 18px 24px 80px;
+        position: relative;
+      }
+      .cols {
+        display: grid;
+        grid-template-columns: 1fr 250px 1fr;
+        gap: 20px;
+        font-family: var(--display);
+        font-weight: 500;
+        font-size: 14px;
+        color: var(--muted);
+        padding: 18px 0 4px;
+      }
+      .cols span:first-child {
+        text-align: right;
+      }
+      .cols span:nth-child(2) {
+        text-align: center;
+      }
+      .spine {
+        position: relative;
+      }
+      .spine::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        margin-left: -1.5px;
+        background: var(--cobalt);
+        opacity: 0.35;
+        border-radius: 2px;
+      }
+      .phase {
+        display: grid;
+        grid-template-columns: 1fr 250px 1fr;
+        gap: 20px;
+        align-items: center;
+        padding: 26px 0;
+        position: relative;
+      }
+      .phase::before {
+        content: '';
+        position: absolute;
+        left: 12%;
+        right: 12%;
+        top: 50%;
+        border-top: 2px dashed var(--line);
+        z-index: 0;
+      }
+      .cluster {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        position: relative;
+        z-index: 1;
+      }
+      .cluster.L {
+        justify-content: flex-end;
+      }
+      .cluster.R {
+        justify-content: flex-start;
+      }
+      .pnode {
+        position: relative;
+        z-index: 1;
+        background: var(--cobalt);
+        color: #fff;
+        border: none;
+        border-radius: 14px;
+        padding: 14px 16px;
+        text-align: center;
+        cursor: default;
+      }
+      .pnode b {
+        display: block;
+        font-family: var(--display);
+        font-weight: 700;
+        font-size: 16px;
+        letter-spacing: -0.01em;
+      }
+      .pnode small {
+        display: block;
+        font-size: 13px;
+        opacity: 0.85;
+        margin-top: 2px;
+      }
+      .pnode .pc {
+        display: block;
+        font-size: 12.5px;
+        margin-top: 6px;
+        opacity: 0.9;
+      }
+      .phase:nth-child(odd) .pnode {
+        background: #3557f0;
+      }
+      .phase.p7 .pnode {
+        background: var(--surface);
+        color: var(--ink);
+        border: 2px dashed var(--cobalt);
+      }
+      .node {
+        --c: var(--muted);
+        --soft: var(--bg);
+        position: relative;
+        background: var(--surface);
+        border: 2px solid var(--line);
+        border-left: 6px solid var(--c);
+        border-radius: 10px;
+        padding: 8px 12px;
+        font-size: 14.5px;
+        font-weight: 500;
+        cursor: pointer;
+        text-align: left;
+        max-width: 230px;
+        line-height: 1.3;
+        transition:
+          transform 0.12s,
+          opacity 0.2s,
+          border-color 0.12s;
+      }
+      .node:hover {
+        border-color: var(--c);
+        transform: translateY(-1px);
+      }
+      .node.opt {
+        border-style: dashed;
+        border-left-style: solid;
+      }
+      .node .st {
+        display: none;
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        font-size: 12px;
+        line-height: 20px;
+        text-align: center;
+        color: #fff;
+        font-weight: 700;
+      }
+      .node[data-status='done'] {
+        background: var(--soft);
+      }
+      .node[data-status='done'] .st {
+        display: block;
+        background: var(--turf);
+      }
+      .node[data-status='doing'] .st {
+        display: block;
+        background: var(--violet);
+      }
+      .node[data-status='done'] .nt {
+        text-decoration: line-through;
+        text-decoration-thickness: 1.5px;
+        text-decoration-color: var(--c);
+      }
+      .map.filtered .node:not(.hit) {
+        opacity: 0.22;
+      }
+      .legend {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+        font-size: 13.5px;
+        color: var(--muted);
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      .legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .lg {
+        display: inline-block;
+        width: 18px;
+        height: 12px;
+        border-radius: 4px;
+        border: 2px solid var(--line);
+        background: var(--surface);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .node,
+        .bar span {
+          transition: none;
+        }
+      }
+      @media (max-width: 860px) {
+        .cols {
+          display: none;
+        }
+        .spine::before,
+        .phase::before {
+          display: none;
+        }
+        .phase {
+          grid-template-columns: 1fr;
+          gap: 10px;
+          padding: 18px 0;
+          border-top: 1px solid var(--line);
+        }
+        .pnode {
+          order: -1;
+          text-align: left;
+        }
+        .cluster.L,
+        .cluster.R {
+          justify-content: flex-start;
+        }
+        .cluster::before {
+          content: attr(data-label);
+          display: block;
+          width: 100%;
+          font-size: 13px;
+          color: var(--muted);
+          font-weight: 500;
+        }
+        .node {
+          max-width: none;
+        }
+      }
+
+      /* drawer */
+      .scrim {
+        position: fixed;
+        inset: 0;
+        background: rgba(6, 12, 35, 0.42);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+        z-index: 20;
+      }
+      .scrim.on {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .drawer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: min(500px, 100%);
+        background: var(--surface);
+        border-left: 1px solid var(--line);
+        z-index: 21;
+        transform: translateX(104%);
+        transition: transform 0.25s ease;
+        overflow-y: auto;
+        padding: calc(env(safe-area-inset-top, 0px) + 22px) 26px calc(env(safe-area-inset-bottom, 0px) + 40px);
+        box-shadow: -20px 0 40px rgba(6, 12, 35, 0.12);
+      }
+      .drawer.on {
+        transform: none;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .drawer,
+        .scrim {
+          transition: none;
+        }
+      }
+      .dclose {
+        position: sticky;
+        top: 0;
+        float: right;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        border-radius: 999px;
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+        font-size: 18px;
+        line-height: 1;
+      }
+      .dkicker {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: var(--muted);
+        margin: 4px 0 8px;
+      }
+      .dkicker i {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--c);
+      }
+      .drawer h2 {
+        font-family: var(--display);
+        font-weight: 700;
+        font-size: 26px;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        margin: 0 0 12px;
+      }
+      .drawer h3 {
+        font-family: var(--display);
+        font-weight: 500;
+        font-size: 15px;
+        margin: 22px 0 8px;
+      }
+      .drawer p {
+        margin: 0 0 10px;
+      }
+      .drawer ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+      .drawer li {
+        margin-bottom: 6px;
+      }
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 14px;
+      }
+      .pill {
+        font-size: 13px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: var(--bg);
+        color: var(--muted);
+      }
+      .pill.col {
+        background: var(--soft);
+        color: var(--c);
+      }
+      .status {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 6px 0 4px;
+      }
+      .status button {
+        border: 1.5px solid var(--line);
+        background: var(--surface);
+        border-radius: 999px;
+        padding: 7px 14px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 14.5px;
+      }
+      .status button[aria-pressed='true'].doing {
+        border-color: var(--violet);
+        background: var(--violet-soft);
+        color: var(--violet);
+      }
+      .status button[aria-pressed='true'].done {
+        border-color: var(--turf);
+        background: var(--turf-soft);
+        color: var(--turf);
+      }
+      .smsg {
+        font-size: 13px;
+        color: var(--muted);
+        min-height: 1.2em;
+        margin: 4px 0 0;
+      }
+      .pit {
+        background: var(--coral-soft);
+        border-radius: 10px;
+        padding: 10px 14px;
+      }
+      .pit li {
+        color: var(--ink);
+      }
+      .donebox {
+        background: var(--turf-soft);
+        border-radius: 10px;
+        padding: 10px 14px;
+      }
+      .res a {
+        font-weight: 500;
+      }
+      .path {
+        list-style: none;
+        padding: 0 !important;
+        margin: 0;
+      }
+      .path li {
+        margin: 0;
+      }
+      .path button {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        text-align: left;
+        background: none;
+        border: none;
+        border-bottom: 1px solid var(--line);
+        padding: 9px 2px;
+        cursor: pointer;
+        font-size: 15px;
+      }
+      .path button:hover .pt {
+        text-decoration: underline;
+      }
+      .path .ph {
+        flex: none;
+        font-size: 12.5px;
+        color: var(--muted);
+        width: 56px;
+      }
+      .path .sd {
+        flex: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid var(--line);
+      }
+      .path [data-status='doing'] .sd {
+        border-color: var(--violet);
+        background: var(--violet-soft);
+      }
+      .path [data-status='done'] .sd {
+        border-color: var(--turf);
+        background: var(--turf);
+      }
+      .path .opt {
+        font-size: 12px;
+        color: var(--muted);
+        margin-left: auto;
+      }
+      .stackchips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .stackchips span {
+        font-size: 13.5px;
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+      }
+      .nav2 {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 26px;
+      }
+      .nav2 button {
+        border: 1px solid var(--line);
+        background: var(--bg);
+        border-radius: 10px;
+        padding: 10px 12px;
+        cursor: pointer;
+        text-align: left;
+        font-size: 14px;
+        max-width: 48%;
+      }
+      .nav2 button small {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .tbar {
+        height: 10px;
+        background: var(--bg);
+        border-radius: 999px;
+        overflow: hidden;
+        margin: 4px 0 2px;
+      }
+      .tbar span {
+        display: block;
+        height: 100%;
+        background: var(--c);
+      }
+      footer {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 24px 40px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <a class="back" href="https://claude.ai/artifact/B5e1w4VcDCSQxaVpe6oVLR" target="_blank" rel="noopener"
+        >Open the full PitchLens project plan</a
+      >
+      <h1>PitchLens learning roadmap</h1>
+      <p class="intro">
+        Every topic you'll learn while building PitchLens, in the order you'll need it. Engineering on the left,
+        football analytics on the right, phases down the middle. Click any topic for what to learn, pitfalls, a finish
+        line and resources; click a track to see everything in it.
+      </p>
+      <div class="prog">
+        <div class="bar" aria-hidden="true"><span id="pbar"></span></div>
+        <b id="ptext">0 of 0 topics done</b>
+      </div>
+      <p class="sync" id="sync">Loading progress…</p>
+      <div class="tracks" id="tracks" role="group" aria-label="Tracks"></div>
+      <p class="howto">
+        Each topic names a lead; the other person pairs and reviews it. Dashed topics are optional. Mark topics in
+        progress or done from their panel.
+      </p>
+    </header>
+    <div class="legend" aria-hidden="true">
+      <span><span class="lg"></span>Topic</span>
+      <span><span class="lg" style="border-style: dashed"></span>Optional</span>
+      <span><span class="lg" style="background: var(--violet)"></span>In progress</span>
+      <span><span class="lg" style="background: var(--turf)"></span>Done</span>
+    </div>
+    <main class="map" id="map">
+      <div class="cols" aria-hidden="true">
+        <span>Engineering</span><span>Phase</span><span>Football analytics</span>
+      </div>
+      <div class="spine" id="spine"></div>
+    </main>
+    <footer>
+      Built for João Meira and Guilherme Azeredo to learn as they go. StatsBomb open data must be credited, with their
+      logo, on anything you publish.
+    </footer>
+    <div class="scrim" id="scrim"></div>
+    <aside
+      class="drawer"
+      id="drawer"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="dtitle"
+      aria-hidden="true"
+      tabindex="-1"
+    >
+      <button class="dclose" id="dclose" aria-label="Close panel">×</button>
+      <div id="dbody"></div>
+    </aside>
+    <script>
+      const TRACKS = {
+        football: {
+          name: 'Football analytics',
+          c: 'var(--turf)',
+          soft: 'var(--turf-soft)',
+          own: 'João Meira leads; Guilherme Azeredo pairs and reviews; both learn',
+          sum: 'The reason the project exists. Every chart and number on PitchLens rests on these concepts, so both of you need them, not only the data lead.',
+          goal: 'Be able to explain and defend every number on the site to a sceptical club analyst.',
+          stack: ['StatsBomb open data', 'mplsoccer', 'penaltyblog', 'socceraction'],
+          done: 'You can write the methods page from memory, and each of you can explain xG, per 90, calibration and Dixon-Coles with a small example.',
+          evidence: 'Two or three published write-ups, model cards, a methods page.',
+        },
+        data: {
+          name: 'Data and ML',
+          c: 'var(--violet)',
+          soft: 'var(--violet-soft)',
+          own: 'João Meira leads; Guilherme Azeredo pairs and reviews',
+          sum: 'Turning raw JSON into trustworthy tables and models: ingestion, contracts, analysis SQL, model training and evaluation.',
+          goal: "One command rebuilds the dataset and models from scratch, and CI proves the numbers haven't silently changed.",
+          stack: ['pandas', 'Parquet', 'DuckDB', 'pandera', 'Typer', 'scikit-learn', 'statsmodels', 'LightGBM'],
+          done: 'A fresh clone runs ingest to publish on fixture data in CI, with contracts and a metrics regression test.',
+          evidence: 'The pipeline package, data contracts, model card, reproducible notebooks.',
+        },
+        backend: {
+          name: 'Backend',
+          c: 'var(--cobalt)',
+          soft: 'var(--cobalt-soft)',
+          own: 'Guilherme Azeredo leads; João Meira pairs and reviews',
+          sum: 'A small, read-only, typed API over precomputed tables. No computation on request, no writes from the web.',
+          goal: "Fast, documented endpoints whose schema drives the frontend's types.",
+          stack: ['FastAPI', 'Pydantic v2', 'SQLAlchemy 2', 'Alembic', 'Postgres (Supabase)', 'Docker Compose'],
+          done: 'Every endpoint has a response model and tests, migrations run in CI, and the live OpenAPI docs page is public.',
+          evidence: 'Live /docs page, migration history, API tests, ADRs on schema design.',
+        },
+        frontend: {
+          name: 'Frontend',
+          c: 'var(--coral)',
+          soft: 'var(--coral-soft)',
+          own: 'Guilherme Azeredo leads; João Meira leads the competition page; pair and review together',
+          sum: 'The match, competition, forecast and methods pages, with custom pitch graphics people can actually read.',
+          goal: 'A fan with no analytics background understands a match page in under a minute.',
+          stack: [
+            'React',
+            'TypeScript',
+            'Vite',
+            'React Router',
+            'TanStack Query',
+            'openapi-typescript',
+            'D3',
+            'Observable Plot',
+            'Vitest',
+            'Playwright',
+          ],
+          done: 'Pages work on mobile, in dark mode and with a keyboard; types are generated from the API; a smoke test runs against production.',
+          evidence: 'The live site, a 90-second demo video, component tests.',
+        },
+        devops: {
+          name: 'DevOps and tooling',
+          c: 'var(--sun)',
+          soft: 'var(--sun-soft)',
+          own: 'Guilherme Azeredo leads; João Meira pairs and reviews',
+          sum: 'Everything that makes two people productive and the site reliable: tooling, CI, containers, hosting, schedules and monitoring.',
+          goal: 'Merging to main deploys safely with no manual steps, and the weekly job tells you when it breaks.',
+          stack: [
+            'uv',
+            'ruff',
+            'mypy',
+            'GitHub Actions',
+            'Docker',
+            'Artifact Registry',
+            'Cloud Run',
+            'Vercel',
+            'Supabase',
+          ],
+          done: 'Green CI on every PR, automatic deploys with a smoke test, a scheduled job that has run unattended for weeks, and an archive-mode export.',
+          evidence: 'Workflow files, deploy.md, the ADRs, an uptime history.',
+        },
+        ai: {
+          name: 'AI',
+          c: 'var(--magenta)',
+          soft: 'var(--magenta-soft)',
+          own: 'Guilherme Azeredo leads; João Meira reviews analytics; video lab is shared',
+          sum: 'AI where it genuinely helps: building faster, describing computed numbers in words, and later turning your own video into tracking data.',
+          goal: 'Every AI output is grounded, tested and labelled. Language models never produce a number.',
+          stack: ['Claude Code', 'Claude API', 'Structured outputs', 'YOLO', 'ByteTrack', 'OpenCV'],
+          done: 'Every published match note passes the faithfulness test; the video lab reports its accuracy in metres.',
+          evidence: 'The faithfulness test suite, labelled AI notes, the video lab accuracy write-up.',
+        },
+      };
+      const PHASES = [
+        { t: 'Foundations', w: 'Week 1' },
+        { t: 'Data foundations', w: 'Weeks 2–3' },
+        { t: 'xG model v1', w: 'Weeks 4–6' },
+        { t: 'App MVP', w: 'Weeks 7–9' },
+        { t: 'Live forecasts', w: 'Weeks 10–11' },
+        { t: 'AI match notes', w: 'Weeks 12–13' },
+        { t: 'Polish and launch', w: 'Weeks 14–16' },
+        { t: 'Video lab', w: 'Weeks 17–22, optional' },
+      ];
+      const NODES = [
+        // ---------- Phase 0
+        {
+          id: 'tooling',
+          t: 'Python tooling',
+          tr: 'devops',
+          ph: 0,
+          s: 'L',
+          own: 'AB',
+          why: "Two laptops and CI must behave identically, or you'll lose evenings to 'works on my machine'.",
+          learn: [
+            'uv: init, add, sync and the lockfile',
+            'ruff for linting and formatting',
+            'mypy on the pipeline package',
+            'pre-commit hooks so style never reaches review',
+          ],
+          pit: ['Committing without the lockfile', 'Letting each person pick a Python version'],
+          done: 'A fresh clone runs uv sync and the test suite passes in under a minute.',
+          res: [
+            ['uv documentation', 'https://docs.astral.sh/uv/'],
+            ['ruff documentation', 'https://docs.astral.sh/ruff/'],
+          ],
+        },
+        {
+          id: 'github',
+          t: 'GitHub workflow',
+          tr: 'devops',
+          ph: 0,
+          s: 'L',
+          own: 'AB',
+          why: 'With two people working mostly async, the board and pull requests are your team process.',
+          learn: [
+            'Small branches and pull requests',
+            'Required review and branch protection',
+            'GitHub Projects board with weekly iterations',
+            'Short ADRs in docs/adr/',
+          ],
+          done: 'Main is protected and the first ten issues are on the board.',
+          res: [['GitHub Projects', 'https://docs.github.com/en/issues/planning-and-tracking-with-projects']],
+        },
+        {
+          id: 'ci',
+          t: 'CI with GitHub Actions',
+          tr: 'devops',
+          ph: 0,
+          s: 'L',
+          own: 'B',
+          why: 'Every later safety net (contracts, model tests, smoke tests) runs here.',
+          learn: [
+            'Workflow syntax, jobs and steps',
+            'Caching uv and pnpm installs',
+            'Required status checks',
+            'Separate jobs for Python and frontend',
+          ],
+          done: 'ci.yml runs lint, types and tests on every pull request and blocks merging on failure.',
+          res: [['GitHub Actions documentation', 'https://docs.github.com/en/actions']],
+        },
+        {
+          id: 'compose',
+          t: 'Docker Compose',
+          tr: 'backend',
+          ph: 0,
+          s: 'L',
+          own: 'B',
+          why: 'An identical local Postgres for both of you in one command.',
+          learn: ['Services, volumes and environment variables', 'Health checks', 'Resetting the database cleanly'],
+          done: 'docker compose up gives both of you the same database.',
+          res: [['Docker Compose documentation', 'https://docs.docker.com/compose/']],
+        },
+        {
+          id: 'claude',
+          t: 'Claude Code and Project',
+          tr: 'ai',
+          ph: 0,
+          s: 'L',
+          own: 'AB',
+          why: 'Your coding agent and shared thinking partner. Set the conventions once so it follows them every time.',
+          learn: [
+            'A CLAUDE.md with your conventions (coordinates, no generated numbers)',
+            'Plan first, then code',
+            'Review AI diffs as strictly as human ones',
+            'Keep project knowledge lean: context file, specs, ADRs',
+          ],
+          pit: ['Accepting large unreviewed diffs', 'Letting it invent statistics in docs or tests'],
+          done: 'CLAUDE.md is committed and the Claude Project has the context file.',
+          res: [['Claude documentation', 'https://docs.claude.com']],
+        },
+        {
+          id: 'events',
+          t: 'Event data 101',
+          tr: 'football',
+          ph: 0,
+          s: 'R',
+          own: 'AB',
+          why: 'Everything in the core layer is built from event data, so you need to read it fluently.',
+          learn: [
+            'What an event is: type, location, timestamp, team, player, possession',
+            'Related events (a pass and its receipt, a shot and the save)',
+            'Lineups and substitutions',
+            'Which matches have 360 freeze frames',
+          ],
+          pit: [
+            'Event data only sees the ball; off-ball movement is invisible',
+            'Event definitions differ between providers',
+          ],
+          done: 'You can explain any row of a StatsBomb events file to each other.',
+          res: [
+            ['StatsBomb open data and spec', 'https://github.com/statsbomb/open-data'],
+            ['statsbombpy', 'https://github.com/statsbomb/statsbombpy'],
+          ],
+        },
+        {
+          id: 'coords',
+          t: 'Pitch coordinates',
+          tr: 'football',
+          ph: 0,
+          s: 'R',
+          own: 'AB',
+          why: 'The single most common source of silently wrong charts.',
+          learn: [
+            'StatsBomb pitch: 120 × 80, origin top-left',
+            "Each team's events are recorded attacking left to right",
+            'Converting to one internal convention at ingest',
+            'How mplsoccer handles different providers',
+          ],
+          pit: ['Flipped y-axis when drawing in SVG', "Mixing two teams' events without flipping one"],
+          done: 'A tested conversion function and a shot map where shots land in the right places.',
+          res: [['mplsoccer documentation', 'https://mplsoccer.readthedocs.io/']],
+        },
+        {
+          id: 'shotmap',
+          t: 'Your first shot map',
+          tr: 'football',
+          ph: 0,
+          s: 'R',
+          own: 'A',
+          why: 'A quick win that forces you through loading, filtering and plotting real data.',
+          learn: [
+            'Loading one match with statsbombpy',
+            'Filtering shots and sizing them by StatsBomb xG',
+            'Drawing with mplsoccer',
+            'Writing a one-sentence caption a fan understands',
+          ],
+          done: 'A notebook with a shot map for one match, attributed to StatsBomb.',
+          res: [['mplsoccer gallery', 'https://mplsoccer.readthedocs.io/en/latest/gallery/index.html']],
+        },
+        // ---------- Phase 1
+        {
+          id: 'pandas',
+          t: 'pandas and Parquet',
+          tr: 'data',
+          ph: 1,
+          s: 'L',
+          own: 'A',
+          why: 'Turning nested JSON into tidy tables you can test and query.',
+          learn: [
+            'Flattening nested events',
+            'Sensible dtypes and categoricals',
+            'Writing Parquet, partitioned by competition and season',
+          ],
+          done: 'Staged Parquet tables for events, shots, lineups and matches.',
+          res: [['pandas documentation', 'https://pandas.pydata.org/docs/']],
+        },
+        {
+          id: 'duckdb',
+          t: 'DuckDB for analysis',
+          tr: 'data',
+          ph: 1,
+          s: 'L',
+          own: 'A',
+          why: 'Fast SQL over Parquet with no server, identical in notebooks and CI.',
+          learn: [
+            'Querying Parquet files directly',
+            'Window functions for sequences and game state',
+            'Views as a shared analysis layer',
+          ],
+          done: 'Analysis queries live in versioned SQL files, not only in notebooks.',
+          res: [['DuckDB documentation', 'https://duckdb.org/docs/']],
+        },
+        {
+          id: 'pandera',
+          t: 'Data contracts',
+          tr: 'data',
+          ph: 1,
+          s: 'L',
+          own: 'A',
+          why: 'When a source changes format, you want a loud failure, not a wrong chart.',
+          learn: [
+            'pandera DataFrameModel schemas',
+            'Range checks (x between 0 and 120)',
+            'Uniqueness of event IDs',
+            'Running contracts in CI',
+          ],
+          done: 'Every staged table has a contract and CI validates it.',
+          res: [['pandera documentation', 'https://pandera.readthedocs.io/']],
+        },
+        {
+          id: 'cli',
+          t: 'Pipeline CLI',
+          tr: 'data',
+          ph: 1,
+          s: 'L',
+          own: 'B',
+          why: 'One command to rebuild everything is what makes the project reproducible.',
+          learn: [
+            'Typer commands: ingest, validate, train, publish',
+            'Idempotency: reruns never duplicate data',
+            'Caching raw downloads',
+            'Configuration with pydantic-settings',
+          ],
+          done: 'pitchlens ingest rebuilds the dataset from scratch.',
+          res: [['Typer documentation', 'https://typer.tiangolo.com/']],
+        },
+        {
+          id: 'testing',
+          t: 'Testing data code',
+          tr: 'devops',
+          ph: 1,
+          s: 'L',
+          own: 'AB',
+          why: 'Football numbers can be wrong while every page still loads. Tests are your only alarm.',
+          learn: [
+            'pytest fixtures with two committed real matches',
+            'Hand-calculated cases for distance and angle',
+            'Property tests with Hypothesis',
+            'Snapshot test of the whole pipeline',
+          ],
+          done: 'An end-to-end test runs ingest to publish on fixtures in CI.',
+          res: [
+            ['pytest documentation', 'https://docs.pytest.org/'],
+            ['Hypothesis documentation', 'https://hypothesis.readthedocs.io/'],
+          ],
+        },
+        {
+          id: 'possession',
+          t: 'Possessions and sequences',
+          tr: 'football',
+          ph: 1,
+          s: 'R',
+          own: 'A',
+          why: 'Most interesting questions (how did this chance happen?) are about sequences, not single events.',
+          learn: [
+            'StatsBomb possession IDs',
+            'Open play versus set pieces',
+            'Game state: how the score changes behaviour',
+            'Why possession percentage alone misleads',
+          ],
+          done: 'A query that returns the full sequence leading to any shot.',
+          res: [['StatsBomb open data docs', 'https://github.com/statsbomb/open-data/tree/master/doc']],
+        },
+        {
+          id: 'bias',
+          t: 'Open data and its biases',
+          tr: 'football',
+          ph: 1,
+          s: 'R',
+          own: 'AB',
+          why: 'Free data is a selected sample. Saying so is part of doing analysis honestly.',
+          learn: [
+            'Which competitions and seasons are available',
+            'Why some teams and players are overrepresented',
+            'Tournaments are short samples',
+            'Showing coverage on every competition page',
+          ],
+          done: 'A coverage table in docs and a note on the competition pages.',
+          res: [['StatsBomb open data', 'https://github.com/statsbomb/open-data']],
+        },
+        // ---------- Phase 2
+        {
+          id: 'modelling',
+          t: 'Modelling in Python',
+          tr: 'data',
+          ph: 2,
+          s: 'L',
+          own: 'A',
+          why: 'Your xG model is the analytical heart of the project and of write-up #1.',
+          learn: [
+            'Splitting by match or season, never by random shot',
+            'scikit-learn pipelines and logistic regression',
+            'Calibration curves',
+            'statsmodels for readable coefficients',
+          ],
+          pit: ['Shots from the same match on both sides of the split'],
+          done: 'A trained, saved model with evaluation numbers in a model card.',
+          res: [
+            ['scikit-learn user guide', 'https://scikit-learn.org/stable/user_guide.html'],
+            ['statsmodels', 'https://www.statsmodels.org/'],
+          ],
+        },
+        {
+          id: 'schema',
+          t: 'Postgres schema and migrations',
+          tr: 'backend',
+          ph: 2,
+          s: 'L',
+          own: 'B',
+          why: 'The website reads only these tables, so their design decides how simple the API can be.',
+          learn: [
+            'Serving tables: matches, shots, team match stats',
+            'Indexes for the queries the pages make',
+            'Alembic migrations, reviewed not just autogenerated',
+            'A read-only database role for the API',
+            'Supabase dev project',
+          ],
+          pit: ['Putting event-level data in Postgres: it belongs in Parquet'],
+          done: 'Migrations create the schema in CI and in the Supabase dev project.',
+          res: [
+            ['SQLAlchemy 2', 'https://docs.sqlalchemy.org/'],
+            ['Alembic', 'https://alembic.sqlalchemy.org/'],
+            ['Supabase docs', 'https://supabase.com/docs'],
+          ],
+        },
+        {
+          id: 'apidesign',
+          t: 'API contract first',
+          tr: 'backend',
+          ph: 2,
+          s: 'L',
+          own: 'AB',
+          why: 'Agreeing endpoints and example JSON early lets the frontend start on mock data while the pipeline catches up.',
+          learn: [
+            'Resource-style endpoints: /competitions, /matches/{id}, /matches/{id}/shots',
+            'Response shapes designed for the pages, not copied from the tables',
+            'Example JSON committed next to the spec',
+            'A /v1 prefix from day one',
+          ],
+          done: 'An OpenAPI draft and example responses you have both signed off.',
+          res: [['FastAPI first steps', 'https://fastapi.tiangolo.com/tutorial/first-steps/']],
+        },
+        {
+          id: 'modeltest',
+          t: 'Model regression tests',
+          tr: 'devops',
+          ph: 2,
+          s: 'L',
+          own: 'B',
+          why: 'Catches accidental feature leaks and silently worse models before they ship.',
+          learn: [
+            'Fixed seeds and a fixed training sample',
+            'Stored baseline metrics in the repo',
+            'Failing CI when log loss worsens beyond a tolerance',
+          ],
+          done: 'A pull request that degrades the model fails CI.',
+          res: [['pytest documentation', 'https://docs.pytest.org/']],
+        },
+        {
+          id: 'xg',
+          t: 'Expected goals (xG)',
+          tr: 'football',
+          ph: 2,
+          s: 'R',
+          own: 'A',
+          why: 'The best-known football metric, and your chance to build one yourself.',
+          learn: [
+            'xG is the probability a shot becomes a goal, learned from many similar past shots',
+            'Features: distance, angle, body part, play type',
+            'Penalties modelled separately (roughly 0.76–0.79)',
+            "Summing xG over a match and what it does and doesn't mean",
+          ],
+          pit: ['Counting own goals as shots', "Reading too much into one match's xG"],
+          done: 'Your xG for every open-play shot, with a short plain-language explanation.',
+          res: [['StatsBomb open data', 'https://github.com/statsbomb/open-data']],
+        },
+        {
+          id: 'evalprob',
+          t: 'Evaluating probabilities',
+          tr: 'football',
+          ph: 2,
+          s: 'R',
+          own: 'A',
+          why: 'A model is only as credible as its evaluation. This is what recruiters look for.',
+          learn: [
+            'Log loss and Brier score: lower is better',
+            'Calibration: of shots rated 0.2, about 20% should go in',
+            'Comparing against baselines: league-average conversion and StatsBomb xG',
+          ],
+          done: 'A calibration plot and a metrics table comparing your model with the baselines.',
+          res: [['scikit-learn probability calibration', 'https://scikit-learn.org/stable/modules/calibration.html']],
+        },
+        {
+          id: 'leakage',
+          t: 'Leakage and fair comparison',
+          tr: 'football',
+          ph: 2,
+          s: 'R',
+          own: 'A',
+          why: 'The easiest way to build a model that looks brilliant and is useless.',
+          learn: [
+            "Never use information from after the shot (end location, outcome, the provider's xG)",
+            'Grouped splits by match',
+            'Writing a leakage checklist in the model card',
+          ],
+          done: 'The model card lists every feature and confirms none leaks the outcome.',
+          res: [],
+        },
+        // ---------- Phase 3
+        {
+          id: 'fastapi',
+          t: 'FastAPI',
+          tr: 'backend',
+          ph: 3,
+          s: 'L',
+          own: 'B',
+          why: 'The read-only layer between your tables and the site, and the source of truth for API types.',
+          learn: [
+            'Routers and Pydantic response models',
+            'Database sessions as dependencies',
+            'Cache-Control headers for data that changes weekly',
+            'A /health endpoint',
+            'The generated OpenAPI spec',
+          ],
+          done: 'Match, shots and competition endpoints with tests and a public /docs page.',
+          res: [
+            ['FastAPI documentation', 'https://fastapi.tiangolo.com/'],
+            ['Pydantic', 'https://docs.pydantic.dev/'],
+          ],
+        },
+        {
+          id: 'apitests',
+          t: 'API tests',
+          tr: 'backend',
+          ph: 3,
+          s: 'L',
+          own: 'B',
+          why: 'The API is the contract between your two halves of the project; tests keep it honest.',
+          learn: [
+            "pytest with FastAPI's TestClient",
+            'A Postgres service container in CI',
+            'Status codes and 404s for unknown IDs',
+            'Responses validated against the schema',
+          ],
+          done: 'Every endpoint is tested against a real Postgres in CI.',
+          res: [['FastAPI testing', 'https://fastapi.tiangolo.com/tutorial/testing/']],
+        },
+        {
+          id: 'react',
+          t: 'React + TypeScript + Vite',
+          tr: 'frontend',
+          ph: 3,
+          s: 'L',
+          own: 'AB',
+          why: 'The app shell for every page. João Meira builds the competition page here as a crossover.',
+          learn: [
+            'Feature-based folder structure',
+            'React Router routes such as /matches/:id',
+            'Design tokens in CSS variables, CSS Modules',
+            'Biome for lint and format',
+          ],
+          done: 'Deployed shell with match and competition routes.',
+          res: [
+            ['React', 'https://react.dev/'],
+            ['Vite', 'https://vite.dev/'],
+          ],
+        },
+        {
+          id: 'typedapi',
+          t: 'Typed API client',
+          tr: 'frontend',
+          ph: 3,
+          s: 'L',
+          own: 'B',
+          why: "A backend change should break the build, not the user's page.",
+          learn: [
+            'openapi-typescript and openapi-fetch',
+            'TanStack Query keys and caching',
+            'Loading, error and empty states',
+            'A CI check that generated types are current',
+          ],
+          done: 'No hand-written API types anywhere in the frontend.',
+          res: [
+            ['openapi-typescript', 'https://openapi-ts.dev/'],
+            ['TanStack Query', 'https://tanstack.com/query/latest'],
+          ],
+        },
+        {
+          id: 'd3',
+          t: 'Pitch graphics',
+          tr: 'frontend',
+          ph: 3,
+          s: 'L',
+          own: 'AB',
+          why: 'Custom SVG pitch graphics are what make PitchLens look like a real analytics product.',
+          learn: [
+            'D3 scales from pitch coordinates to SVG',
+            'Responsive viewBox drawing',
+            'Shot map, cumulative xG timeline, pass network',
+            'Observable Plot for standard bar and line charts',
+            'Text alternatives for every chart',
+          ],
+          done: 'The match page shows all three pitch graphics from live API data.',
+          res: [
+            ['D3', 'https://d3js.org/'],
+            ['Observable Plot', 'https://observablehq.com/plot/'],
+          ],
+        },
+        {
+          id: 'image',
+          t: 'Docker image for the API',
+          tr: 'devops',
+          ph: 3,
+          s: 'L',
+          own: 'B',
+          why: 'The same image runs locally, in CI and on Cloud Run.',
+          learn: [
+            'Multi-stage builds with uv',
+            'Slim base image, non-root user',
+            'Listening on $PORT',
+            'Keeping startup fast for cold starts',
+          ],
+          done: 'CI builds the image on every pull request.',
+          res: [['Docker multi-stage builds', 'https://docs.docker.com/build/building/multi-stage/']],
+        },
+        {
+          id: 'cloudrun',
+          t: 'Cloud Run',
+          tr: 'devops',
+          ph: 3,
+          s: 'L',
+          own: 'B',
+          why: 'Scale-to-zero hosting for the API, so an idle portfolio costs nothing.',
+          learn: [
+            'Artifact Registry and image cleanup policies',
+            'Deploying revisions, max instances 2',
+            'Workload Identity Federation from GitHub (no JSON keys)',
+            'A budget alert on the billing account',
+          ],
+          done: 'Merging to main deploys a new API revision automatically.',
+          res: [
+            ['Cloud Run documentation', 'https://cloud.google.com/run/docs'],
+            ['google-github-actions/auth', 'https://github.com/google-github-actions/auth'],
+          ],
+        },
+        {
+          id: 'vercel',
+          t: 'Vercel',
+          tr: 'devops',
+          ph: 3,
+          s: 'L',
+          own: 'B',
+          why: 'Static hosting with a preview URL for every pull request.',
+          learn: [
+            'Vite build settings and SPA rewrites',
+            'Rewriting /api/* to Cloud Run (no CORS)',
+            'Preview deployments',
+            'Hobby plan terms: personal, non-commercial',
+          ],
+          done: 'A public URL for the site, with previews on pull requests.',
+          res: [['Vercel documentation', 'https://vercel.com/docs']],
+        },
+        {
+          id: 'fetests',
+          t: 'Frontend tests',
+          tr: 'frontend',
+          ph: 3,
+          s: 'L',
+          own: 'B',
+          why: 'Scale functions decide where every shot is drawn. Test them like money code.',
+          learn: [
+            'Vitest for pitch scale functions',
+            'Testing Library for components',
+            'A Playwright smoke test against production',
+          ],
+          done: 'Deploy runs a smoke test that loads a real match page.',
+          res: [
+            ['Vitest', 'https://vitest.dev/'],
+            ['Playwright', 'https://playwright.dev/'],
+          ],
+        },
+        {
+          id: 'per90',
+          t: 'Per 90 and sample size',
+          tr: 'football',
+          ph: 3,
+          s: 'R',
+          own: 'A',
+          why: 'The fair way to compare players, and the easiest way to mislead with small samples.',
+          learn: [
+            'Per 90 = total ÷ minutes × 90',
+            '2 goals in 180 minutes is 1.0 per 90; 15 in 2,700 is 0.5. Which is more reliable?',
+            'Minimum-minutes thresholds (default 900)',
+            'Regression to the mean',
+          ],
+          done: 'Per-90 tables that hide players under the threshold.',
+          res: [],
+        },
+        {
+          id: 'passnet',
+          t: 'Pass networks',
+          tr: 'football',
+          ph: 3,
+          s: 'R',
+          own: 'A',
+          why: 'A classic visual of team structure, and good practice in aggregating events.',
+          learn: [
+            "Average positions of each player's passes",
+            'Edge weights by pass count, with a minimum',
+            'Usually computed until the first substitution',
+            'What averages hide',
+          ],
+          done: 'Pass networks on match pages, with a caption explaining how to read them.',
+          res: [['mplsoccer pass network example', 'https://mplsoccer.readthedocs.io/en/latest/gallery/index.html']],
+        },
+        {
+          id: 'explain',
+          t: 'Charts for non-experts',
+          tr: 'football',
+          ph: 3,
+          s: 'R',
+          own: 'AB',
+          why: 'Analysis that nobody understands has no impact. Clubs hire people who can explain.',
+          learn: [
+            'One message per chart',
+            'Annotate instead of adding legends',
+            'Explain xG in a sentence next to the chart',
+            'StatsBomb attribution and logo on published charts',
+          ],
+          done: "Every chart has a 'how to read this' line.",
+          res: [],
+        },
+        // ---------- Phase 4
+        {
+          id: 'apiclient',
+          t: 'Rate-limited API client',
+          tr: 'data',
+          ph: 4,
+          s: 'L',
+          own: 'B',
+          why: 'The free football-data.org tier allows 10 requests a minute. Respect it and cache everything.',
+          learn: [
+            'football-data.org v4 and the X-Auth-Token header',
+            'Retries with backoff (tenacity)',
+            'Caching responses',
+            'Idempotent upserts of results',
+          ],
+          done: 'Fetching a round of results is safe to rerun at any time.',
+          res: [['football-data.org quickstart', 'https://www.football-data.org/documentation/quickstart']],
+        },
+        {
+          id: 'cron',
+          t: 'Scheduled workflows',
+          tr: 'devops',
+          ph: 4,
+          s: 'L',
+          own: 'B',
+          why: 'The live layer is just a schedule, but an unattended one.',
+          learn: [
+            'Cron schedules in UTC and manual dispatch',
+            'Concurrency groups so runs never overlap',
+            'Failure notifications',
+            'Scheduled workflows pause after 60 days without repo activity',
+          ],
+          done: 'The forecast job has run twice without anyone touching it.',
+          res: [['GitHub Actions documentation', 'https://docs.github.com/en/actions']],
+        },
+        {
+          id: 'security',
+          t: 'Security and secrets',
+          tr: 'backend',
+          ph: 4,
+          s: 'L',
+          own: 'B',
+          why: 'Once a scheduled job holds write credentials, the basics stop being optional.',
+          learn: [
+            'Separate read-only and writer database roles',
+            'Secrets only in GitHub Actions and Cloud Run, never in the frontend',
+            'No direct browser access to Supabase',
+            'Validating query parameters and basic rate limiting',
+          ],
+          pit: ['Committing a .env file'],
+          done: 'A security section in docs/deploy.md and secret scanning enabled on the repo.',
+          res: [['OWASP API Security Top 10', 'https://owasp.org/API-Security/']],
+        },
+        {
+          id: 'elo',
+          t: 'Elo ratings',
+          tr: 'football',
+          ph: 4,
+          s: 'R',
+          own: 'AB',
+          why: "The simplest honest team-strength model, and Guilherme Azeredo's crossover into analytics.",
+          learn: [
+            'Update rule: rating moves by K × (result − expected)',
+            'Home advantage as a rating bonus',
+            'Turning rating differences into home, draw and away probabilities',
+          ],
+          done: 'Elo forecasts for the next round, backtested on past seasons.',
+          res: [],
+        },
+        {
+          id: 'dixoncoles',
+          t: 'Poisson and Dixon-Coles',
+          tr: 'football',
+          ph: 4,
+          s: 'R',
+          own: 'A',
+          why: "The classic goals model: each team's goals depend on its attack, the opponent's defence and home advantage.",
+          learn: [
+            'Goals as Poisson counts',
+            'Dixon-Coles correction for low scores (0-0, 1-0, 0-1, 1-1)',
+            'Weighting recent matches more',
+            'Simulating the rest of the season many times',
+          ],
+          done: 'Season simulations with title and relegation probabilities.',
+          res: [['penaltyblog', 'https://penaltyblog.readthedocs.io/']],
+        },
+        {
+          id: 'scoring',
+          t: 'Scoring forecasts',
+          tr: 'football',
+          ph: 4,
+          s: 'R',
+          own: 'A',
+          why: 'Publishing your track record, wrong weeks included, is the most credible thing on the site.',
+          learn: [
+            'Ranked probability score for home, draw, away',
+            'Bookmaker implied probabilities from closing odds, with the margin removed',
+            'Walk-forward backtests: only use data available before each match',
+          ],
+          pit: ["Fitting on the whole season, then 'predicting' its early matches"],
+          done: 'A track-record page comparing your model with bookmakers and a naive baseline.',
+          res: [['football-data.co.uk data', 'https://www.football-data.co.uk/data.php']],
+        },
+        // ---------- Phase 5
+        {
+          id: 'llm',
+          t: 'Claude API, structured outputs',
+          tr: 'ai',
+          ph: 5,
+          s: 'L',
+          own: 'B',
+          why: 'Readable match notes, generated offline, at a cost of a few euros in total.',
+          learn: [
+            'Prompting with a JSON of computed stats only',
+            'An output schema: the note plus the claims and numbers it uses',
+            'Batch generation in the pipeline, stored with the prompt version',
+            'A monthly spend limit',
+          ],
+          done: 'Notes generated for every match and stored in Postgres.',
+          res: [['Claude API documentation', 'https://docs.claude.com']],
+        },
+        {
+          id: 'faith',
+          t: 'Faithfulness testing',
+          tr: 'ai',
+          ph: 5,
+          s: 'L',
+          own: 'AB',
+          why: 'Language models describe numbers; they never produce them. This test enforces that.',
+          learn: [
+            'Extract every number from a note',
+            'Check it against the input, including simple derived values',
+            'Regenerate or drop failures',
+            'A golden set of matches for prompt changes',
+            'Label notes as AI-written',
+          ],
+          done: 'Every published note passes the check.',
+          res: [],
+        },
+        {
+          id: 'story',
+          t: 'Telling a match story',
+          tr: 'football',
+          ph: 5,
+          s: 'R',
+          own: 'A',
+          why: "Deciding which five numbers explain a match is an analyst's real skill.",
+          learn: [
+            'Big chances and xG swings',
+            'Game state: who chased the game and when',
+            'Set pieces versus open play',
+            'Leaving out numbers that need too much context',
+          ],
+          done: 'A short list of stats the notes are allowed to use, with reasons.',
+          res: [],
+        },
+        // ---------- Phase 6
+        {
+          id: 'a11y',
+          t: 'Accessibility and performance',
+          tr: 'frontend',
+          ph: 6,
+          s: 'L',
+          own: 'B',
+          why: 'Polish is what separates a portfolio piece from a side project.',
+          learn: [
+            'Keyboard navigation and visible focus',
+            'Colour contrast in both themes',
+            'Text alternatives for charts',
+            'Code splitting and caching',
+          ],
+          done: 'Lighthouse is green on the main pages and everything works with a keyboard.',
+          res: [['web.dev accessibility', 'https://web.dev/learn/accessibility']],
+        },
+        {
+          id: 'perf',
+          t: 'Query performance and caching',
+          tr: 'backend',
+          ph: 6,
+          s: 'L',
+          own: 'B',
+          why: 'A cold start plus a slow query makes a bad first impression on a recruiter.',
+          learn: [
+            'EXPLAIN ANALYZE on the slowest queries',
+            'Indexes that match what the pages ask for',
+            'Cache-Control and ETags for weekly data',
+            'Keeping API startup light',
+          ],
+          done: 'Main endpoints respond quickly when warm, and you can show the query plans.',
+          res: [['PostgreSQL: using EXPLAIN', 'https://www.postgresql.org/docs/current/using-explain.html']],
+        },
+        {
+          id: 'monitor',
+          t: 'Monitoring and archive mode',
+          tr: 'devops',
+          ph: 6,
+          s: 'L',
+          own: 'B',
+          opt: true,
+          why: 'Know when things break, and make sure the portfolio link still works in two years.',
+          learn: [
+            'Sentry free tier (optional)',
+            'An uptime check on /health',
+            'Exporting serving tables to static JSON',
+            'A frontend that can read the static export',
+          ],
+          done: 'Archive mode tested: the site runs with no API and no database.',
+          res: [['Sentry for Python', 'https://docs.sentry.io/platforms/python/']],
+        },
+        {
+          id: 'docs',
+          t: 'README, docs and demo',
+          tr: 'devops',
+          ph: 6,
+          s: 'L',
+          own: 'AB',
+          why: 'Recruiters spend about a minute. Make that minute count.',
+          learn: [
+            'README: GIF, live link, pitch, architecture, attribution',
+            'Model cards and methods page',
+            'A 90-second demo video',
+            'Individual case studies',
+          ],
+          done: 'Ready to send to a club hiring manager.',
+          res: [],
+        },
+        {
+          id: 'lgbm',
+          t: 'Gradient boosting',
+          tr: 'data',
+          ph: 6,
+          s: 'L',
+          own: 'A',
+          opt: true,
+          why: 'xG v2: a more flexible model, compared honestly with v1.',
+          learn: [
+            'LightGBM with early stopping',
+            'Checking calibration after boosting',
+            'Explaining what the extra complexity bought',
+          ],
+          done: "v2 beats v1 on held-out log loss, or you write up why it didn't.",
+          res: [['LightGBM documentation', 'https://lightgbm.readthedocs.io/']],
+        },
+        {
+          id: 'freeze',
+          t: '360 freeze frames',
+          tr: 'football',
+          ph: 6,
+          s: 'R',
+          own: 'A',
+          opt: true,
+          why: 'Where defenders and the keeper stood changes chance quality a lot.',
+          learn: [
+            'Defenders inside the shooting cone',
+            'Keeper distance from goal',
+            'Only some competitions have 360 data',
+          ],
+          done: '360 features in xG v2, with a write-up of what changed.',
+          res: [['StatsBomb open data', 'https://github.com/statsbomb/open-data']],
+        },
+        {
+          id: 'percentiles',
+          t: 'Player percentiles',
+          tr: 'football',
+          ph: 6,
+          s: 'R',
+          own: 'A',
+          opt: true,
+          why: 'Player pages are popular, but only honest with full seasons and fair comparisons.',
+          learn: [
+            'Per-90 percentiles within position and competition',
+            'Minimum minutes',
+            'Why radar charts can mislead',
+          ],
+          done: 'Player pages limited to competitions with full seasons.',
+          res: [],
+        },
+        {
+          id: 'xt',
+          t: 'Possession value (xT, VAEP)',
+          tr: 'football',
+          ph: 6,
+          s: 'R',
+          own: 'A',
+          opt: true,
+          why: 'Credits passes and carries, not just shots: the next step after xG.',
+          learn: ['Expected threat: value of moving the ball between pitch zones', 'VAEP with socceraction'],
+          done: 'An experiment notebook and a short write-up.',
+          res: [['socceraction', 'https://socceraction.readthedocs.io/']],
+        },
+        // ---------- Phase 7
+        {
+          id: 'detect',
+          t: 'Detection and tracking',
+          tr: 'ai',
+          ph: 7,
+          s: 'L',
+          own: 'AB',
+          opt: true,
+          why: 'Turns your own match footage into per-player positions.',
+          learn: [
+            'Fine-tuning a YOLO detector on a few hundred labelled frames',
+            'Multi-object tracking with ByteTrack',
+            'Team assignment by shirt colour',
+            'Handling ID switches and occlusions',
+          ],
+          pit: ['Using broadcast footage: copyrighted and much harder'],
+          done: 'Stable player tracks for a 5-minute clip of your own game.',
+          res: [
+            ['Ultralytics docs', 'https://docs.ultralytics.com/'],
+            ['Roboflow sports examples', 'https://github.com/roboflow/sports'],
+          ],
+        },
+        {
+          id: 'homography',
+          t: 'Pitch mapping (homography)',
+          tr: 'data',
+          ph: 7,
+          s: 'L',
+          own: 'AB',
+          opt: true,
+          why: 'Converts pixels to pitch coordinates so your existing charts work on video data.',
+          learn: [
+            'Four or more known pitch points',
+            'OpenCV findHomography',
+            'Fixed camera: compute it once',
+            'Error grows with distance from the camera',
+          ],
+          done: 'Tracks in pitch coordinates using the same convention as the rest of PitchLens.',
+          res: [['OpenCV documentation', 'https://docs.opencv.org/']],
+        },
+        {
+          id: 'gpu',
+          t: 'GPU batch jobs',
+          tr: 'devops',
+          ph: 7,
+          s: 'L',
+          own: 'B',
+          opt: true,
+          why: 'Video processing needs a GPU, and never belongs inside your web API.',
+          learn: [
+            'A CUDA-based Docker image',
+            'Running on a rented GPU or a free notebook GPU',
+            'Writing outputs as Parquet',
+          ],
+          done: 'One command processes a clip end to end.',
+          res: [],
+        },
+        {
+          id: 'tracking',
+          t: 'Tracking data and physical metrics',
+          tr: 'football',
+          ph: 7,
+          s: 'R',
+          own: 'AB',
+          opt: true,
+          why: 'Distance, speed and sprints are the most reliable things you can get from video.',
+          learn: [
+            'Smoothing noisy positions',
+            'Distance covered and speed zones',
+            'Measuring error in metres against hand-labelled frames',
+            'Consent from everyone shown',
+          ],
+          done: 'Per-player heatmaps and distances with a published accuracy figure.',
+          res: [],
+        },
+        {
+          id: 'pitchcontrol',
+          t: 'Pitch control',
+          tr: 'football',
+          ph: 7,
+          s: 'R',
+          own: 'AB',
+          opt: true,
+          why: 'A stretch goal: which team controls each area of the pitch at a moment.',
+          learn: ['Time-to-intercept models', 'Why it needs reliable positions for everyone'],
+          done: 'A pitch-control frame for one moment of your clip.',
+          res: [],
+        },
+      ];
+      const OWN = {
+        A: 'Lead: João Meira; pairing and review: Guilherme Azeredo',
+        B: 'Lead: Guilherme Azeredo; pairing and review: João Meira',
+        AB: 'Shared lead: João Meira and Guilherme Azeredo',
+      };
+      const byId = Object.fromEntries(NODES.map((n) => [n.id, n]));
+      let state = {}; // id -> "doing" | "done"
+      let store = null; // {set(id,val)} backend
+      let activeTrack = null;
+      let current = null; // {kind:"node"|"track", id}
+      let lastFocus = null;
+      const $ = (s) => document.querySelector(s);
+      const esc = (s) =>
+        String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+      const trackVars = (tr) => `--c:${TRACKS[tr].c};--soft:${TRACKS[tr].soft}`;
+
+      function renderMap() {
+        const sp = $('#spine');
+        sp.innerHTML = PHASES.map((p, i) => {
+          const L = NODES.filter((n) => n.ph === i && n.s === 'L'),
+            R = NODES.filter((n) => n.ph === i && n.s === 'R');
+          const btn = (n) =>
+            `<button class="node${n.opt ? ' opt' : ''}" data-id="${n.id}" data-track="${n.tr}" style="${trackVars(n.tr)}"><span class="nt">${esc(n.t)}</span><span class="st" aria-hidden="true"></span></button>`;
+          return `<section class="phase p${i}" aria-label="Phase ${i}: ${esc(p.t)}">
+      <div class="cluster L" data-label="Engineering">${L.map(btn).join('')}</div>
+      <div class="pnode"><b>Phase ${i}</b>${esc(p.t)}<small>${esc(p.w)}</small><span class="pc" data-pc="${i}"></span></div>
+      <div class="cluster R" data-label="Football analytics">${R.map(btn).join('')}</div>
+    </section>`;
+        }).join('');
+        sp.addEventListener('click', (e) => {
+          const b = e.target.closest('.node');
+          if (b) openNode(b.dataset.id, b);
+        });
+      }
+      function renderTracks() {
+        const el = $('#tracks');
+        el.innerHTML =
+          `<button class="chip all" data-tr="" aria-pressed="true">All tracks</button>` +
+          Object.entries(TRACKS)
+            .map(
+              ([k, t]) =>
+                `<button class="chip" data-tr="${k}" aria-pressed="false" style="${trackVars(k)}"><i></i>${esc(t.name)} <small data-tc="${k}"></small></button>`,
+            )
+            .join('');
+        el.addEventListener('click', (e) => {
+          const b = e.target.closest('.chip');
+          if (!b) return;
+          if (!b.dataset.tr) {
+            setFilter(null);
+            return;
+          }
+          setFilter(b.dataset.tr);
+          openTrack(b.dataset.tr, b);
+        });
+      }
+      function setFilter(tr) {
+        activeTrack = tr;
+        document
+          .querySelectorAll('.chip')
+          .forEach((c) => c.setAttribute('aria-pressed', String((c.dataset.tr || null) === tr)));
+        const m = $('#map');
+        m.classList.toggle('filtered', !!tr);
+        document.querySelectorAll('.node').forEach((n) => n.classList.toggle('hit', n.dataset.track === tr));
+      }
+      function counts(list) {
+        const d = list.filter((n) => state[n.id] === 'done').length;
+        return { d, t: list.length };
+      }
+      function renderProgress() {
+        document.querySelectorAll('.node').forEach((n) => {
+          const s = state[n.dataset.id] || '';
+          n.dataset.status = s;
+          n.querySelector('.st').textContent = s === 'done' ? '✓' : s === 'doing' ? '•' : '';
+          n.setAttribute(
+            'aria-label',
+            `${byId[n.dataset.id].t}${byId[n.dataset.id].opt ? ', optional' : ''}${s ? ', ' + (s === 'done' ? 'done' : 'in progress') : ''}`,
+          );
+        });
+        const all = counts(NODES);
+        $('#pbar').style.width = (all.t ? (all.d / all.t) * 100 : 0) + '%';
+        $('#ptext').textContent = `${all.d} of ${all.t} topics done`;
+        Object.keys(TRACKS).forEach((k) => {
+          const c = counts(NODES.filter((n) => n.tr === k));
+          const el = document.querySelector(`[data-tc="${k}"]`);
+          if (el) el.textContent = `${c.d}/${c.t}`;
+        });
+        PHASES.forEach((p, i) => {
+          const c = counts(NODES.filter((n) => n.ph === i));
+          const el = document.querySelector(`[data-pc="${i}"]`);
+          if (el) el.textContent = `${c.d} of ${c.t} done`;
+        });
+        if (current) (current.kind === 'node' ? fillNode : fillTrack)(current.id);
+      }
+
+      function openDrawer(trigger) {
+        lastFocus = trigger || document.activeElement;
+        $('#drawer').classList.add('on');
+        $('#drawer').setAttribute('aria-hidden', 'false');
+        $('#scrim').classList.add('on');
+        document.body.classList.add('locked');
+        $('#drawer').scrollTop = 0;
+        $('#dclose').focus();
+      }
+      function closeDrawer() {
+        $('#drawer').classList.remove('on');
+        $('#drawer').setAttribute('aria-hidden', 'true');
+        $('#scrim').classList.remove('on');
+        document.body.classList.remove('locked');
+        current = null;
+        try {
+          history.replaceState(null, '', location.pathname + location.search);
+        } catch (e) {}
+        if (lastFocus && lastFocus.focus) lastFocus.focus();
+      }
+      function setHash(h) {
+        try {
+          history.replaceState(null, '', '#' + h);
+        } catch (e) {}
+      }
+
+      function fillNode(id) {
+        const n = byId[id],
+          T = TRACKS[n.tr],
+          s = state[id] || '';
+        const same = NODES.filter((x) => x.tr === n.tr),
+          i = same.indexOf(n),
+          prev = same[i - 1],
+          next = same[i + 1];
+        $('#dbody').style.cssText = trackVars(n.tr);
+        $('#dbody').innerHTML = `
+    <div class="dkicker"><i></i>${esc(T.name)}, phase ${n.ph}: ${esc(PHASES[n.ph].t)}</div>
+    <h2 id="dtitle">${esc(n.t)}</h2>
+    <div class="meta"><span class="pill col">${OWN[n.own]}</span><span class="pill">${esc(PHASES[n.ph].w)}</span>${n.opt ? '<span class="pill">Optional</span>' : ''}</div>
+    <div class="status" role="group" aria-label="Your progress">
+      <button class="doing" data-set="doing" aria-pressed="${s === 'doing'}">In progress</button>
+      <button class="done" data-set="done" aria-pressed="${s === 'done'}">Done</button>
+      ${s ? '<button data-set="">Reset</button>' : ''}
+    </div>
+    <p class="smsg" id="smsg"></p>
+    <h3>Why it matters for PitchLens</h3><p>${esc(n.why)}</p>
+    <h3>What to learn</h3><ul>${n.learn.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+    ${n.pit && n.pit.length ? `<h3>Watch out for</h3><div class="pit"><ul>${n.pit.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
+    <h3>Done when</h3><div class="donebox"><p style="margin:0">${esc(n.done)}</p></div>
+    ${n.res.length ? `<h3>Resources</h3><ul class="res">${n.res.map((r) => `<li><a href="${esc(r[1])}" target="_blank" rel="noopener">${esc(r[0])}</a></li>`).join('')}</ul>` : ''}
+    <div class="nav2">
+      ${prev ? `<button data-go="${prev.id}"><small>Previous in ${esc(T.name)}</small>${esc(prev.t)}</button>` : '<span></span>'}
+      ${next ? `<button data-go="${next.id}"><small>Next in ${esc(T.name)}</small>${esc(next.t)}</button>` : '<span></span>'}
+    </div>
+    <p style="margin-top:18px"><a href="#" data-track-link="${n.tr}">See the whole ${esc(T.name)} track</a></p>`;
+      }
+      function fillTrack(tr) {
+        const T = TRACKS[tr],
+          list = NODES.filter((n) => n.tr === tr),
+          c = counts(list);
+        $('#dbody').style.cssText = trackVars(tr);
+        $('#dbody').innerHTML = `
+    <div class="dkicker"><i></i>Track</div>
+    <h2 id="dtitle">${esc(T.name)}</h2>
+    <div class="meta"><span class="pill col">${esc(T.own)}</span><span class="pill">${list.length} topics</span></div>
+    <div class="tbar"><span style="width:${c.t ? (c.d / c.t) * 100 : 0}%"></span></div><p class="smsg">${c.d} of ${c.t} done</p>
+    <p>${esc(T.sum)}</p>
+    <h3>The goal</h3><p>${esc(T.goal)}</p>
+    <h3>Stack</h3><div class="stackchips">${T.stack.map((x) => `<span>${esc(x)}</span>`).join('')}</div>
+    <h3>The path, in order</h3>
+    <ul class="path">${list.map((n) => `<li><button data-go="${n.id}" data-status="${state[n.id] || ''}"><span class="sd" aria-hidden="true"></span><span class="ph">Phase ${n.ph}</span><span class="pt">${esc(n.t)}</span>${n.opt ? '<span class="opt">optional</span>' : ''}</button></li>`).join('')}</ul>
+    <h3>You've finished this track when</h3><div class="donebox"><p style="margin:0">${esc(T.done)}</p></div>
+    <h3>Portfolio evidence</h3><p>${esc(T.evidence)}</p>`;
+      }
+      function openNode(id, trigger) {
+        current = { kind: 'node', id };
+        fillNode(id);
+        setHash(id);
+        if (!$('#drawer').classList.contains('on')) openDrawer(trigger);
+        else {
+          $('#drawer').scrollTop = 0;
+        }
+      }
+      function openTrack(tr, trigger) {
+        current = { kind: 'track', id: tr };
+        fillTrack(tr);
+        setHash('track-' + tr);
+        if (!$('#drawer').classList.contains('on')) openDrawer(trigger);
+        else {
+          $('#drawer').scrollTop = 0;
+        }
+      }
+
+      $('#dbody').addEventListener('click', async (e) => {
+        const go = e.target.closest('[data-go]');
+        if (go) {
+          openNode(go.dataset.go);
+          return;
+        }
+        const tl = e.target.closest('[data-track-link]');
+        if (tl) {
+          e.preventDefault();
+          setFilter(tl.dataset.trackLink);
+          openTrack(tl.dataset.trackLink);
+          return;
+        }
+        const st = e.target.closest('[data-set]');
+        if (st && current && current.kind === 'node') {
+          const id = current.id,
+            val = st.dataset.set;
+          const old = state[id];
+          if (val) state[id] = val;
+          else delete state[id];
+          renderProgress();
+          const fb =
+            document.querySelector(`#dbody [data-set="${val}"]`) || document.querySelector('#dbody [data-set="doing"]');
+          if (fb) fb.focus();
+          try {
+            await store.set(id, val);
+          } catch (err) {
+            if (old) state[id] = old;
+            else delete state[id];
+            renderProgress();
+            const m = $('#smsg');
+            if (m)
+              m.textContent =
+                err && (err.code === 'not_granted' || err.code === 'permission_denied')
+                  ? 'You can view progress here but not change it. Ask the owner for edit access.'
+                  : "Couldn't save that change. Try again in a moment.";
+          }
+        }
+      });
+      $('#dclose').addEventListener('click', closeDrawer);
+      $('#scrim').addEventListener('click', closeDrawer);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && $('#drawer').classList.contains('on')) closeDrawer();
+        if (e.key === 'Tab' && $('#drawer').classList.contains('on')) {
+          const f = [...$('#drawer').querySelectorAll('button,a[href]')];
+          if (!f.length) return;
+          const first = f[0],
+            last = f[f.length - 1];
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      });
+
+      // ---------- storage: shared db when available, browser storage otherwise
+      const LS = 'pitchlens-roadmap-progress';
+      function localStore() {
+        try {
+          state = JSON.parse(localStorage.getItem(LS) || '{}') || {};
+        } catch (e) {
+          state = {};
+        }
+        return {
+          set: async (id, val) => {
+            try {
+              localStorage.setItem(LS, JSON.stringify(state));
+            } catch (e) {}
+          },
+        };
+      }
+      async function init() {
+        renderMap();
+        renderTracks();
+        store = localStore();
+        renderProgress();
+        $('#sync').textContent = 'Progress is saved in this browser.';
+        const h = decodeURIComponent(location.hash.slice(1));
+        if (h.startsWith('track-') && TRACKS[h.slice(6)]) {
+          setFilter(h.slice(6));
+          openTrack(h.slice(6));
+        } else if (byId[h]) openNode(h);
+        let db = null;
+        try {
+          db = window.claude && window.claude.use ? await window.claude.use('db') : null;
+        } catch (e) {
+          db = null;
+        }
+        if (!db) return;
+        const col = db.collection('progress');
+        store = {
+          set: async (id, val) => {
+            const ref = col.doc(id);
+            if (val) await ref.set({ s: val, at: new Date().toISOString() });
+            else await ref.delete();
+          },
+        };
+        col.onSnapshot(
+          (snap) => {
+            const next = {};
+            snap.docs.forEach((d) => {
+              const v = d.data();
+              if (v && (v.s === 'done' || v.s === 'doing')) next[d.id] = v.s;
+            });
+            state = next;
+            renderProgress();
+            $('#sync').textContent = 'Progress is shared: everyone with edit access sees the same ticks.';
+          },
+          () => {
+            $('#sync').textContent = "Couldn't load shared progress; showing this browser's copy.";
+          },
+        );
+      }
+      init();
+    </script>
+  </body>
+</html>
