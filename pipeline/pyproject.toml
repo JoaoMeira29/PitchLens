@@ -1,0 +1,24 @@
+[project]
+name = "pitchlens"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "João Meira", email = "150527324+JoaoMeira29@users.noreply.github.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "duckdb>=1.5.6",
+    "mplsoccer>=1.8.1",
+    "pandas>=3.0.6",
+    "pyarrow>=25.0.1",
+    "statsbombpy>=1.22.0",
+    "typer>=0.27.2",
+]
+
+[project.scripts]
+pitchlens = "pitchlens:main"
+
+[build-system]
+requires = ["uv_build>=0.12.17,<0.13.0"]
+build-backend = "uv_build"
