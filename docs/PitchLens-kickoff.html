@@ -135,11 +135,18 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,5.6vw,60px);l
 .markdone{border:1.5px solid var(--turf);background:var(--surface);color:var(--turf);border-radius:999px;padding:8px 16px;font-weight:700;cursor:pointer;font-size:14.5px}
 .card.is-done .markdone{background:var(--turf);color:#fff}
 .smsg{font-size:13px;color:var(--muted);margin:6px 0 0;min-height:1.2em}
+.ospick{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:20px 0 0;padding:6px;background:var(--surface);border:1px solid var(--line);border-radius:16px;width:fit-content;max-width:100%}
+.ospick > span{font-size:14px;color:var(--muted);padding:0 8px;font-weight:500}
+.ospick button{border:none;background:none;border-radius:11px;padding:8px 14px;cursor:pointer;font-weight:500;font-size:14.5px;color:var(--muted)}
+.ospick button small{font-size:12px;color:var(--turf);font-weight:700;margin-left:4px}
+.ospick button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.ospick button[aria-pressed="true"] small{color:var(--turf-soft)}
+body[data-os="mac"] [data-osb]:not(.os-mac),body[data-os="wsl"] [data-osb]:not(.os-wsl),body[data-os="win"] [data-osb]:not(.os-win){display:none}
 footer{color:var(--muted);font-size:14px;padding:40px 0 48px}
 @media (max-width:600px){.card summary{padding:14px}.cbody{padding:14px}.num{width:32px;height:32px}}
 </style>
 </head>
-<body>
+<body data-os="mac">
 <div class="wrap">
   <header class="hero">
     <div class="links">
@@ -150,6 +157,12 @@ footer{color:var(--muted);font-size:14px;padding:40px 0 48px}
     <p class="lede">Phase 0 in VS Code, from a freshly cloned repo to green CI and your first shot map. Sixteen tasks in three stages, split between two people, with a ready-made Claude Code prompt for every task an agent can do.</p>
     <div class="prog"><div class="bar" aria-hidden="true"><span id="pbar"></span></div><b id="ptext">0 of 16 tasks done</b></div>
     <p class="sync" id="sync">Loading progress…</p>
+    <div class="ospick" role="group" aria-label="Your setup">
+      <span>My setup</span>
+      <button type="button" data-os="mac" aria-pressed="true">macOS or Linux</button>
+      <button type="button" data-os="wsl" aria-pressed="false">Windows with WSL2 <small>recommended</small></button>
+      <button type="button" data-os="win" aria-pressed="false">Windows, native</button>
+    </div>
     <div class="keys">
       <span><i class="kd" style="background:var(--cobalt)"></i>Person A: data and models</span>
       <span><i class="kd" style="background:var(--coral)"></i>Person B: product and platform</span>
@@ -181,12 +194,24 @@ footer{color:var(--muted);font-size:14px;padding:40px 0 48px}
 <details class="card lane-both" id="prereqs" data-id="prereqs" open>
   <summary><span class="num">1</span><span class="stitle"><b>Install the prerequisites</b><span class="meta"><span class="who">Each of you</span><span class="mode">By hand</span><span class="time">30 min</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
   <div class="cbody">
-    <p class="intro">Each of you does this on your own laptop. On Windows, use WSL2 with Ubuntu and clone the repo inside the Linux file system, not under /mnt/c: file watching and Docker are much faster there.</p>
-    <div class="panel"><ol><li>Git, and VS Code 1.98 or newer.</li><li>Docker Desktop (with the WSL2 backend on Windows). Start it once.</li><li>uv, which also installs Python for you:</li></ol><div class="code"><span class="clabel">macOS, Linux, WSL</span><button class="copy" type="button">Copy</button><pre><code>curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre></div><p>Then check everything:</p><div class="code"><button class="copy" type="button">Copy</button><pre><code>git --version
+    <p class="intro">Each of you does this on your own laptop. Pick your setup with the switch at the top of the page; the steps below follow it.</p>
+    <div class="panel"><div data-osb class="os-mac"><ol><li>Git, and VS Code 1.98 or newer.</li><li>Docker Desktop (or Docker Engine on Linux). Start it once.</li><li>uv, which also installs Python for you:</li></ol><div class="code"><span class="clabel">macOS, Linux</span><button class="copy" type="button">Copy</button><pre><code>curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre></div><p>Then check everything:</p><div class="code"><button class="copy" type="button">Copy</button><pre><code>git --version
 code --version
 docker --version
-uv --version</code></pre></div><p>Node.js and pnpm can wait until phase 3.</p></div>
-    <div class="donebox"><b>Done when</b> All four version commands print a version.</div>
+uv --version</code></pre></div></div><div data-osb class="os-wsl"><p>WSL2 runs a real Ubuntu inside Windows. Your code, Python and tools live in Linux; VS Code and Docker Desktop stay on Windows and connect to it. This is the smoothest Windows setup for this stack.</p><ol><li>In PowerShell <b>as administrator</b>, install WSL with Ubuntu, then restart:</li></ol><div class="code"><span class="clabel">PowerShell (admin)</span><button class="copy" type="button">Copy</button><pre><code>wsl --install</code></pre></div><ol start="2"><li>Open <b>Ubuntu</b> from the Start menu and create your Linux user.</li><li>Install VS Code and Docker Desktop on <b>Windows</b> (winget or the installers):</li></ol><div class="code"><span class="clabel">PowerShell</span><button class="copy" type="button">Copy</button><pre><code>winget install -e --id Microsoft.VisualStudioCode
+winget install -e --id Docker.DockerDesktop</code></pre></div><ol start="4"><li>In Docker Desktop: Settings, Resources, WSL integration, switch on <b>Ubuntu</b>.</li><li>In the Ubuntu terminal, install Git and uv, then clone into your Linux home folder (not <code>/mnt/c</code>, which is much slower):</li></ol><div class="code"><span class="clabel">Ubuntu terminal</span><button class="copy" type="button">Copy</button><pre><code>sudo apt update &amp;&amp; sudo apt install -y git
+curl -LsSf https://astral.sh/uv/install.sh | sh
+mkdir -p ~/code &amp;&amp; cd ~/code
+git clone https://github.com/YOUR-ORG/pitchlens.git</code></pre></div><p>Check everything from the Ubuntu terminal:</p><div class="code"><span class="clabel">Ubuntu terminal</span><button class="copy" type="button">Copy</button><pre><code>git --version
+docker --version
+uv --version</code></pre></div></div><div data-osb class="os-win"><p>Native Windows works for everything in phase 0. Expect a few more path and shell quirks than WSL2; the steps note them where they matter.</p><div class="code"><span class="clabel">PowerShell</span><button class="copy" type="button">Copy</button><pre><code>winget install -e --id Git.Git
+winget install -e --id Microsoft.VisualStudioCode
+winget install -e --id Docker.DockerDesktop
+winget install -e --id astral-sh.uv</code></pre></div><p>Docker Desktop uses WSL2 under the hood even here; accept its prompt to enable it, then start Docker Desktop once. Close and reopen the terminal so the new commands are on your PATH, then check:</p><div class="code"><span class="clabel">PowerShell</span><button class="copy" type="button">Copy</button><pre><code>git --version
+code --version
+docker --version
+uv --version</code></pre></div><p>Turn on long paths in Git once, to avoid errors with deep Python package folders:</p><div class="code"><span class="clabel">PowerShell</span><button class="copy" type="button">Copy</button><pre><code>git config --global core.longpaths true</code></pre></div></div></div>
+    <div class="donebox"><b>Done when</b> Git, Docker and uv all print a version in the terminal you&#x27;ll work in.</div>
     <button class="markdone" type="button" data-mark="prereqs">Mark task done</button>
     <p class="smsg" aria-live="polite"></p>
   </div>
@@ -195,8 +220,10 @@ uv --version</code></pre></div><p>Node.js and pnpm can wait until phase 3.</p></
   <summary><span class="num">2</span><span class="stitle"><b>Open the repo in VS Code</b><span class="meta"><span class="who">Each of you</span><span class="mode">By hand</span><span class="time">10 min</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
   <div class="cbody">
     <p class="intro">Open the cloned folder as the workspace root so every setting and tool finds the project files.</p>
-    <div class="panel"><div class="code"><button class="copy" type="button">Copy</button><pre><code>cd pitchlens
-code .</code></pre></div><p>Install these extensions from the Extensions view (Ctrl/Cmd+Shift+X). In task 5 Person B commits them as recommendations, so later VS Code offers them automatically:</p><ul><li><b>Python</b> and <b>Pylance</b>: interpreter, IntelliSense, test explorer</li><li><b>Ruff</b>: lint and format on save</li><li><b>Jupyter</b>: notebooks inside VS Code</li><li><b>Docker</b>: see and manage the local database container</li><li><b>Even Better TOML</b>: for pyproject.toml</li><li><b>GitHub Actions</b>: workflow syntax and run status</li><li><b>Claude Code</b>: your agent, next task</li></ul></div>
+    <div class="panel"><div data-osb class="os-mac"><div class="code"><button class="copy" type="button">Copy</button><pre><code>cd pitchlens
+code .</code></pre></div></div><div data-osb class="os-wsl"><p>From the Ubuntu terminal, inside the cloned repo:</p><div class="code"><span class="clabel">Ubuntu terminal</span><button class="copy" type="button">Copy</button><pre><code>cd ~/code/pitchlens
+code .</code></pre></div><p>The first time, VS Code installs its WSL server and asks you to install the <b>WSL</b> extension; accept. The bottom-left corner should read <b>WSL: Ubuntu</b>. Extensions you install now go <b>into WSL</b>; if VS Code shows an "Install in WSL: Ubuntu" button, use that one.</p></div><div data-osb class="os-win"><p>Open the cloned folder with File, Open Folder, or from PowerShell:</p><div class="code"><span class="clabel">PowerShell</span><button class="copy" type="button">Copy</button><pre><code>cd pitchlens
+code .</code></pre></div><p>Use <b>PowerShell 7</b> as the integrated terminal if you can (Terminal, select default profile). Older Windows PowerShell 5 doesn't support <code>&amp;&amp;</code>, so commands joined with it later need to be run one by one.</p></div><p>Install these extensions from the Extensions view (Ctrl/Cmd+Shift+X). In task 5 Person B commits them as recommendations, so later VS Code offers them automatically:</p><ul><li><b>Python</b> and <b>Pylance</b>: interpreter, IntelliSense, test explorer</li><li><b>Ruff</b>: lint and format on save</li><li><b>Jupyter</b>: notebooks inside VS Code</li><li><b>Docker</b>: see and manage the local database container</li><li><b>Even Better TOML</b>: for pyproject.toml</li><li><b>GitHub Actions</b>: workflow syntax and run status</li><li><b>Claude Code</b>: your agent, next task</li></ul></div>
     <div class="donebox"><b>Done when</b> All extensions installed and the repo open as the workspace root.</div>
     <button class="markdone" type="button" data-mark="vscode">Mark task done</button>
     <p class="smsg" aria-live="polite"></p>
@@ -206,7 +233,7 @@ code .</code></pre></div><p>Install these extensions from the Extensions view (C
   <summary><span class="num">3</span><span class="stitle"><b>Connect Claude Code</b><span class="meta"><span class="who">Each of you</span><span class="mode">By hand</span><span class="time">10 min</span></span></span><span class="state" aria-hidden="true">✓</span></summary>
   <div class="cbody">
     <p class="intro">The Claude Code extension gives you the agent in a VS Code panel, with inline diffs you approve before anything changes.</p>
-    <div class="panel"><ol><li>Install <b>Claude Code</b> (publisher: Anthropic) from the Extensions view.</li><li>Click the Claude icon in the top-right of the editor and sign in with your Claude account.</li><li>Optional: install the command-line version too if you want to run <code>claude</code> in the integrated terminal (see Anthropic's Claude Code quickstart).</li></ol><div class="rule"><b>Agent ground rules for the team:</b> ask for a plan before edits, review every diff like a teammate's pull request, keep each agent task to one task card below, and never accept made-up numbers in code, tests or docs.</div></div>
+    <div class="panel"><ol><li>Install <b>Claude Code</b> (publisher: Anthropic) from the Extensions view.</li><li>Click the Claude icon in the top-right of the editor and sign in with your Claude account.</li><li>On WSL, install the extension into WSL when asked, so it works on the Linux copy of the repo.</li><li>Optional: install the command-line version too if you want to run <code>claude</code> in the integrated terminal (see Anthropic's Claude Code quickstart).</li></ol><div class="rule"><b>Agent ground rules for the team:</b> ask for a plan before edits, review every diff like a teammate's pull request, keep each agent task to one task card below, and never accept made-up numbers in code, tests or docs.</div></div>
     <div class="donebox"><b>Done when</b> You can open the Claude panel and it answers a question about the (still empty) repo.</div>
     <button class="markdone" type="button" data-mark="claudecode">Mark task done</button>
     <p class="smsg" aria-live="polite"></p>
@@ -254,10 +281,15 @@ files = [&quot;pipeline/src&quot;, &quot;tests&quot;]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-testpaths = [&quot;tests&quot;]</code></pre></div><p>Then create the pipeline package, add its dependencies and install:</p><div class="code"><button class="copy" type="button">Copy</button><pre><code>uv python pin 3.12
+testpaths = [&quot;tests&quot;]</code></pre></div><p>Then create the pipeline package, add its dependencies and install:</p><div data-osb class="os-mac os-wsl"><div class="code"><button class="copy" type="button">Copy</button><pre><code>uv python pin 3.12
 uv init --package --name pitchlens --no-workspace pipeline
 cd pipeline &amp;&amp; uv add pandas pyarrow duckdb statsbombpy mplsoccer typer &amp;&amp; cd ..
-uv sync</code></pre></div><p>In VS Code: Command Palette, <b>Python: Select Interpreter</b>, choose <code>.venv</code>. Commit <code>uv.lock</code> and <code>.python-version</code>.</p></div>
+uv sync</code></pre></div></div><div data-osb class="os-win"><div class="code"><span class="clabel">PowerShell</span><button class="copy" type="button">Copy</button><pre><code>uv python pin 3.12
+uv init --package --name pitchlens --no-workspace pipeline
+cd pipeline
+uv add pandas pyarrow duckdb statsbombpy mplsoccer typer
+cd ..
+uv sync</code></pre></div></div><p>In VS Code: Command Palette, <b>Python: Select Interpreter</b>, choose <code>.venv</code>. Commit <code>uv.lock</code> and <code>.python-version</code>.</p></div>
               <div class="panel" data-panel="agent" hidden>
                 <p>Paste this into the Claude Code panel. Read its plan, approve the edits you agree with, then review the diff before committing.</p>
                 <div class="code prompt"><span class="clabel">Prompt for Claude Code</span><button class="copy" type="button">Copy</button><pre><code>Set up a uv workspace in this repo. Root pyproject.toml is a virtual root (tool.uv package = false) that depends on the workspace package &quot;pitchlens&quot; and has a dev dependency group: pytest, hypothesis, ruff, mypy, pre-commit, ipykernel, pandas-stubs. Member package &quot;pitchlens&quot; lives in pipeline/ (src layout, uv_build) and depends on pandas, pyarrow, duckdb, statsbombpy, mplsoccer and typer. Pin Python 3.12. Configure ruff (line length 100, rules E F I B UP SIM, pitchlens as first-party), strict mypy over pipeline/src and tests, and pytest with testpaths = tests. Run uv sync. Show me your plan first, then the diff before committing.</code></pre></div>
@@ -275,8 +307,12 @@ uv sync</code></pre></div><p>In VS Code: Command Palette, <b>Python: Select Inte
     <div class="tabs" role="tablist" aria-label="How to do this task">
               <button role="tab" aria-selected="true" data-tab="hand">Do it yourself</button>
               <button role="tab" aria-selected="false" data-tab="agent">Ask Claude Code</button></div>
-              <div class="panel" data-panel="hand"><div class="code"><button class="copy" type="button">Copy</button><pre><code>mkdir -p api web notebooks docs/adr tests/fixtures .vscode .github/workflows
-touch api/.gitkeep web/.gitkeep tests/fixtures/.gitkeep</code></pre></div><div class="code"><span class="clabel">.gitignore</span><button class="copy" type="button">Copy</button><pre><code>.venv/
+              <div class="panel" data-panel="hand"><div data-osb class="os-mac os-wsl"><div class="code"><button class="copy" type="button">Copy</button><pre><code>mkdir -p api web notebooks docs/adr tests/fixtures .vscode .github/workflows
+touch api/.gitkeep web/.gitkeep tests/fixtures/.gitkeep</code></pre></div></div><div data-osb class="os-win"><div class="code"><span class="clabel">PowerShell</span><button class="copy" type="button">Copy</button><pre><code>&quot;api&quot;,&quot;web&quot;,&quot;notebooks&quot;,&quot;docs/adr&quot;,&quot;tests/fixtures&quot;,&quot;.vscode&quot;,&quot;.github/workflows&quot; | ForEach-Object { New-Item -ItemType Directory -Force $_ | Out-Null }
+&quot;api&quot;,&quot;web&quot;,&quot;tests/fixtures&quot; | ForEach-Object { New-Item -ItemType File -Force &quot;$_/.gitkeep&quot; | Out-Null }</code></pre></div></div><p>Add <code>.gitattributes</code> so files are stored with Linux line endings whatever OS each of you uses. Mixed line endings otherwise show up as whole-file diffs between a Windows and a Mac laptop.</p><div class="code"><span class="clabel">.gitattributes</span><button class="copy" type="button">Copy</button><pre><code>* text=auto eol=lf
+*.ipynb text eol=lf
+*.png binary
+*.parquet binary</code></pre></div><div class="code"><span class="clabel">.gitignore</span><button class="copy" type="button">Copy</button><pre><code>.venv/
 __pycache__/
 .mypy_cache/
 .ruff_cache/
@@ -304,7 +340,7 @@ ANTHROPIC_API_KEY=     # phase 5</code></pre></div><div class="code"><span class
 }</code></pre></div><p>Also copy <code>PITCHLENS_CONTEXT.md</code> into <code>docs/CONTEXT.md</code> so the agent can read it.</p></div>
               <div class="panel" data-panel="agent" hidden>
                 <p>Paste this into the Claude Code panel. Read its plan, approve the edits you agree with, then review the diff before committing.</p>
-                <div class="code prompt"><span class="clabel">Prompt for Claude Code</span><button class="copy" type="button">Copy</button><pre><code>Create the repo layout from docs/CONTEXT.md: api/, web/, notebooks/, docs/adr/, tests/fixtures/ (with .gitkeep where empty). Add a .gitignore for Python, Jupyter, Node and macOS that also ignores data/ and .env. Add .env.example with DATABASE_URL for the local Postgres from compose, plus empty FOOTBALL_DATA_TOKEN and ANTHROPIC_API_KEY marked for phases 4 and 5. Add .vscode/extensions.json recommending Python, Pylance, Ruff, Jupyter, Docker, Even Better TOML, GitHub Actions and Claude Code. Show the diff before committing.</code></pre></div>
+                <div class="code prompt"><span class="clabel">Prompt for Claude Code</span><button class="copy" type="button">Copy</button><pre><code>Create the repo layout from docs/CONTEXT.md, plus a .gitattributes that normalises line endings to LF: api/, web/, notebooks/, docs/adr/, tests/fixtures/ (with .gitkeep where empty). Add a .gitignore for Python, Jupyter, Node and macOS that also ignores data/ and .env. Add .env.example with DATABASE_URL for the local Postgres from compose, plus empty FOOTBALL_DATA_TOKEN and ANTHROPIC_API_KEY marked for phases 4 and 5. Add .vscode/extensions.json recommending Python, Pylance, Ruff, Jupyter, Docker, Even Better TOML, GitHub Actions and Claude Code. Show the diff before committing.</code></pre></div>
                 <p class="small">Check the result against the "Do it yourself" tab: that version has been run and works.</p>
               </div>
     <div class="donebox"><b>Done when</b> git status shows no data files, no .env and no cache folders.</div>
@@ -337,7 +373,7 @@ ANTHROPIC_API_KEY=     # phase 5</code></pre></div><div class="code"><span class
     &quot;.ruff_cache&quot;: true,
     &quot;.pytest_cache&quot;: true
   }
-}</code></pre></div><p>On Windows-native (not WSL) the interpreter path is <code>.venv/Scripts/python.exe</code>.</p><div class="code"><span class="clabel">.pre-commit-config.yaml</span><button class="copy" type="button">Copy</button><pre><code>repos:
+}</code></pre></div><div data-osb class="os-win"><p><b>Native Windows:</b> the virtual environment keeps Python in <code>.venv/Scripts/python.exe</code>, not <code>.venv/bin/python</code>. Rather than committing an OS-specific path, delete the <code>python.defaultInterpreterPath</code> line from the shared file and pick the interpreter once with <b>Python: Select Interpreter</b>; VS Code remembers it per machine.</p></div><div data-osb class="os-mac os-wsl"><p>If your teammate is on native Windows, drop the <code>python.defaultInterpreterPath</code> line and let each of you select the interpreter once instead.</p></div><div class="code"><span class="clabel">.pre-commit-config.yaml</span><button class="copy" type="button">Copy</button><pre><code>repos:
   - repo: local
     hooks:
       - id: ruff-check
@@ -450,7 +486,7 @@ uv run mypy</code></pre></div><p>Open the <b>Testing</b> panel in VS Code (the f
 
 volumes:
   pgdata:</code></pre></div><div class="code"><button class="copy" type="button">Copy</button><pre><code>docker compose up -d
-docker compose exec db psql -U pitchlens -c &quot;select version();&quot;</code></pre></div><p>The Docker extension's sidebar now shows the running container.</p></div>
+docker compose exec db psql -U pitchlens -c &quot;select version();&quot;</code></pre></div><p>The Docker extension's sidebar now shows the running container.</p><div data-osb class="os-wsl os-win"><p>Docker Desktop must be running first. If <code>docker</code> isn't found inside WSL, recheck the WSL integration switch for Ubuntu in Docker Desktop's settings.</p></div></div>
               <div class="panel" data-panel="agent" hidden>
                 <p>Paste this into the Claude Code panel. Read its plan, approve the edits you agree with, then review the diff before committing.</p>
                 <div class="code prompt"><span class="clabel">Prompt for Claude Code</span><button class="copy" type="button">Copy</button><pre><code>Add compose.yaml with a single Postgres 17 service named db (user, password and database all pitchlens, port 5432, a named volume and a pg_isready healthcheck). Start it and run a select version() through docker compose exec to confirm it works.</code></pre></div>
@@ -714,6 +750,14 @@ modelling, and revisit if we add a provider with true metric coordinates.</code>
       msg.textContent=(err&&(err.code==="not_granted"||err.code==="permission_denied"))?"You can see progress but not change it. Ask the owner for edit access.":"Couldn't save that. Try again in a moment.";
     }
   }
+
+  // setup switch: remembered per viewer
+  const OSK="pitchlens-kickoff-os";
+  function setOS(os){document.body.dataset.os=os;$$(".ospick button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.os===os)));try{localStorage.setItem(OSK,os)}catch(e){}}
+  let os0=null;try{os0=localStorage.getItem(OSK)}catch(e){}
+  if(!os0)os0=/Windows/i.test(navigator.userAgent)?"wsl":"mac";
+  setOS(os0);
+  $$(".ospick button").forEach(b=>b.addEventListener("click",()=>setOS(b.dataset.os)));
 
   const LS="pitchlens-kickoff-progress";
   async function init(){
