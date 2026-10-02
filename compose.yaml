@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:17   # match the major version your Supabase project shows
+    environment:
+      POSTGRES_USER: pitchlens
+      POSTGRES_PASSWORD: pitchlens
+      POSTGRES_DB: pitchlens
+    ports: ["5433:5432"]   # host 5433 avoids clashing with a locally installed Postgres
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pitchlens"]
+      interval: 5s
+      retries: 10
+
+volumes:
+  pgdata:
