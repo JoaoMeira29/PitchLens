@@ -6,6 +6,7 @@ from typing import Annotated
 import typer
 
 from pitchlens.config import COMPETITIONS
+from pitchlens.contracts import TABLES, validate_staged
 from pitchlens.coverage import coverage, render_markdown
 from pitchlens.sources.statsbomb import fetch_url, ingest_competition
 from pitchlens.staging import stage
@@ -36,6 +37,23 @@ def ingest(
     staged_dir = data_dir / "staged"
     for table, rows in stage(raw_dir, staged_dir, COMPETITIONS).items():
         typer.echo(f"{staged_dir / table}.parquet: {rows} rows")
+
+
+@app.command()
+def validate(
+    data_dir: Annotated[Path, typer.Option(help="Root folder for downloaded data.")] = DATA_DIR,
+) -> None:
+    """Check the staged tables against the data contracts; exit with code 1 if any fails."""
+    problems = validate_staged(data_dir / "staged")
+    for table in TABLES:
+        if table not in problems:
+            typer.echo(f"{table}: ok")
+            continue
+        typer.echo(f"{table}: FAILED")
+        for problem in problems[table]:
+            typer.echo(f"  - {problem}")
+    if problems:
+        raise typer.Exit(code=1)
 
 
 @app.command("coverage")
