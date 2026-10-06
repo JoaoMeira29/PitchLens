@@ -25,3 +25,5 @@ def test_ingest_reports_each_competition(tmp_path: Path, monkeypatch: pytest.Mon
     assert result.exit_code == 0, result.output
     assert "Test Cup" in result.output
     assert (tmp_path / "raw" / "statsbomb" / "matches" / "1" / "2.json").is_file()
+    for table in ["matches", "events", "shots", "lineups"]:
+        assert (tmp_path / "staged" / f"{table}.parquet").is_file()

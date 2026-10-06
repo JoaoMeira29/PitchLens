@@ -7,6 +7,7 @@ import typer
 
 from pitchlens.config import COMPETITIONS
 from pitchlens.sources.statsbomb import fetch_url, ingest_competition
+from pitchlens.staging import stage
 
 DATA_DIR = Path("data")
 
@@ -22,7 +23,7 @@ def main() -> None:
 def ingest(
     data_dir: Annotated[Path, typer.Option(help="Root folder for downloaded data.")] = DATA_DIR,
 ) -> None:
-    """Download StatsBomb open data for the configured competitions into a local cache."""
+    """Download StatsBomb open data into a local cache, then stage it as Parquet tables."""
     raw_dir = data_dir / "raw" / "statsbomb"
     for competition in COMPETITIONS:
         summary = ingest_competition(competition, raw_dir, fetch_url)
@@ -30,3 +31,6 @@ def ingest(
             f"{competition.name}: {summary.matches} matches, "
             f"{summary.downloaded} files downloaded, {summary.cached} already cached"
         )
+    staged_dir = data_dir / "staged"
+    for table, rows in stage(raw_dir, staged_dir, COMPETITIONS).items():
+        typer.echo(f"{staged_dir / table}.parquet: {rows} rows")
