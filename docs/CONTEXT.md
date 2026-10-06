@@ -78,13 +78,24 @@ Weekly 30-minute sync; everything else async in GitHub Issues, Projects and pull
  
 ## Current status
  
-- Phase: 0 (Foundations)
-- Done so far: plan written, name chosen
-- Next up: create repo, register for StatsBomb open data, first shot map notebook
-- Open questions: which league for the live layer; how long to keep the live layer running before archive mode
+- Phase: 0 (Foundations), closing
+- Done so far: plan written, name chosen, repo created; uv workspace with the pitchlens package;
+  ruff, mypy and pre-commit; coordinate conversion with tests; local Postgres via Docker Compose;
+  CI on every pull request; CLAUDE.md; main protected; ADR 0001
+- Still open in phase 0: StatsBomb data reading and docs/DATA_SOURCES.md, first shot map notebook,
+  learning notes (Person A, kickoff tasks 11-13)
+- Next up: phase 1 (data foundations), tracked as issues on the GitHub board
+- Open questions: which league for the live layer; how long to keep the live layer running before
+  archive mode; which 2-3 StatsBomb competitions to ingest first
+
 ## Decisions log
  
 - 2026-10: Name is PitchLens.
 - 2026-10: Batch architecture only; no per-request computation or LLM calls.
 - 2026-10: Language models never produce numbers; they only describe computed numbers.
 - 2026-10: Video lab uses only our own footage, filmed from a fixed wide camera, with consent from people shown.
+- 2026-10: Internal pitch coordinates are metres, 105 x 68, origin bottom-left; convert at ingest (ADR 0001).
+- 2026-10: Local Postgres runs on host port 5433 to avoid clashing with a locally installed Postgres.
+- 2026-10: CI runs ruff, mypy and pytest on every pull request; main accepts changes only through a
+  pull request with the python check passing (0 required approvals).
+- 2026-10: Claude Code never commits or pushes; a person makes every commit.
