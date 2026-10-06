@@ -14,9 +14,10 @@ roadmap and decisions: docs/CONTEXT.md. Guiding rule: show the numbers and show 
 
 ## Commands
 - Tests: `uv run pytest`. One test: `uv run pytest tests/test_coords.py::test_corners_map_correctly`
-- Lint: `uv run ruff check --fix .` then format: `uv run ruff format .`
-- Types: `uv run mypy` (strict, over pipeline/src and tests)
+- Lint, format, types: `uv run ruff check --fix .`, `uv run ruff format .`, `uv run mypy` (strict)
 - All pre-commit hooks: `uv run pre-commit run --all-files`
+- Data: `uv run pitchlens ingest` caches StatsBomb JSON in data/raw (first run about 7 min, 1.4 GB)
+  and writes data/staged/*.parquet; `uv run pitchlens coverage` regenerates docs/coverage.md.
 - Local Postgres (Docker Desktop running): `docker compose up -d --wait`, stop with `docker compose stop`.
   Host port is 5433, not 5432, to avoid clashing with a local Postgres (see .env.example).
 - CI (.github/workflows/ci.yml) runs `uv sync --locked`, ruff check, ruff format --check, mypy and
