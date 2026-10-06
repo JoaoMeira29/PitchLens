@@ -5,7 +5,7 @@ terms before each public release and update "Last checked".
 
 | Source | Used for | Terms | Last checked | Required attribution |
 |---|---|---|---|---|
-| [StatsBomb open data](https://github.com/statsbomb/open-data) | Core event data, lineups, 360 freeze frames | [User Agreement](https://github.com/statsbomb/open-data/blob/master/LICENSE.pdf) (version "last updated 8 September 2023") | 2026-10-06 | Name StatsBomb as the data source and show the StatsBomb logo ([Media Pack](https://statsbomb.com/media-pack/)) on anything published |
+| [StatsBomb open data](https://github.com/statsbomb/open-data) | Core event data, lineups, 360 freeze frames. Ingested: FIFA World Cup 2022 (43/106), UEFA Euro 2024 (55/282), Premier League 2015/16 (2/27); see `docs/coverage.md` | [User Agreement](https://github.com/statsbomb/open-data/blob/master/LICENSE.pdf) (version "last updated 8 September 2023") | 2026-10-06 | Name StatsBomb as the data source and show the StatsBomb logo ([Media Pack](https://statsbomb.com/media-pack/)) on anything published |
 
 ## StatsBomb open data: what the agreement means for us
 

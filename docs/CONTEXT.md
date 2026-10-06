@@ -85,8 +85,7 @@ All sources, licence links and last-checked dates live in `docs/DATA_SOURCES.md`
 - Next up: phase 1 issues #3-#7 (milestone "Phase 1: Data foundations", PitchLens project board):
   ingest 2-3 competitions to Parquet, pandera contracts, test fixtures, pipeline CLI, end-to-end test
 - Open questions: which league for the live layer; how long to keep the live layer running before
-  archive mode; which 2-3 StatsBomb competitions to ingest first; how tests get fixture data
-  without committing StatsBomb files (issue #5)
+  archive mode; how tests get fixture data without committing StatsBomb files (issue #5)
 
 ## Decisions log
  
@@ -103,3 +102,7 @@ All sources, licence links and last-checked dates live in `docs/DATA_SOURCES.md`
 - 2026-10: Raw StatsBomb data is never committed: the user agreement forbids redistribution
   (clause 1.2.1). It is downloaded and cached locally under data/ (see docs/DATA_SOURCES.md).
 - 2026-10: Notebooks are committed without outputs.
+- 2026-10: Phase 1 ingests FIFA World Cup 2022, UEFA Euro 2024 and Premier League 2015/16, following
+  the plan's "a World Cup, a Euros and one full league season": the tournaments are recent and have
+  360 data; the league is one of the few complete seasons in the open data and gives xG volume.
+- 2026-10: Event locations up to 1 StatsBomb unit outside the pitch are clamped and flagged (ADR 0002).
