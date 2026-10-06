@@ -4,11 +4,11 @@ Last updated: October 2026. Update the "Current status" and "Decisions" sections
  
 ## What PitchLens is
  
-An open football (soccer) analytics web app and a set of written analyses, built by two software engineers who are learning sports data analysis as they go. The guiding idea: **show the numbers and show the method.** Every chart explains itself, the xG model is our own and benchmarked in the open, and the forecast publishes its own track record.
+An open football (soccer) analytics web app and a set of written analyses, built by a software engineer who is learning sports data analysis as they go. The guiding idea: **show the numbers and show the method.** Every chart explains itself, the xG model is our own and benchmarked in the open, and the forecast publishes its own track record.
  
 Goals, in order:
 1. Learn practical football analytics (event data, xG, forecasting, evaluation).
-2. Build two strong portfolios (one shared project, two individual case studies).
+2. Build a strong portfolio (the project plus a case study).
 3. Ship a polished, public, low-maintenance product.
 Non-goals: commercial use, real-time live scores, betting tips, scraping sites that forbid it.
  
@@ -57,17 +57,16 @@ All sources, licence links and last-checked dates live in `docs/DATA_SOURCES.md`
 - **Testing:** pytest, Hypothesis for invariants (xG in [0, 1], H/D/A probabilities sum to 1), pandera contracts, end-to-end test on committed fixture matches, model-metric regression test, Vitest and Playwright for the frontend, faithfulness test for every AI note.
 - **Code style:** ruff, mypy, typed functions, small pull requests, one review required.
 - **Decisions** are recorded as short ADRs in `docs/adr/`.
-## Roles
+## Ownership
  
-- **Person A, data and models lead:** ingestion, data contracts, xG and forecast models, analytical write-ups. Crosses over by building the competition page frontend.
-- **Person B, product and platform lead:** API, frontend, CI/CD, deployment, AI integration. Crosses over by building the Elo baseline and co-writing one analysis.
-Weekly 30-minute sync; everything else async in GitHub Issues, Projects and pull requests.
+- **João Meira owns all of the work:** ingestion, data contracts, xG and forecast models, analytical write-ups, API, frontend, CI/CD, deployment, AI integration. The plan, roadmap and kickoff in docs/ still say Person A and Person B; both roles are João's.
+- Work is tracked in GitHub Issues, Projects and pull requests.
  
 ## Roadmap
  
 | Phase | Weeks | Done when |
 |---|---|---|
-| 0 Foundations | 1 | Repo runs locally for both; CI green |
+| 0 Foundations | 1 | Repo runs from a fresh clone; CI green |
 | 1 Data foundations | 2–3 | One command rebuilds the dataset; CI validates it |
 | 2 xG model v1 | 4–6 | Model card and write-up #1 drafted |
 | 3 App MVP | 7–9 | Public URL (safe stopping point) |
@@ -83,7 +82,7 @@ Weekly 30-minute sync; everything else async in GitHub Issues, Projects and pull
   ruff, mypy and pre-commit; coordinate conversion with tests; local Postgres via Docker Compose;
   CI on every pull request; CLAUDE.md; main protected; ADR 0001
 - Still open in phase 0: StatsBomb data reading and docs/DATA_SOURCES.md, first shot map notebook,
-  learning notes (Person A, kickoff tasks 11-13)
+  learning notes (kickoff tasks 11-13)
 - Next up: phase 1 (data foundations), tracked as issues on the GitHub board
 - Open questions: which league for the live layer; how long to keep the live layer running before
   archive mode; which 2-3 StatsBomb competitions to ingest first
@@ -99,3 +98,4 @@ Weekly 30-minute sync; everything else async in GitHub Issues, Projects and pull
 - 2026-10: CI runs ruff, mypy and pytest on every pull request; main accepts changes only through a
   pull request with the python check passing (0 required approvals).
 - 2026-10: Claude Code never commits or pushes; a person makes every commit.
+- 2026-10: Guilherme Azeredo left the project; João Meira owns all of the work.
