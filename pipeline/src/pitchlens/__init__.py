@@ -1,2 +1,1 @@
-def main() -> None:
-    print("Hello from pitchlens!")
+"""PitchLens: open football analytics pipeline."""
