@@ -77,15 +77,16 @@ All sources, licence links and last-checked dates live in `docs/DATA_SOURCES.md`
  
 ## Current status
  
-- Phase: 0 (Foundations), closing
-- Done so far: plan written, name chosen, repo created; uv workspace with the pitchlens package;
-  ruff, mypy and pre-commit; coordinate conversion with tests; local Postgres via Docker Compose;
-  CI on every pull request; CLAUDE.md; main protected; ADR 0001
-- Still open in phase 0: StatsBomb data reading and docs/DATA_SOURCES.md, first shot map notebook,
-  learning notes (kickoff tasks 11-13)
-- Next up: phase 1 (data foundations), tracked as issues on the GitHub board
+- Phase: 1 (Data foundations), starting. Phase 0 is done.
+- Done in phase 0: repo and uv workspace with the pitchlens package; ruff, mypy and pre-commit;
+  coordinate conversion with tests; local Postgres via Docker Compose; CI on every pull request;
+  CLAUDE.md; main protected; ADR 0001; docs/DATA_SOURCES.md; first shot map notebook;
+  learning notes in docs/notes/event-data.md
+- Next up: phase 1 issues #3-#7 (milestone "Phase 1: Data foundations", PitchLens project board):
+  ingest 2-3 competitions to Parquet, pandera contracts, test fixtures, pipeline CLI, end-to-end test
 - Open questions: which league for the live layer; how long to keep the live layer running before
-  archive mode; which 2-3 StatsBomb competitions to ingest first
+  archive mode; which 2-3 StatsBomb competitions to ingest first; how tests get fixture data
+  without committing StatsBomb files (issue #5)
 
 ## Decisions log
  
@@ -99,3 +100,6 @@ All sources, licence links and last-checked dates live in `docs/DATA_SOURCES.md`
   pull request with the python check passing (0 required approvals).
 - 2026-10: Claude Code never commits or pushes; a person makes every commit.
 - 2026-10: Guilherme Azeredo left the project; João Meira owns all of the work.
+- 2026-10: Raw StatsBomb data is never committed: the user agreement forbids redistribution
+  (clause 1.2.1). It is downloaded and cached locally under data/ (see docs/DATA_SOURCES.md).
+- 2026-10: Notebooks are committed without outputs.
