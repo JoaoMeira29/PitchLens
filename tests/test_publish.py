@@ -102,3 +102,12 @@ def test_write_site_writes_index_and_one_file_per_match(tmp_path: Path) -> None:
     write_site(index, documents, tmp_path)
     assert json.loads((tmp_path / "matches.json").read_text(encoding="utf-8")) == index
     assert json.loads((tmp_path / "matches" / "1.json").read_text(encoding="utf-8")) == documents[1]
+
+
+def test_index_carries_each_teams_xg_from_the_document() -> None:
+    index, documents = build_match_documents(*tables(), penalty_xg=PENALTY_XG)
+    for entry in index:
+        document = documents[entry["id"]]
+        for side in ["home", "away"]:
+            team = entry[side]["team"]
+            assert entry[side]["xg"] == document["stats"][team]["xg"]

@@ -8,8 +8,8 @@ function match(id: number, competition: string, season: string, date: string): M
     competition,
     season,
     stage: null,
-    home: { team: `Home ${id}`, score: 1 },
-    away: { team: `Away ${id}`, score: 0 },
+    home: { team: `Home ${id}`, score: 1, xg: 0.5 },
+    away: { team: `Away ${id}`, score: 0, xg: 0.2 },
   };
 }
 

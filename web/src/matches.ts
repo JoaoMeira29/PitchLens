@@ -1,21 +1,9 @@
-// Types and helpers for matches.json, written by `uv run pitchlens publish`.
+import type { MatchSummary } from "./data";
 
-export interface Side {
-  team: string;
-  score: number;
-}
-
-export interface MatchSummary {
-  id: number;
-  date: string;
-  competition: string;
-  season: string;
-  stage: string | null;
-  home: Side;
-  away: Side;
-}
+export type { MatchSummary } from "./data";
 
 export interface CompetitionGroup {
+  key: string;
   competition: string;
   season: string;
   matches: MatchSummary[];
@@ -27,6 +15,7 @@ export function groupByCompetition(matches: MatchSummary[]): CompetitionGroup[] 
   for (const match of matches) {
     const key = `${match.competition}|${match.season}`;
     const group = groups.get(key) ?? {
+      key,
       competition: match.competition,
       season: match.season,
       matches: [],
@@ -45,4 +34,10 @@ export function groupByCompetition(matches: MatchSummary[]): CompetitionGroup[] 
 /** "Argentina 3–3 France" (en dash between the scores). */
 export function scoreline(match: MatchSummary): string {
   return `${match.home.team} ${match.home.score}–${match.away.score} ${match.away.team}`;
+}
+
+/** Home team's share of the match xG, between 0 and 1 (0.5 when neither team had a shot). */
+export function homeXgShare(match: MatchSummary): number {
+  const total = match.home.xg + match.away.xg;
+  return total === 0 ? 0.5 : match.home.xg / total;
 }
