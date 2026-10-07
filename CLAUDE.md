@@ -17,7 +17,7 @@ roadmap and decisions: docs/CONTEXT.md. Guiding rule: show the numbers and show 
 - Lint, format, types: `uv run ruff check --fix .`, `uv run ruff format .`, `uv run mypy` (strict);
   all of them as hooks: `uv run pre-commit run --all-files`
 - Data: `uv run pitchlens ingest` (JSON cache in data/raw, first run ~7 min and 1.4 GB; Parquet in
-  data/staged), then `validate` (contracts), `coverage`, `train` and `evaluate` (xG v1 results doc).
+  data/staged), then `validate`, `coverage`, `train`, `evaluate` (xG results doc) and `publish`.
 - Local Postgres (Docker Desktop running): `docker compose up -d --wait`, stop with `docker compose stop`.
   Host port is 5433, not 5432, to avoid clashing with a local Postgres (see .env.example).
 - CI (.github/workflows/ci.yml) runs `uv sync --locked`, ruff check, ruff format --check, mypy and
@@ -27,8 +27,8 @@ roadmap and decisions: docs/CONTEXT.md. Guiding rule: show the numbers and show 
 - uv workspace: the root pyproject.toml is a virtual root with the dev tools and ruff/mypy/pytest
   config; the `pitchlens` package lives in pipeline/src/pitchlens (src layout, uv_build).
 - Tests live in the top-level tests/, fixture data in tests/fixtures/. api/ and web/ are empty until phase 3.
-- Planned flow: pipeline ingests StatsBomb open data -> Parquet and DuckDB -> precomputed tables in
-  Postgres -> read-only FastAPI -> React site. Batch only: no per-request computation or LLM calls.
+- Flow (ADR 0004, static-first): ingest -> staged Parquet -> train -> `publish` writes per-page JSON
+  to data/site -> static React site. No API or database yet; batch only, no per-request LLM calls.
 
 ## Conventions
 - Coordinates: StatsBomb is 120 x 80, origin top-left. Convert at ingest with

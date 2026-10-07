@@ -24,10 +24,10 @@ Non-goals: commercial use, real-time live scores, betting tips, scraping sites t
 ## Architecture
  
 - **Pipeline:** Python package with a CLI (`pitchlens ingest | validate | train | forecast | publish`). Idempotent. Raw JSON cached; staged as Parquet validated with pandera; analysis and training in DuckDB.
-- **Serving:** Postgres (Supabase free tier) holds only the tables the site needs.
-- **API:** FastAPI, read-only, Pydantic v2, SQLAlchemy 2, Alembic. OpenAPI spec generates frontend types.
-- **Frontend:** React, TypeScript, Vite, TanStack Query, D3 (pitch graphics), Observable Plot (standard charts).
-- **Deploy:** static frontend on Cloudflare Pages or Vercel; API as one Docker container on Cloud Run or Fly.io (scale to zero); GitHub Actions for CI, deploy and the scheduled forecast job.
+- **Serving (ADR 0004, static-first):** `pitchlens publish` writes per-page JSON (match index and one document per match) that a static site reads. No API or database in the MVP; only what each page shows is published, with StatsBomb attribution.
+- **Later, if a phase needs per-request data:** FastAPI (read-only, Pydantic v2) and Postgres, with the JSON documents as the contract.
+- **Frontend:** React, TypeScript, Vite, D3 (pitch graphics), Observable Plot (standard charts).
+- **Deploy:** static hosting (chosen in issue #27); GitHub Actions for CI, deploy and scheduled jobs.
 - **AI:** Claude API called only from the pipeline, never from the browser or per page view.
 - **Not using:** Kubernetes, Terraform, Airflow, message queues, a second coding assistant.
 Repo layout:
@@ -77,7 +77,7 @@ All sources, licence links and last-checked dates live in `docs/DATA_SOURCES.md`
  
 ## Current status
  
-- Phase: 2 (xG model v1), closing; phase 1 is done. Next is phase 3 (app MVP).
+- Phase: 3 (App MVP), in progress; phases 0-2 are done.
 - Done in phase 0: repo and uv workspace with the pitchlens package; ruff, mypy and pre-commit;
   coordinate conversion with tests; local Postgres via Docker Compose; CI on every pull request;
   CLAUDE.md; main protected; ADR 0001; docs/DATA_SOURCES.md; first shot map notebook;
@@ -92,7 +92,8 @@ All sources, licence links and last-checked dates live in `docs/DATA_SOURCES.md`
   2024; `pitchlens evaluate` writes docs/xg-v1-results.md (beats the naive baseline, behind
   StatsBomb xG, over-predicts the highest-xG shots); docs/model-card-xg-v1.md; write-up #1 draft in
   docs/writeups/.
-- Next up: plan phase 3 issues (read-only API, match and competition pages, deployment)
+- Phase 3 (issues #25-#32, milestone "Phase 3: App MVP"): static-first architecture (ADR 0004);
+  `pitchlens publish` writes match JSON; next the web app scaffold and first deploy (#27)
 - Open questions: which league for the live layer; how long to keep the live layer running before
   archive mode; the StatsBomb logo on committed results docs and write-ups before they count as
   published
@@ -122,3 +123,5 @@ All sources, licence links and last-checked dates live in `docs/DATA_SOURCES.md`
 - 2026-10: xG v1 is trained on Premier League 2015/16 and tested on World Cup 2022 and Euro 2024,
   split by competition so no match is on both sides; penalties are valued at the training-set
   conversion rate; scikit-learn and matplotlib added as dependencies.
+- 2026-10: The MVP is static-first (ADR 0004): pipeline-exported JSON and a static site, no API or
+  database; FastAPI and Postgres stay available for later phases.

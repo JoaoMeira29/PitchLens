@@ -116,3 +116,20 @@ def test_shot_features_cover_every_non_penalty_match_shot(data_dir: Path) -> Non
     features = staged(data_dir, "shot_features")
     assert set(features.event_id) == expected
     assert features.angle.between(0, math.pi).all() and (features.distance >= 0).all()
+
+
+def test_publish_writes_match_documents_that_reproduce_the_scores(data_dir: Path) -> None:
+    for command in ["train", "publish"]:
+        result = runner.invoke(cli.app, [command, "--data-dir", str(data_dir)])
+        assert result.exit_code == 0, result.output
+    site = data_dir / "site"
+    index = json.loads((site / "matches.json").read_text(encoding="utf-8"))
+    assert {entry["id"] for entry in index} == {match["match_id"] for match in MATCHES}
+    for match in MATCHES:
+        document = json.loads((site / "matches" / f"{match['match_id']}.json").read_text("utf-8"))
+        assert all(shot["period"] < 5 for shot in document["shots"])
+        for side in ["home", "away"]:
+            team = match[f"{side}_team"][f"{side}_team_name"]
+            assert document["stats"][team]["goals"] == match[f"{side}_score"]
+            final = document["timeline"][team][-1]["xg"]
+            assert final == pytest.approx(document["stats"][team]["xg"], abs=1e-3)

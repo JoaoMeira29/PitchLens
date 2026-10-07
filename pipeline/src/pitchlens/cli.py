@@ -9,6 +9,7 @@ from pitchlens.config import COMPETITIONS, TEST_COMPETITIONS
 from pitchlens.contracts import TABLES, validate_staged
 from pitchlens.coverage import coverage, render_markdown
 from pitchlens.features import write_shot_features
+from pitchlens.publish import publish as publish_site
 from pitchlens.sources.statsbomb import fetch_url, ingest_competition
 from pitchlens.staging import stage
 from pitchlens.xg_run import train as train_xg
@@ -92,3 +93,13 @@ def evaluate_command(
     """Write xG v1 test-set metrics and calibration (run after train)."""
     plot = write_results(data_dir / "models", output)
     typer.echo(f"Wrote {output} and {plot}")
+
+
+@app.command()
+def publish(
+    data_dir: Annotated[Path, typer.Option(help="Root folder for downloaded data.")] = DATA_DIR,
+) -> None:
+    """Write the static site data (match index and match documents) to data/site (after train)."""
+    out_dir = data_dir / "site"
+    count = publish_site(data_dir / "staged", data_dir / "models", out_dir)
+    typer.echo(f"Wrote {count} match documents to {out_dir}")
