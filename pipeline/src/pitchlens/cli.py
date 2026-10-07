@@ -5,15 +5,18 @@ from typing import Annotated
 
 import typer
 
-from pitchlens.config import COMPETITIONS
+from pitchlens.config import COMPETITIONS, TEST_COMPETITIONS
 from pitchlens.contracts import TABLES, validate_staged
 from pitchlens.coverage import coverage, render_markdown
 from pitchlens.features import write_shot_features
 from pitchlens.sources.statsbomb import fetch_url, ingest_competition
 from pitchlens.staging import stage
+from pitchlens.xg_run import train as train_xg
+from pitchlens.xg_run import write_results
 
 DATA_DIR = Path("data")
 COVERAGE_FILE = Path("docs") / "coverage.md"
+RESULTS_FILE = Path("docs") / "xg-v1-results.md"
 
 app = typer.Typer(help="PitchLens data pipeline.", no_args_is_help=True)
 
@@ -68,3 +71,24 @@ def coverage_command(
     markdown = render_markdown(coverage(data_dir / "staged"))
     output.write_text(markdown, encoding="utf-8", newline="\n")  # same bytes on Windows and macOS
     typer.echo(f"Wrote {output}")
+
+
+@app.command()
+def train(
+    data_dir: Annotated[Path, typer.Option(help="Root folder for downloaded data.")] = DATA_DIR,
+) -> None:
+    """Fit xG v1 on the training competitions and write predictions under data/models."""
+    metadata = train_xg(data_dir / "staged", data_dir / "models", TEST_COMPETITIONS)
+    typer.echo(f"Trained on {', '.join(metadata['train_competitions'])}")
+    typer.echo(f"Tested on {', '.join(metadata['test_competitions'])}")
+    typer.echo(f"Wrote {data_dir / 'models'}")
+
+
+@app.command("evaluate")
+def evaluate_command(
+    data_dir: Annotated[Path, typer.Option(help="Root folder for downloaded data.")] = DATA_DIR,
+    output: Annotated[Path, typer.Option(help="Markdown file to write.")] = RESULTS_FILE,
+) -> None:
+    """Write xG v1 test-set metrics and calibration (run after train)."""
+    plot = write_results(data_dir / "models", output)
+    typer.echo(f"Wrote {output} and {plot}")
