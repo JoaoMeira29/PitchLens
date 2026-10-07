@@ -27,7 +27,7 @@ Non-goals: commercial use, real-time live scores, betting tips, scraping sites t
 - **Serving (ADR 0004, static-first):** `pitchlens publish` writes per-page JSON (match index and one document per match) that a static site reads. No API or database in the MVP; only what each page shows is published, with StatsBomb attribution.
 - **Later, if a phase needs per-request data:** FastAPI (read-only, Pydantic v2) and Postgres, with the JSON documents as the contract.
 - **Frontend:** React, TypeScript, Vite, D3 (pitch graphics), Observable Plot (standard charts).
-- **Deploy:** static hosting (chosen in issue #27); GitHub Actions for CI, deploy and scheduled jobs.
+- **Deploy:** Vercel (Hobby) for the static site, deployed from GitHub Actions with the Vercel CLI; GitHub Actions for CI, deploy and scheduled jobs.
 - **AI:** Claude API called only from the pipeline, never from the browser or per page view.
 - **Not using:** Kubernetes, Terraform, Airflow, message queues, a second coding assistant.
 Repo layout:
@@ -93,7 +93,9 @@ All sources, licence links and last-checked dates live in `docs/DATA_SOURCES.md`
   StatsBomb xG, over-predicts the highest-xG shots); docs/model-card-xg-v1.md; write-up #1 draft in
   docs/writeups/.
 - Phase 3 (issues #25-#32, milestone "Phase 3: App MVP"): static-first architecture (ADR 0004);
-  `pitchlens publish` writes match JSON; next the web app scaffold and first deploy (#27)
+  `pitchlens publish` writes match JSON; web/ is a React + Vite site deployed to Vercel by
+  .github/workflows/deploy.yml (needs the Vercel secrets and the StatsBomb logo); next the match
+  page charts (#28)
 - Open questions: which league for the live layer; how long to keep the live layer running before
   archive mode; the StatsBomb logo on committed results docs and write-ups before they count as
   published

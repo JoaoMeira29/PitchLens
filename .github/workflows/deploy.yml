@@ -1,0 +1,65 @@
+name: deploy
+# On every merge to main: rebuild the data with the pipeline, build the static site and deploy it
+# to Vercel (ADR 0004). StatsBomb files are cached in the repository's private Actions cache and
+# never published as files; only what the pages show is in the site data.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+      - run: uv sync --locked
+      - uses: actions/cache@v6
+        with:
+          path: data/raw
+          key: statsbomb-raw-${{ hashFiles('pipeline/src/pitchlens/config.py') }}
+      - run: uv run pitchlens ingest
+      - run: uv run pitchlens validate
+      - run: uv run pitchlens train
+      - run: uv run pitchlens publish
+
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: web/package.json
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: web/pnpm-lock.yaml
+      - working-directory: web
+        run: pnpm install --frozen-lockfile
+      - working-directory: web
+        run: pnpm data
+      - working-directory: web
+        run: pnpm build
+
+      # Deploy only when the Vercel secrets are set and the StatsBomb logo is in the site, because
+      # the user agreement requires the logo on published analysis.
+      - name: Deploy to Vercel
+        if: env.VERCEL_TOKEN != '' && hashFiles('web/public/statsbomb-logo.png') != ''
+        working-directory: web
+        run: |
+          pnpm dlx vercel@62.7.0 pull --yes --environment=production --token="$VERCEL_TOKEN"
+          rm -rf .vercel/output
+          mkdir -p .vercel/output
+          cp -r dist .vercel/output/static
+          echo '{"version": 3}' > .vercel/output/config.json
+          pnpm dlx vercel@62.7.0 deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+      - name: Explain a skipped deploy
+        if: env.VERCEL_TOKEN == '' || hashFiles('web/public/statsbomb-logo.png') == ''
+        run: echo "::warning::Not deployed. Needs the VERCEL_* secrets and web/public/statsbomb-logo.png."
