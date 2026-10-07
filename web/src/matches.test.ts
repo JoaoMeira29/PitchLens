@@ -7,7 +7,10 @@ function match(id: number, competition: string, season: string, date: string): M
     date,
     competition,
     season,
+    competition_id: 1,
+    season_id: 2,
     stage: null,
+    match_week: null,
     home: { team: `Home ${id}`, score: 1, xg: 0.5 },
     away: { team: `Away ${id}`, score: 0, xg: 0.2 },
   };

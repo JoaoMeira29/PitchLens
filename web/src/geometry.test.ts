@@ -100,7 +100,10 @@ describe("homeXgShare", () => {
     date: "2000-01-01",
     competition: "Cup",
     season: "2000",
+    competition_id: 1,
+    season_id: 2,
     stage: null,
+    match_week: null,
     home: { team: "A", score: 0, xg: home },
     away: { team: "B", score: 0, xg: away },
   });

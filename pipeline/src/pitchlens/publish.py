@@ -91,7 +91,10 @@ def build_match_documents(
             "date": match["match_date"],
             "competition": match["competition"],
             "season": match["season"],
+            "competition_id": int(match["competition_id"]),
+            "season_id": int(match["season_id"]),
             "stage": match["competition_stage"],
+            "match_week": None if pd.isna(match["match_week"]) else int(match["match_week"]),
             **{
                 side: {
                     "team": team,

@@ -19,6 +19,9 @@ def tables() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
             "competition": ["Cup"],
             "season": ["2000"],
             "competition_stage": ["Final"],
+            "competition_id": [43],
+            "season_id": [106],
+            "match_week": [7],
             "home_team": ["Home"],
             "away_team": ["Away"],
             "home_score": [2],
@@ -111,3 +114,9 @@ def test_index_carries_each_teams_xg_from_the_document() -> None:
         for side in ["home", "away"]:
             team = entry[side]["team"]
             assert entry[side]["xg"] == document["stats"][team]["xg"]
+
+
+def test_index_carries_competition_ids_and_match_week() -> None:
+    index, _ = build_match_documents(*tables(), penalty_xg=PENALTY_XG)
+    entry = index[0]
+    assert (entry["competition_id"], entry["season_id"], entry["match_week"]) == (43, 106, 7)
