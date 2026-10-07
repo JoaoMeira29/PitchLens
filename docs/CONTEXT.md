@@ -93,9 +93,9 @@ All sources, licence links and last-checked dates live in `docs/DATA_SOURCES.md`
   StatsBomb xG, over-predicts the highest-xG shots); docs/model-card-xg-v1.md; write-up #1 draft in
   docs/writeups/.
 - Phase 3 (issues #25-#32, milestone "Phase 3: App MVP"): static-first architecture (ADR 0004);
-  `pitchlens publish` writes match JSON; web/ is a React + Vite site deployed to Vercel by
-  .github/workflows/deploy.yml (needs the Vercel secrets and the StatsBomb logo); next the match
-  page charts (#28)
+  `pitchlens publish` writes match JSON; web/ is a React + Vite site live at
+  https://pitchlens-topaz.vercel.app, deployed by .github/workflows/deploy.yml on every merge;
+  match pages with shot map, cumulative xG timeline and stats table (#28); next the pass network (#29)
 - Open questions: which league for the live layer; how long to keep the live layer running before
   archive mode; the StatsBomb logo on committed results docs and write-ups before they count as
   published
@@ -125,5 +125,7 @@ All sources, licence links and last-checked dates live in `docs/DATA_SOURCES.md`
 - 2026-10: xG v1 is trained on Premier League 2015/16 and tested on World Cup 2022 and Euro 2024,
   split by competition so no match is on both sides; penalties are valued at the training-set
   conversion rate; scikit-learn and matplotlib added as dependencies.
+- 2026-10: Site design "the pitch is the page": mown-stripe turf, Big Shoulders Display and
+  Atkinson Hyperlegible, amber home and sky-blue away; one load animation, reduced motion respected.
 - 2026-10: The MVP is static-first (ADR 0004): pipeline-exported JSON and a static site, no API or
   database; FastAPI and Postgres stay available for later phases.

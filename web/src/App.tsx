@@ -1,59 +1,59 @@
-import { useEffect, useState } from "react";
-import { groupByCompetition, type MatchSummary, scoreline } from "./matches";
-
-type Load = { state: "loading" } | { state: "error" } | { state: "ready"; matches: MatchSummary[] };
+import { useEffect, useRef } from "react";
+import { Link } from "./components/Link";
+import { HomePage } from "./pages/HomePage";
+import { MatchPage } from "./pages/MatchPage";
+import { useRoute } from "./router";
 
 export function App() {
-  const [load, setLoad] = useState<Load>({ state: "loading" });
+  const route = useRoute();
+  const main = useRef<HTMLElement>(null);
 
+  // After client-side navigation, move focus to the new page so screen readers announce it.
+  const first = useRef(true);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: runs on every route change
   useEffect(() => {
-    fetch("/data/matches.json")
-      .then((response) => {
-        if (!response.ok) throw new Error(String(response.status));
-        return response.json() as Promise<MatchSummary[]>;
-      })
-      .then((matches) => setLoad({ state: "ready", matches }))
-      .catch(() => setLoad({ state: "error" }));
-  }, []);
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    main.current?.focus();
+  }, [route]);
 
   return (
     <>
-      <header>
-        <h1>PitchLens</h1>
-        <p>Explainable football analytics: show the numbers and show the method.</p>
+      <a className="skip" href="#main">
+        Skip to content
+      </a>
+      <header className="site-header">
+        <Link className="brand" href="/">
+          PitchLens
+        </Link>
+        <span className="tagline">Show the numbers, show the method</span>
       </header>
-      <main>
-        {load.state === "loading" && <p>Loading matches…</p>}
-        {load.state === "error" && (
-          <p>Match data is not available. Locally, run the pipeline and `pnpm data` first.</p>
+      <main id="main" ref={main} tabIndex={-1}>
+        {route.page === "home" && <HomePage />}
+        {route.page === "match" && <MatchPage key={route.id} id={route.id} />}
+        {route.page === "not-found" && (
+          <p className="status">
+            There's no page here. <Link href="/">Go to the match list</Link>.
+          </p>
         )}
-        {load.state === "ready" &&
-          groupByCompetition(load.matches).map((group) => (
-            <section key={`${group.competition}|${group.season}`}>
-              <h2>
-                {group.competition} {group.season}
-              </h2>
-              <ul>
-                {group.matches.map((match) => (
-                  <li key={match.id}>
-                    <time dateTime={match.date}>{match.date}</time> {scoreline(match)}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
       </main>
-      <footer>
+      <footer className="site-footer">
         <p>
           Data: StatsBomb open data.{" "}
           <img
             src="/statsbomb-logo.png"
-            alt="StatsBomb"
-            height={24}
+            alt="Hudl StatsBomb"
+            height={22}
             onError={(event) => {
               event.currentTarget.hidden = true;
             }}
           />
+        </p>
+        <p>
+          Our own xG model, built in the open.{" "}
+          <a href="https://github.com/JoaoMeira29/PitchLens">Code and method on GitHub</a>.
         </p>
       </footer>
     </>

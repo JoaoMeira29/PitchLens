@@ -58,7 +58,8 @@ jobs:
           rm -rf .vercel/output
           mkdir -p .vercel/output
           cp -r dist .vercel/output/static
-          echo '{"version": 3}' > .vercel/output/config.json
+          # Serve real files first, then send any other path (e.g. /matches/123) to the app.
+          echo '{"version": 3, "routes": [{"handle": "filesystem"}, {"src": "/(.*)", "dest": "/index.html"}]}' > .vercel/output/config.json
           pnpm dlx vercel@62.7.0 deploy --prebuilt --prod --token="$VERCEL_TOKEN"
       - name: Explain a skipped deploy
         if: env.VERCEL_TOKEN == '' || hashFiles('web/public/statsbomb-logo.png') == ''

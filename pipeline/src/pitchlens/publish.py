@@ -82,14 +82,24 @@ def build_match_documents(
             published.append(_shot(row, xg))
         match_own_goals = own_goals[own_goals.match_id == match["match_id"]]
         sides: dict[str, str] = {"home": match["home_team"], "away": match["away_team"]}
+        stats = {
+            team: _stats(published, int((match_own_goals.team == team).sum()), team)
+            for team in sides.values()
+        }
         summary = {
             "id": int(match["match_id"]),
             "date": match["match_date"],
             "competition": match["competition"],
             "season": match["season"],
             "stage": match["competition_stage"],
-            "home": {"team": match["home_team"], "score": int(match["home_score"])},
-            "away": {"team": match["away_team"], "score": int(match["away_score"])},
+            **{
+                side: {
+                    "team": team,
+                    "score": int(match[f"{side}_score"]),
+                    "xg": stats[team]["xg"],
+                }
+                for side, team in sides.items()
+            },
         }
         index.append(summary)
         documents[int(match["match_id"])] = {
@@ -100,10 +110,7 @@ def build_match_documents(
                 for goal in match_own_goals.itertuples(index=False)
             ],
             "timeline": {team: _timeline(published, team) for team in sides.values()},
-            "stats": {
-                team: _stats(published, int((match_own_goals.team == team).sum()), team)
-                for team in sides.values()
-            },
+            "stats": stats,
             "attribution": ATTRIBUTION,
         }
     return index, documents

@@ -1,0 +1,699 @@
+/* PitchLens: "the pitch is the page". Mown-stripe turf, chalk lines, floodlight amber for the
+   home team, sky blue for the away team. One orchestrated moment: shots drop onto the pitch in
+   match order while the xG lines draw. Everything else stays quiet. */
+
+:root {
+  --turf-dark: #2e6b3f;
+  --turf-light: #367a49;
+  --chalk: #ffffff;
+  --paper: #eef2ea;
+  --ink: #1b2b21;
+  --ink-soft: #4a5d50;
+  --rule: #c9d4c9;
+  --home: #f2b33d;
+  --home-ink: #8a5a00;
+  --away: #4fb3e3;
+  --away-ink: #0f5f85;
+  --display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+  --text: "Atkinson Hyperlegible", system-ui, sans-serif;
+  --measure: 68ch;
+  --page: min(1120px, 100% - 2.5rem);
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 1.0625rem / 1.6 var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--away-ink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+main:focus {
+  outline: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.5rem 0.75rem;
+  z-index: 2;
+}
+
+.skip:focus {
+  top: 1rem;
+}
+
+/* Header and footer */
+
+.site-header,
+.site-footer,
+main {
+  width: var(--page);
+  margin-inline: auto;
+}
+
+.site-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding-block: 1.25rem 0.5rem;
+}
+
+.brand {
+  font: 800 1.9rem / 1 var(--display);
+  letter-spacing: 0.01em;
+  text-decoration: none;
+}
+
+.tagline {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+.site-footer {
+  margin-top: 4rem;
+  padding-block: 1.5rem 2.5rem;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+.site-footer p {
+  margin: 0.4rem 0;
+}
+
+.site-footer img {
+  vertical-align: middle;
+  margin-left: 0.35rem;
+}
+
+.status {
+  padding-block: 4rem;
+  font-size: 1.15rem;
+}
+
+/* Home: hero */
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: center;
+  padding-block: clamp(1.5rem, 5vw, 3.5rem);
+}
+
+.hero h1 {
+  font: 800 clamp(2.6rem, 6vw, 4.6rem) / 0.95 var(--display);
+  margin: 0 0 1rem;
+  max-width: 11ch;
+}
+
+.hero-copy p {
+  margin: 0;
+  max-width: 42ch;
+  color: var(--ink-soft);
+}
+
+.hero-match {
+  display: grid;
+  gap: 0.75rem;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.hero-score {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: var(--display);
+}
+
+.hero-team {
+  font-weight: 700;
+  font-size: clamp(1.2rem, 2.6vw, 1.7rem);
+}
+
+.hero-digits {
+  font-weight: 900;
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-caption {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+.hero-match:hover .hero-caption {
+  text-decoration: underline;
+}
+
+/* Home: competition tabs and match list */
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  border-bottom: 2px solid var(--ink);
+  margin-top: 1rem;
+}
+
+.tabs [role="tab"] {
+  font: 700 1.2rem / 1 var(--display);
+  letter-spacing: 0.01em;
+  color: var(--ink-soft);
+  background: none;
+  border: 0;
+  padding: 0.8rem 1rem 0.7rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.tabs [role="tab"] .season {
+  font-weight: 500;
+}
+
+.tabs [role="tab"][aria-selected="true"] {
+  color: var(--paper);
+  background: var(--turf-dark);
+  border-radius: 6px 6px 0 0;
+}
+
+.tabs [role="tab"]:hover:not([aria-selected="true"]) {
+  color: var(--ink);
+}
+
+.list-note {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  max-width: var(--measure);
+}
+
+.match-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.match-row {
+  display: grid;
+  grid-template-columns: 9.5rem minmax(0, 1fr) 4.5rem minmax(0, 1fr) minmax(5rem, 9rem);
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+  background: linear-gradient(90deg, var(--turf-light) 0 0) no-repeat left / 0 100%;
+  transition:
+    background-size 220ms ease-out,
+    color 220ms ease-out;
+}
+
+.match-row:hover,
+.match-row:focus-visible {
+  background-size: 100% 100%;
+  color: var(--chalk);
+}
+
+.match-row time {
+  font-size: 0.9rem;
+  color: inherit;
+  opacity: 0.8;
+}
+
+.row-home {
+  text-align: right;
+}
+
+.row-score {
+  font: 800 1.45rem / 1 var(--display);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.row-bar {
+  display: flex;
+  height: 0.55rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--rule);
+}
+
+.bar-home {
+  background: var(--home);
+}
+
+.bar-away {
+  background: var(--away);
+}
+
+.panel-fade {
+  animation: fade-in 260ms ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* Pitch and shots */
+
+.pitch {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  background: var(--turf-dark);
+}
+
+.turf rect:nth-child(odd) {
+  fill: var(--turf-dark);
+}
+
+.turf rect:nth-child(even) {
+  fill: var(--turf-light);
+}
+
+.lines rect,
+.lines line,
+.lines ellipse {
+  fill: none;
+  stroke: var(--chalk);
+  stroke-width: 0.3;
+  opacity: 0.85;
+}
+
+.lines .spot {
+  fill: var(--chalk);
+  opacity: 0.85;
+}
+
+.lines .goal {
+  fill: rgb(255 255 255 / 0.25);
+}
+
+.shot {
+  stroke-width: 0.35;
+  fill-opacity: 0.18;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    transform 150ms ease-out,
+    fill-opacity 150ms ease-out;
+}
+
+.shot.home {
+  fill: var(--home);
+  stroke: var(--home);
+}
+
+.shot.away {
+  fill: var(--away);
+  stroke: var(--away);
+}
+
+.shot.goal {
+  fill-opacity: 1;
+  stroke: var(--chalk);
+}
+
+.shot[role="button"] {
+  cursor: pointer;
+}
+
+.shot.active,
+.shot:focus-visible {
+  transform: scale(1.35);
+  fill-opacity: 0.9;
+  outline: none;
+  stroke: var(--chalk);
+  stroke-width: 0.5;
+}
+
+.shots-animate .shot {
+  animation: drop 520ms cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
+  animation-delay: calc(var(--order) * 35ms + 150ms);
+}
+
+@keyframes drop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.2);
+  }
+}
+
+/* Match page */
+
+.scoreboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: end;
+  gap: clamp(0.75rem, 3vw, 2.5rem);
+  padding-block: clamp(1.5rem, 5vw, 3rem) 1.5rem;
+}
+
+.scoreboard .team {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.scoreboard .home {
+  text-align: right;
+}
+
+.scoreboard .name {
+  font: 800 clamp(1.5rem, 4vw, 2.8rem) / 1 var(--display);
+}
+
+.scoreboard .xg {
+  font-size: 1rem;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.scoreboard .name {
+  text-decoration-skip-ink: none;
+  text-underline-offset: 0.18em;
+}
+
+.scoreboard .home .name {
+  text-decoration: underline 0.18em var(--home);
+}
+
+.scoreboard .away .name {
+  text-decoration: underline 0.18em var(--away);
+}
+
+.score {
+  font: 900 clamp(4rem, 15vw, 9.5rem) / 0.82 var(--display);
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  gap: 0.15em;
+}
+
+.score .dash {
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.context {
+  grid-column: 1 / -1;
+  text-align: center;
+  margin: 0.5rem 0 0;
+  color: var(--ink-soft);
+}
+
+.panel {
+  margin-top: 2.5rem;
+}
+
+.panel h2 {
+  font: 800 clamp(1.6rem, 3.5vw, 2.2rem) / 1.05 var(--display);
+  margin: 0 0 0.5rem;
+}
+
+.explain {
+  max-width: var(--measure);
+  margin: 0 0 1rem;
+  color: var(--ink-soft);
+}
+
+.explain.small {
+  font-size: 0.95rem;
+  margin-top: 1rem;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.key::before {
+  content: "";
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
+  border-radius: 50%;
+  margin-right: 0.4em;
+  vertical-align: -0.05em;
+  border: 2px solid currentColor;
+}
+
+.key.home::before {
+  border-color: var(--home);
+  background: rgb(242 179 61 / 0.25);
+}
+
+.key.away::before {
+  border-color: var(--away);
+  background: rgb(79 179 227 / 0.25);
+}
+
+.key.goal::before {
+  border-color: var(--ink-soft);
+  background: var(--ink-soft);
+}
+
+.readout {
+  min-height: 1.6em;
+  margin: 0.6rem 0 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* xG timeline */
+
+.timeline {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.timeline .grid line {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.timeline .grid .half {
+  stroke-dasharray: 3 4;
+}
+
+.timeline text {
+  fill: var(--ink-soft);
+  font: 12px var(--text);
+}
+
+.timeline .step {
+  fill: none;
+  stroke-width: 3;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  animation: draw 1600ms ease-out 200ms both;
+}
+
+.timeline .goal-mark {
+  fill: var(--paper);
+  stroke-width: 3;
+}
+
+.timeline .home .step,
+.timeline .home .goal-mark {
+  stroke: var(--home);
+}
+
+.timeline .away .step,
+.timeline .away .goal-mark {
+  stroke: var(--away);
+}
+
+.timeline .home .end-label {
+  fill: var(--home-ink);
+  font-weight: 700;
+}
+
+.timeline .away .end-label {
+  fill: var(--away-ink);
+  font-weight: 700;
+}
+
+.timeline .cursor line {
+  stroke: var(--ink);
+  stroke-width: 1;
+}
+
+.timeline .cursor circle {
+  fill: var(--ink);
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Tables */
+
+.shot-list {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.shot-list caption {
+  text-align: left;
+  color: var(--ink-soft);
+  padding-bottom: 0.5rem;
+}
+
+.shot-list th,
+.shot-list td {
+  text-align: left;
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.shot-list tr.goal td {
+  font-weight: 700;
+}
+
+.stats {
+  width: min(100%, 34rem);
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.stats th,
+.stats td {
+  padding: 0.55rem 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.stats thead th {
+  font: 700 1.2rem / 1.1 var(--display);
+}
+
+.stats td {
+  font: 800 1.35rem / 1 var(--display);
+  width: 30%;
+}
+
+.stats td:first-child,
+.stats thead th:first-child {
+  text-align: right;
+}
+
+.stats tbody th {
+  font-weight: 400;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+.all-shots {
+  margin-top: 1.5rem;
+}
+
+.all-shots summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+/* Small screens */
+
+.match .pitch {
+  max-width: 60rem;
+  margin-inline: auto;
+}
+
+@media (max-width: 720px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-pitch {
+    max-width: 22rem;
+    margin-inline: auto;
+  }
+
+  .match-row {
+    grid-template-columns: minmax(0, 1fr) 3.5rem minmax(0, 1fr);
+    row-gap: 0.35rem;
+  }
+
+  .match-row time {
+    grid-column: 1 / -1;
+  }
+
+  .row-bar {
+    grid-column: 1 / -1;
+  }
+
+  .scoreboard .team {
+    align-self: center;
+  }
+
+  .match .pitch {
+    max-width: 26rem;
+    margin-inline: auto;
+    display: block;
+  }
+
+  .shot-list {
+    font-size: 0.85rem;
+  }
+}
+
+/* Motion is decoration here, so it goes away when people ask for less of it. */
+@media (prefers-reduced-motion: reduce) {
+  .shots-animate .shot,
+  .timeline .step,
+  .panel-fade {
+    animation: none;
+  }
+
+  .match-row,
+  .shot {
+    transition: none;
+  }
+}

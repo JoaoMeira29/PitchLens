@@ -4,7 +4,7 @@ PitchLens is a planned, public football analytics project by **João Meira**. Th
 
 The guiding rule is: **show the numbers and show the method**. Conventional, tested code produces every statistic and probability. AI may describe computed results, but it must never invent them.
 
-> **Project status:** planning and documentation only. This repository does not yet contain the application, pipeline, or runnable development commands. The implementation layout and stack below are the agreed direction from the project plan, not existing code.
+> **Project status:** in progress. The data pipeline, xG model v1 and a first version of the public site are live at https://pitchlens-topaz.vercel.app; see [docs/CONTEXT.md](docs/CONTEXT.md) for the current phase.
 
 ## Project Documents
 
@@ -97,7 +97,15 @@ Planned stack: Python 3.12+, `uv`, pandas, Parquet, DuckDB, pandera, scikit-lear
 
 ## Development Setup
 
-There are no application setup commands yet because the implementation has not been scaffolded. The first implementation task is the Week 1 foundation work above. Once the project files exist, add the verified install, test, and run commands here rather than documenting commands that do not work yet.
+Live site: **https://pitchlens-topaz.vercel.app**
+
+Setup and commands for Windows and macOS are in [CLAUDE.md](CLAUDE.md). In short:
+
+1. Install [uv](https://docs.astral.sh/uv/) and Node 24, then run `uv sync`, `corepack enable` and `pnpm install` in `web/`.
+2. Build the data: `uv run pitchlens ingest`, `uv run pitchlens train`, `uv run pitchlens publish`.
+3. Run the site: in `web/`, `pnpm data` and then `pnpm dev`.
+
+Every merge to `main` rebuilds the data and deploys the site to Vercel (`.github/workflows/deploy.yml`).
 
 ## Definition of Done
 
