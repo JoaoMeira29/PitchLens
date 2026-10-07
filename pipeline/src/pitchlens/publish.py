@@ -56,6 +56,56 @@ def _stats(shots: list[dict[str, Any]], own_goals_for: int, team: str) -> dict[s
     }
 
 
+def _root(parent: dict[str, str], team: str) -> str:
+    """Union-find root: the team that represents the group `team` is in."""
+    while parent.setdefault(team, team) != team:
+        team = parent[team]
+    return team
+
+
+def assign_groups(matches: pd.DataFrame) -> dict[int, str]:
+    """Group label of every group-stage match, found from who played whom.
+
+    Teams linked by group matches form one group. A group keeps the letter the source gives its
+    matches (StatsBomb labels most World Cup 2022 matches but no Euro 2024 match); groups without
+    a letter are numbered by the date of their first match instead of guessing letters.
+    """
+    labels: dict[int, str] = {}
+    group_matches = matches[matches.competition_stage == "Group Stage"]
+    for _, season in group_matches.groupby(["competition_id", "season_id"]):
+        parent: dict[str, str] = {}
+        for row in season.itertuples(index=False):
+            parent[_root(parent, str(row.home_team))] = _root(parent, str(row.away_team))
+        components: dict[str, list[Any]] = {}
+        for row in season.sort_values(["match_date", "match_id"]).itertuples(index=False):
+            components.setdefault(_root(parent, str(row.home_team)), []).append(row)
+        letters = {
+            root: {g for r in rows if isinstance(g := getattr(r, "home_group", None), str)}
+            for root, rows in components.items()
+        }
+        numbered = 0
+        for root, rows in components.items():  # in order of each group's first match
+            known = letters[root]
+            if len(known) == 1 and all(letters[r] != known for r in letters if r != root):
+                label = f"Group {next(iter(known))}"
+            else:
+                numbered += 1
+                label = f"Group {numbered}"
+            for row in rows:
+                labels[int(row.match_id)] = label
+    return labels
+
+
+def _winner(summary: dict[str, Any], shootout: dict[str, int] | None) -> str | None:
+    """The team that won the match, on the score or else on the shootout; None for a draw."""
+    home, away = summary["home"], summary["away"]
+    if home["score"] != away["score"]:
+        return str(home["team"] if home["score"] > away["score"] else away["team"])
+    if shootout and shootout["home"] != shootout["away"]:
+        return str(home["team"] if shootout["home"] > shootout["away"] else away["team"])
+    return None
+
+
 def build_match_documents(
     matches: pd.DataFrame,
     shots: pd.DataFrame,
@@ -65,6 +115,8 @@ def build_match_documents(
 ) -> tuple[list[dict[str, Any]], dict[int, Document]]:
     """Return the match index and a document per match id."""
     xg_by_shot = dict(zip(predictions.event_id, predictions.xg, strict=True))
+    groups = assign_groups(matches)
+    shootouts = shots[shots.period == 5].groupby(["match_id", "team"]).is_goal.sum()
     match_shots = shots[shots.period < 5].sort_values(["match_id", "period", "minute", "second"])
     index: list[dict[str, Any]] = []
     documents: dict[int, Document] = {}
@@ -95,6 +147,7 @@ def build_match_documents(
             "season_id": int(match["season_id"]),
             "stage": match["competition_stage"],
             "match_week": None if pd.isna(match["match_week"]) else int(match["match_week"]),
+            "group": groups.get(int(match["match_id"])),
             **{
                 side: {
                     "team": team,
@@ -104,6 +157,14 @@ def build_match_documents(
                 for side, team in sides.items()
             },
         }
+        shootout = None
+        if any((match["match_id"], team) in shootouts.index for team in sides.values()):
+            shootout = {
+                side: int(shootouts.get((match["match_id"], team), 0))
+                for side, team in sides.items()
+            }
+        summary["shootout"] = shootout
+        summary["winner"] = _winner(summary, shootout)
         index.append(summary)
         documents[int(match["match_id"])] = {
             **summary,

@@ -6,7 +6,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pitchlens.publish import ON_TARGET, Document, build_match_documents, write_site
+from pitchlens.publish import ON_TARGET, Document, assign_groups, build_match_documents, write_site
 
 PENALTY_XG = 0.8
 
@@ -120,3 +120,60 @@ def test_index_carries_competition_ids_and_match_week() -> None:
     index, _ = build_match_documents(*tables(), penalty_xg=PENALTY_XG)
     entry = index[0]
     assert (entry["competition_id"], entry["season_id"], entry["match_week"]) == (43, 106, 7)
+
+
+def group_matches() -> pd.DataFrame:
+    rows = [
+        # Two groups of three teams; group "B" has one match without a letter in the source data.
+        (11, "2000-01-01", "A1", "A2", "A"),
+        (12, "2000-01-02", "A2", "A3", "A"),
+        (13, "2000-01-03", "B1", "B2", "B"),
+        (14, "2000-01-04", "B2", "B3", None),
+    ]
+    return pd.DataFrame(
+        {
+            "match_id": [r[0] for r in rows],
+            "match_date": [r[1] for r in rows],
+            "home_team": [r[2] for r in rows],
+            "away_team": [r[3] for r in rows],
+            "home_group": [r[4] for r in rows],
+            "competition_id": [1] * len(rows),
+            "season_id": [2] * len(rows),
+            "competition_stage": ["Group Stage"] * len(rows),
+        }
+    )
+
+
+def test_groups_come_from_who_played_whom_and_keep_known_letters() -> None:
+    groups = assign_groups(group_matches())
+    assert groups == {11: "Group A", 12: "Group A", 13: "Group B", 14: "Group B"}
+
+
+def test_groups_without_letters_are_numbered_by_first_match() -> None:
+    matches = group_matches().assign(home_group=None)
+    groups = assign_groups(matches)
+    assert groups == {11: "Group 1", 12: "Group 1", 13: "Group 2", 14: "Group 2"}
+
+
+def test_level_knockout_match_is_decided_by_the_shootout() -> None:
+    matches, shots, predictions, own_goals = tables()
+    matches = matches.assign(home_score=1, away_score=1)
+    shots = pd.concat(
+        [
+            shots[shots.event_id != "s3"],  # leave the match level at 1-1 (s1 and the own goal)
+            shots[shots.event_id == "s5"].assign(event_id="s6", team="Away", is_goal=False),
+        ]
+    )
+    index, documents = build_match_documents(matches, shots, predictions, own_goals, PENALTY_XG)
+    assert index[0]["shootout"] == {"home": 1, "away": 0}
+    assert index[0]["winner"] == "Home"
+    assert all(shot["period"] < 5 for shot in documents[1]["shots"])
+
+
+def test_winner_is_none_for_a_draw_without_shootout() -> None:
+    matches, shots, predictions, own_goals = tables()
+    matches = matches.assign(home_score=1, away_score=1)
+    shots = shots[~shots.event_id.isin(["s3", "s5"])]
+    index, _ = build_match_documents(matches, shots, predictions, own_goals, PENALTY_XG)
+    assert index[0]["shootout"] is None
+    assert index[0]["winner"] is None

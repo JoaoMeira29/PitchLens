@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { flushSync } from "react-dom";
 
-export type View = "teams" | "rounds";
+export type View = "teams" | "rounds" | "table";
 
 export type Route =
   | { page: "home" }
@@ -21,7 +21,7 @@ export function parseRoute(pathname: string): Route {
     const ref = { competitionId: Number(parts[1]), seasonId: Number(parts[2]) };
     const [view, item] = [parts[3], parts[4]];
     if (parts.length === 3) return { page: "competition", ...ref, view: "teams" };
-    if (parts.length === 4 && (view === "teams" || view === "rounds")) {
+    if (parts.length === 4 && (view === "teams" || view === "rounds" || view === "table")) {
       return { page: "competition", ...ref, view };
     }
     if (parts.length === 5 && view === "teams") {
@@ -35,7 +35,7 @@ export function parseRoute(pathname: string): Route {
 export const paths = {
   home: () => "/",
   competition: (competitionId: number, seasonId: number, view: View = "teams") =>
-    `/competitions/${competitionId}/${seasonId}${view === "rounds" ? "/rounds" : ""}`,
+    `/competitions/${competitionId}/${seasonId}${view === "teams" ? "" : `/${view}`}`,
   team: (competitionId: number, seasonId: number, team: string) =>
     `/competitions/${competitionId}/${seasonId}/teams/${encodeURIComponent(team)}`,
   round: (competitionId: number, seasonId: number, round: string) =>

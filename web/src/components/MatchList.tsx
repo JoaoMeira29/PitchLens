@@ -4,6 +4,7 @@ import { homeXgShare } from "../matches";
 import { paths } from "../router";
 import { prefetch } from "../useJson";
 import { Link } from "./Link";
+import { TeamMark } from "./TeamMark";
 
 function MatchRow({ match, highlight }: { match: MatchSummary; highlight?: string }) {
   const share = homeXgShare(match);
@@ -13,14 +14,20 @@ function MatchRow({ match, highlight }: { match: MatchSummary; highlight?: strin
     <li>
       <Link className="match-row" href={paths.match(match.id)} onPointerEnter={warm} onFocus={warm}>
         <time dateTime={match.date}>{formatDate(match.date)}</time>
-        <span className={`row-home ${side(match.home.team) ?? ""}`}>{match.home.team}</span>
+        <span className={`row-home ${side(match.home.team) ?? ""}`}>
+          {match.home.team}
+          <TeamMark team={match.home.team} size={22} />
+        </span>
         <span
           className="row-score"
           style={{ viewTransitionName: `score-${match.id}` } as CSSProperties}
         >
           {match.home.score}–{match.away.score}
         </span>
-        <span className={`row-away ${side(match.away.team) ?? ""}`}>{match.away.team}</span>
+        <span className={`row-away ${side(match.away.team) ?? ""}`}>
+          <TeamMark team={match.away.team} size={22} />
+          {match.away.team}
+        </span>
         <span
           className="row-bar"
           role="img"
