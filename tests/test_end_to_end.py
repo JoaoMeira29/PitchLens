@@ -4,6 +4,7 @@ Every expected value is computed from the fixture JSON files, never typed in by 
 """
 
 import json
+import math
 import shutil
 from pathlib import Path
 from typing import Any
@@ -104,3 +105,14 @@ def test_only_out_of_pitch_locations_are_clamped(data_dir: Path) -> None:
 def test_staged_fixtures_pass_the_contracts(data_dir: Path) -> None:
     result = runner.invoke(cli.app, ["validate", "--data-dir", str(data_dir)])
     assert result.exit_code == 0, result.output
+
+
+def test_shot_features_cover_every_non_penalty_match_shot(data_dir: Path) -> None:
+    expected = {
+        shot["id"]
+        for shot in SHOTS
+        if shot["period"] < 5 and shot["shot"]["type"]["name"] != "Penalty"
+    }
+    features = staged(data_dir, "shot_features")
+    assert set(features.event_id) == expected
+    assert features.angle.between(0, math.pi).all() and (features.distance >= 0).all()
