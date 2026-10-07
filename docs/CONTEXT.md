@@ -77,15 +77,19 @@ All sources, licence links and last-checked dates live in `docs/DATA_SOURCES.md`
  
 ## Current status
  
-- Phase: 1 (Data foundations), starting. Phase 0 is done.
+- Phase: 1 (Data foundations), closing; next is phase 2 (xG model v1).
 - Done in phase 0: repo and uv workspace with the pitchlens package; ruff, mypy and pre-commit;
   coordinate conversion with tests; local Postgres via Docker Compose; CI on every pull request;
   CLAUDE.md; main protected; ADR 0001; docs/DATA_SOURCES.md; first shot map notebook;
   learning notes in docs/notes/event-data.md
-- Next up: phase 1 issues #3-#7 (milestone "Phase 1: Data foundations", PitchLens project board):
-  ingest 2-3 competitions to Parquet, pandera contracts, test fixtures, pipeline CLI, end-to-end test
+- Done in phase 1 (issues #3-#7): `pitchlens ingest` downloads and caches World Cup 2022, Euro 2024
+  and Premier League 2015/16 and stages them as Parquet with internal coordinates (ADR 0002 for
+  clamping); `pitchlens validate` checks pandera contracts; `pitchlens coverage` writes
+  docs/coverage.md; CI runs the whole pipeline end to end on synthetic fixtures. Real data cannot be
+  stored, so it is validated locally rather than in CI.
+- Next up: plan phase 2 issues (shot features, logistic regression xG, evaluation, model card)
 - Open questions: which league for the live layer; how long to keep the live layer running before
-  archive mode; how tests get fixture data without committing StatsBomb files (issue #5)
+  archive mode
 
 ## Decisions log
  
@@ -106,3 +110,5 @@ All sources, licence links and last-checked dates live in `docs/DATA_SOURCES.md`
   the plan's "a World Cup, a Euros and one full league season": the tournaments are recent and have
   360 data; the league is one of the few complete seasons in the open data and gives xG volume.
 - 2026-10: Event locations up to 1 StatsBomb unit outside the pitch are clamped and flagged (ADR 0002).
+- 2026-10: Test fixtures are synthetic files in the StatsBomb format (tests/fixtures/), because real
+  StatsBomb data cannot be committed; expected values in tests are derived from the fixture files.

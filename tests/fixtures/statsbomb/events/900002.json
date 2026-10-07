@@ -1,0 +1,479 @@
+[
+ {
+  "id": "synthetic-900002-1",
+  "index": 1,
+  "period": 1,
+  "timestamp": "00:00:00.000",
+  "minute": 0,
+  "second": 0,
+  "type": {
+   "id": 0,
+   "name": "Starting XI"
+  },
+  "possession": 1,
+  "possession_team": {
+   "id": 3,
+   "name": "Synthetic City"
+  },
+  "play_pattern": {
+   "id": 1,
+   "name": "Regular Play"
+  },
+  "team": {
+   "id": 3,
+   "name": "Synthetic City"
+  }
+ },
+ {
+  "id": "synthetic-900002-2",
+  "index": 2,
+  "period": 1,
+  "timestamp": "00:00:00.000",
+  "minute": 0,
+  "second": 0,
+  "type": {
+   "id": 0,
+   "name": "Starting XI"
+  },
+  "possession": 2,
+  "possession_team": {
+   "id": 4,
+   "name": "Synthetic Athletic"
+  },
+  "play_pattern": {
+   "id": 1,
+   "name": "Regular Play"
+  },
+  "team": {
+   "id": 4,
+   "name": "Synthetic Athletic"
+  }
+ },
+ {
+  "id": "synthetic-900002-3",
+  "index": 3,
+  "period": 1,
+  "timestamp": "00:30:00.000",
+  "minute": 30,
+  "second": 0,
+  "type": {
+   "id": 0,
+   "name": "Shot"
+  },
+  "possession": 3,
+  "possession_team": {
+   "id": 3,
+   "name": "Synthetic City"
+  },
+  "play_pattern": {
+   "id": 1,
+   "name": "Regular Play"
+  },
+  "team": {
+   "id": 3,
+   "name": "Synthetic City"
+  },
+  "player": {
+   "id": 31,
+   "name": "City Nine"
+  },
+  "position": {
+   "id": 23,
+   "name": "Center Forward"
+  },
+  "location": [
+   105.0,
+   40.0
+  ],
+  "shot": {
+   "statsbomb_xg": 0.4,
+   "end_location": [
+    120.0,
+    40.0,
+    1.0
+   ],
+   "type": {
+    "id": 87,
+    "name": "Open Play"
+   },
+   "outcome": {
+    "id": 0,
+    "name": "Goal"
+   },
+   "body_part": {
+    "id": 40,
+    "name": "Right Foot"
+   },
+   "technique": {
+    "id": 93,
+    "name": "Normal"
+   }
+  }
+ },
+ {
+  "id": "synthetic-900002-4",
+  "index": 4,
+  "period": 2,
+  "timestamp": "00:35:00.000",
+  "minute": 80,
+  "second": 0,
+  "type": {
+   "id": 0,
+   "name": "Shot"
+  },
+  "possession": 4,
+  "possession_team": {
+   "id": 4,
+   "name": "Synthetic Athletic"
+  },
+  "play_pattern": {
+   "id": 1,
+   "name": "Regular Play"
+  },
+  "team": {
+   "id": 4,
+   "name": "Synthetic Athletic"
+  },
+  "player": {
+   "id": 41,
+   "name": "Athletic Nine"
+  },
+  "position": {
+   "id": 23,
+   "name": "Center Forward"
+  },
+  "location": [
+   110.0,
+   38.0
+  ],
+  "shot": {
+   "statsbomb_xg": 0.2,
+   "end_location": [
+    120.0,
+    40.0,
+    1.0
+   ],
+   "type": {
+    "id": 87,
+    "name": "Open Play"
+   },
+   "outcome": {
+    "id": 0,
+    "name": "Saved"
+   },
+   "body_part": {
+    "id": 40,
+    "name": "Right Foot"
+   },
+   "technique": {
+    "id": 93,
+    "name": "Normal"
+   }
+  }
+ },
+ {
+  "id": "synthetic-900002-5",
+  "index": 5,
+  "period": 4,
+  "timestamp": "00:25:00.000",
+  "minute": 115,
+  "second": 0,
+  "type": {
+   "id": 0,
+   "name": "Shot"
+  },
+  "possession": 5,
+  "possession_team": {
+   "id": 4,
+   "name": "Synthetic Athletic"
+  },
+  "play_pattern": {
+   "id": 1,
+   "name": "Regular Play"
+  },
+  "team": {
+   "id": 4,
+   "name": "Synthetic Athletic"
+  },
+  "player": {
+   "id": 42,
+   "name": "Athletic Ten"
+  },
+  "position": {
+   "id": 23,
+   "name": "Center Forward"
+  },
+  "location": [
+   108.0,
+   42.0
+  ],
+  "shot": {
+   "statsbomb_xg": 0.35,
+   "end_location": [
+    120.0,
+    40.0,
+    1.0
+   ],
+   "type": {
+    "id": 87,
+    "name": "Open Play"
+   },
+   "outcome": {
+    "id": 0,
+    "name": "Goal"
+   },
+   "body_part": {
+    "id": 40,
+    "name": "Right Foot"
+   },
+   "technique": {
+    "id": 93,
+    "name": "Normal"
+   }
+  }
+ },
+ {
+  "id": "synthetic-900002-6",
+  "index": 6,
+  "period": 5,
+  "timestamp": "00:31:00.000",
+  "minute": 121,
+  "second": 0,
+  "type": {
+   "id": 0,
+   "name": "Shot"
+  },
+  "possession": 6,
+  "possession_team": {
+   "id": 3,
+   "name": "Synthetic City"
+  },
+  "play_pattern": {
+   "id": 1,
+   "name": "Regular Play"
+  },
+  "team": {
+   "id": 3,
+   "name": "Synthetic City"
+  },
+  "player": {
+   "id": 31,
+   "name": "City Nine"
+  },
+  "position": {
+   "id": 23,
+   "name": "Center Forward"
+  },
+  "location": [
+   108.0,
+   40.0
+  ],
+  "shot": {
+   "statsbomb_xg": 0.78,
+   "end_location": [
+    120.0,
+    40.0,
+    1.0
+   ],
+   "type": {
+    "id": 87,
+    "name": "Penalty"
+   },
+   "outcome": {
+    "id": 0,
+    "name": "Goal"
+   },
+   "body_part": {
+    "id": 40,
+    "name": "Right Foot"
+   },
+   "technique": {
+    "id": 93,
+    "name": "Normal"
+   }
+  }
+ },
+ {
+  "id": "synthetic-900002-7",
+  "index": 7,
+  "period": 5,
+  "timestamp": "00:32:00.000",
+  "minute": 122,
+  "second": 0,
+  "type": {
+   "id": 0,
+   "name": "Shot"
+  },
+  "possession": 7,
+  "possession_team": {
+   "id": 4,
+   "name": "Synthetic Athletic"
+  },
+  "play_pattern": {
+   "id": 1,
+   "name": "Regular Play"
+  },
+  "team": {
+   "id": 4,
+   "name": "Synthetic Athletic"
+  },
+  "player": {
+   "id": 41,
+   "name": "Athletic Nine"
+  },
+  "position": {
+   "id": 23,
+   "name": "Center Forward"
+  },
+  "location": [
+   108.0,
+   40.0
+  ],
+  "shot": {
+   "statsbomb_xg": 0.78,
+   "end_location": [
+    120.0,
+    40.0,
+    1.0
+   ],
+   "type": {
+    "id": 87,
+    "name": "Penalty"
+   },
+   "outcome": {
+    "id": 0,
+    "name": "Goal"
+   },
+   "body_part": {
+    "id": 40,
+    "name": "Right Foot"
+   },
+   "technique": {
+    "id": 93,
+    "name": "Normal"
+   }
+  }
+ },
+ {
+  "id": "synthetic-900002-8",
+  "index": 8,
+  "period": 5,
+  "timestamp": "00:33:00.000",
+  "minute": 123,
+  "second": 0,
+  "type": {
+   "id": 0,
+   "name": "Shot"
+  },
+  "possession": 8,
+  "possession_team": {
+   "id": 3,
+   "name": "Synthetic City"
+  },
+  "play_pattern": {
+   "id": 1,
+   "name": "Regular Play"
+  },
+  "team": {
+   "id": 3,
+   "name": "Synthetic City"
+  },
+  "player": {
+   "id": 32,
+   "name": "City Ten"
+  },
+  "position": {
+   "id": 23,
+   "name": "Center Forward"
+  },
+  "location": [
+   108.0,
+   40.0
+  ],
+  "shot": {
+   "statsbomb_xg": 0.78,
+   "end_location": [
+    120.0,
+    40.0,
+    1.0
+   ],
+   "type": {
+    "id": 87,
+    "name": "Penalty"
+   },
+   "outcome": {
+    "id": 0,
+    "name": "Saved"
+   },
+   "body_part": {
+    "id": 40,
+    "name": "Right Foot"
+   },
+   "technique": {
+    "id": 93,
+    "name": "Normal"
+   }
+  }
+ },
+ {
+  "id": "synthetic-900002-9",
+  "index": 9,
+  "period": 5,
+  "timestamp": "00:34:00.000",
+  "minute": 124,
+  "second": 0,
+  "type": {
+   "id": 0,
+   "name": "Shot"
+  },
+  "possession": 9,
+  "possession_team": {
+   "id": 4,
+   "name": "Synthetic Athletic"
+  },
+  "play_pattern": {
+   "id": 1,
+   "name": "Regular Play"
+  },
+  "team": {
+   "id": 4,
+   "name": "Synthetic Athletic"
+  },
+  "player": {
+   "id": 42,
+   "name": "Athletic Ten"
+  },
+  "position": {
+   "id": 23,
+   "name": "Center Forward"
+  },
+  "location": [
+   108.0,
+   40.0
+  ],
+  "shot": {
+   "statsbomb_xg": 0.78,
+   "end_location": [
+    120.0,
+    40.0,
+    1.0
+   ],
+   "type": {
+    "id": 87,
+    "name": "Penalty"
+   },
+   "outcome": {
+    "id": 0,
+    "name": "Goal"
+   },
+   "body_part": {
+    "id": 40,
+    "name": "Right Foot"
+   },
+   "technique": {
+    "id": 93,
+    "name": "Normal"
+   }
+  }
+ }
+]

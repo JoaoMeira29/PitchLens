@@ -1,0 +1,34 @@
+[
+ {
+  "team_id": 3,
+  "team_name": "Synthetic City",
+  "lineup": [
+   {
+    "player_id": 31,
+    "player_name": "City Nine",
+    "jersey_number": 9
+   },
+   {
+    "player_id": 32,
+    "player_name": "City Ten",
+    "jersey_number": 10
+   }
+  ]
+ },
+ {
+  "team_id": 4,
+  "team_name": "Synthetic Athletic",
+  "lineup": [
+   {
+    "player_id": 41,
+    "player_name": "Athletic Nine",
+    "jersey_number": 9
+   },
+   {
+    "player_id": 42,
+    "player_name": "Athletic Ten",
+    "jersey_number": 10
+   }
+  ]
+ }
+]

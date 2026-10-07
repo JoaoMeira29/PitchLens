@@ -1,0 +1,62 @@
+[
+ {
+  "match_id": 900001,
+  "match_date": "2000-01-01",
+  "kick_off": "15:00:00.000",
+  "competition": {
+   "competition_id": 9001,
+   "competition_name": "Synthetic League"
+  },
+  "season": {
+   "season_id": 9002,
+   "season_name": "2000"
+  },
+  "home_team": {
+   "home_team_id": 1,
+   "home_team_name": "Synthetic Rovers"
+  },
+  "away_team": {
+   "away_team_id": 2,
+   "away_team_name": "Synthetic United"
+  },
+  "home_score": 2,
+  "away_score": 1,
+  "competition_stage": {
+   "id": 0,
+   "name": "Regular Season"
+  },
+  "metadata": {
+   "data_version": "synthetic"
+  }
+ },
+ {
+  "match_id": 900002,
+  "match_date": "2000-01-02",
+  "kick_off": "15:00:00.000",
+  "competition": {
+   "competition_id": 9001,
+   "competition_name": "Synthetic League"
+  },
+  "season": {
+   "season_id": 9002,
+   "season_name": "2000"
+  },
+  "home_team": {
+   "home_team_id": 3,
+   "home_team_name": "Synthetic City"
+  },
+  "away_team": {
+   "away_team_id": 4,
+   "away_team_name": "Synthetic Athletic"
+  },
+  "home_score": 1,
+  "away_score": 1,
+  "competition_stage": {
+   "id": 0,
+   "name": "Final"
+  },
+  "metadata": {
+   "data_version": "synthetic"
+  }
+ }
+]
