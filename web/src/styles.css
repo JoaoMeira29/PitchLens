@@ -10,6 +10,7 @@
   --ink: #1b2b21;
   --ink-soft: #4a5d50;
   --rule: #c9d4c9;
+  --surface: #f8fbf6;
   --home: #f2b33d;
   --home-ink: #8a5a00;
   --away: #4fb3e3;
@@ -18,7 +19,20 @@
   --text: "Atkinson Hyperlegible", system-ui, sans-serif;
   --measure: 68ch;
   --page: min(1120px, 100% - 2.5rem);
-  color-scheme: light;
+  color-scheme: light dark;
+}
+
+/* Night match: same pitch and team colours, deep turf-green surroundings instead of white. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0e1a13;
+    --surface: #15251b;
+    --ink: #e4ece5;
+    --ink-soft: #a5b5a9;
+    --rule: #2a3b30;
+    --home-ink: #f2b33d;
+    --away-ink: #7cc8ee;
+  }
 }
 
 *,
@@ -76,7 +90,6 @@ main:focus {
 
 /* Header and footer */
 
-.site-header,
 .site-footer,
 main {
   width: var(--page);
@@ -84,10 +97,16 @@ main {
 }
 
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
   display: flex;
   align-items: baseline;
   gap: 1rem;
-  padding-block: 1.25rem 0.5rem;
+  padding: 0.9rem max(1.25rem, (100% - 1120px) / 2);
+  background: color-mix(in srgb, var(--paper) 78%, transparent);
+  backdrop-filter: blur(14px) saturate(1.3);
+  border-bottom: 1px solid color-mix(in srgb, var(--rule) 70%, transparent);
 }
 
 .brand {
@@ -118,103 +137,286 @@ main {
   margin-left: 0.35rem;
 }
 
+/* The official logo has dark lettering, so on the night theme it sits on a light chip. */
+@media (prefers-color-scheme: dark) {
+  .site-footer img {
+    background: #ffffff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    box-sizing: content-box;
+  }
+}
+
 .status {
   padding-block: 4rem;
   font-size: 1.15rem;
 }
 
-/* Home: hero */
+/* Home: competitions */
 
-.hero {
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  gap: clamp(1.5rem, 4vw, 3.5rem);
-  align-items: center;
-  padding-block: clamp(1.5rem, 5vw, 3.5rem);
+.intro {
+  padding-block: clamp(2rem, 6vw, 4.5rem) clamp(1.5rem, 4vw, 2.5rem);
 }
 
-.hero h1 {
-  font: 800 clamp(2.6rem, 6vw, 4.6rem) / 0.95 var(--display);
+.intro h1 {
+  font: 800 clamp(2.8rem, 7vw, 5.4rem) / 0.92 var(--display);
   margin: 0 0 1rem;
-  max-width: 11ch;
+  max-width: 14ch;
 }
 
-.hero-copy p {
+.intro p {
   margin: 0;
-  max-width: 42ch;
+  max-width: 52ch;
+  color: var(--ink-soft);
+  font-size: 1.15rem;
+}
+
+.tiles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: 1.25rem;
+}
+
+.tile {
+  display: grid;
+  height: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  text-decoration: none;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  transition:
+    transform 200ms ease-out,
+    box-shadow 200ms ease-out,
+    border-color 200ms ease-out;
+}
+
+.tile:hover,
+.tile:focus-visible {
+  transform: translateY(-4px);
+  border-color: var(--turf-light);
+  box-shadow: 0 18px 40px -24px rgb(18 60 32 / 0.55);
+}
+
+.tile-art {
+  display: block;
+  padding: 1.1rem 1.25rem;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--turf-dark) 0 2.25rem,
+    var(--turf-light) 2.25rem 4.5rem
+  );
+}
+
+.constellation {
+  display: block;
+  width: 100%;
+  height: 7.5rem;
+}
+
+.constellation circle {
+  fill: var(--chalk);
+  opacity: 0.88;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pop 420ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+  animation-delay: calc(var(--order) * 4ms + 100ms);
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+
+.tile-body {
+  display: grid;
+  gap: 0.15rem;
+  padding: 1.1rem 1.25rem 1.3rem;
+}
+
+.tile-name {
+  font: 800 1.9rem / 1 var(--display);
+}
+
+.tile-season {
+  font: 600 1.25rem / 1.1 var(--display);
   color: var(--ink-soft);
 }
 
-.hero-match {
-  display: grid;
-  gap: 0.75rem;
-  text-decoration: none;
-  border-radius: 6px;
-}
-
-.hero-score {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-  font-family: var(--display);
-}
-
-.hero-team {
-  font-weight: 700;
-  font-size: clamp(1.2rem, 2.6vw, 1.7rem);
-}
-
-.hero-digits {
-  font-weight: 900;
-  font-size: clamp(3rem, 8vw, 5.5rem);
-  line-height: 0.9;
-  font-variant-numeric: tabular-nums;
-}
-
-.hero-caption {
+.tile-meta {
+  margin-top: 0.5rem;
   color: var(--ink-soft);
   font-size: 0.95rem;
 }
 
-.hero-match:hover .hero-caption {
-  text-decoration: underline;
-}
+/* Competition, team and round pages */
 
-/* Home: competition tabs and match list */
-
-.tabs {
+.crumbs ol {
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem;
-  border-bottom: 2px solid var(--ink);
-  margin-top: 1rem;
-}
-
-.tabs [role="tab"] {
-  font: 700 1.2rem / 1 var(--display);
-  letter-spacing: 0.01em;
+  gap: 0.35rem;
+  font-size: 0.95rem;
   color: var(--ink-soft);
-  background: none;
-  border: 0;
-  padding: 0.8rem 1rem 0.7rem;
-  cursor: pointer;
-  position: relative;
 }
 
-.tabs [role="tab"] .season {
-  font-weight: 500;
+.crumbs li + li::before {
+  content: "›";
+  margin-right: 0.35rem;
 }
 
-.tabs [role="tab"][aria-selected="true"] {
-  color: var(--paper);
-  background: var(--turf-dark);
-  border-radius: 6px 6px 0 0;
-}
-
-.tabs [role="tab"]:hover:not([aria-selected="true"]) {
+.crumbs [aria-current="page"] {
   color: var(--ink);
 }
+
+.page-head {
+  padding-block: 0.75rem 1.5rem;
+}
+
+.page-head h1 {
+  font: 800 clamp(2.6rem, 7vw, 5rem) / 0.95 var(--display);
+  margin: 0 0 1.25rem;
+}
+
+.page-head .season {
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem 2.5rem;
+  margin: 0;
+}
+
+.figures dt {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+.figures dd {
+  margin: 0;
+  font: 800 2.6rem / 1 var(--display);
+  font-variant-numeric: tabular-nums;
+}
+
+.switch {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.3rem;
+  margin-bottom: 1.5rem;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+}
+
+.switch a {
+  font: 700 1.15rem / 1 var(--display);
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--ink-soft);
+  transition:
+    background-color 180ms ease-out,
+    color 180ms ease-out;
+}
+
+.switch a[aria-current="page"] {
+  background: var(--turf-dark);
+  color: var(--chalk);
+}
+
+.switch a:hover:not([aria-current="page"]) {
+  color: var(--ink);
+}
+
+.team-grid,
+.round-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  gap: 0.75rem;
+}
+
+.round-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+}
+
+.team-grid li,
+.round-grid li {
+  animation: rise 360ms ease-out both;
+  animation-delay: calc(var(--order) * 18ms);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.team-tile,
+.round-tile {
+  display: grid;
+  gap: 0.2rem;
+  height: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  text-decoration: none;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--turf-light);
+  transition:
+    transform 180ms ease-out,
+    border-color 180ms ease-out;
+}
+
+.team-tile:hover,
+.team-tile:focus-visible,
+.round-tile:hover,
+.round-tile:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--turf-light);
+}
+
+.team-name,
+.round-name {
+  font: 800 1.45rem / 1.05 var(--display);
+}
+
+.team-meta,
+.team-xg {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+.focus-team {
+  font-weight: 700;
+}
+
+/* Page changes: shared elements morph (competition names, scores); the rest cross-fades. */
+
+::view-transition-group(*) {
+  animation-duration: 380ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
+}
+
+/* Match lists */
 
 .list-note {
   color: var(--ink-soft);
@@ -278,17 +480,6 @@ main {
 
 .bar-away {
   background: var(--away);
-}
-
-.panel-fade {
-  animation: fade-in 260ms ease-out;
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
 }
 
 /* Pitch and shots */
@@ -389,7 +580,7 @@ main {
 
 .scoreboard .team {
   display: grid;
-  gap: 0.25rem;
+  gap: 0.7rem;
 }
 
 .scoreboard .home {
@@ -647,13 +838,20 @@ main {
 }
 
 @media (max-width: 720px) {
-  .hero {
-    grid-template-columns: 1fr;
+  .figures dd {
+    font-size: 2.1rem;
   }
 
-  .hero-pitch {
-    max-width: 22rem;
-    margin-inline: auto;
+  .tagline {
+    display: none;
+  }
+
+  .round-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .round-name {
+    font-size: 1.2rem;
   }
 
   .match-row {
@@ -688,12 +886,33 @@ main {
 @media (prefers-reduced-motion: reduce) {
   .shots-animate .shot,
   .timeline .step,
-  .panel-fade {
+  .constellation circle,
+  .team-grid li,
+  .round-grid li {
     animation: none;
   }
 
   .match-row,
-  .shot {
+  .shot,
+  .tile,
+  .team-tile,
+  .round-tile,
+  .switch a {
     transition: none;
+  }
+
+  .tile:hover,
+  .tile:focus-visible,
+  .team-tile:hover,
+  .team-tile:focus-visible,
+  .round-tile:hover,
+  .round-tile:focus-visible {
+    transform: none;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
   }
 }

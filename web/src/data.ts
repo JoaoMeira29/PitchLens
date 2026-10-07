@@ -11,7 +11,10 @@ export interface MatchSummary {
   date: string;
   competition: string;
   season: string;
+  competition_id: number;
+  season_id: number;
   stage: string | null;
+  match_week: number | null;
   home: Side;
   away: Side;
 }

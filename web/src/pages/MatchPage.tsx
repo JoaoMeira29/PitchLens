@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
+import { type CSSProperties, useEffect, useState } from "react";
+import { roundOf } from "../competitions";
+import { Breadcrumbs } from "../components/Breadcrumbs";
 import { ShotMap } from "../components/ShotMap";
 import { ShotList, StatsTable } from "../components/StatsTable";
 import { XgTimeline } from "../components/XgTimeline";
 import { formatClock, formatDate, formatXg, type MatchDocument } from "../data";
+import { paths } from "../router";
 import { useJson, useNarrow } from "../useJson";
 
 export function MatchPage({ id }: { id: number }) {
@@ -26,8 +29,23 @@ export function MatchPage({ id }: { id: number }) {
   const match = loaded.data;
   const context = [match.competition, match.season, match.stage].filter(Boolean).join(", ");
   const active = match.shots.find((shot) => shot.id === activeShot);
+  const round = roundOf(match);
   return (
     <article className="match">
+      <Breadcrumbs
+        trail={[
+          { label: "Competitions", href: paths.home() },
+          {
+            label: `${match.competition} ${match.season}`,
+            href: paths.competition(match.competition_id, match.season_id),
+          },
+          {
+            label: round.label,
+            href: paths.round(match.competition_id, match.season_id, round.key),
+          },
+          { label: `${match.home.team} v ${match.away.team}` },
+        ]}
+      />
       <header className="scoreboard">
         <h1 className="visually-hidden">
           {match.home.team} {match.home.score}, {match.away.team} {match.away.score}
@@ -36,7 +54,11 @@ export function MatchPage({ id }: { id: number }) {
           <span className="name">{match.home.team}</span>
           <span className="xg">xG {formatXg(match.home.xg)}</span>
         </div>
-        <div className="score" aria-hidden="true">
+        <div
+          className="score"
+          aria-hidden="true"
+          style={{ viewTransitionName: `score-${match.id}` } as CSSProperties}
+        >
           <span>{match.home.score}</span>
           <span className="dash">–</span>
           <span>{match.away.score}</span>

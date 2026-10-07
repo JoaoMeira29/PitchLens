@@ -85,6 +85,7 @@ MATCHES = [
         "home_score": 1,
         "away_score": 0,
         "competition_stage": {"id": 26, "name": "Final"},
+        "match_week": 7,
         "metadata": {"data_version": "1.1.0"},
     }
 ]
@@ -130,6 +131,7 @@ def test_matches_table(staged: Path) -> None:
     row = matches.iloc[0]
     assert (row.home_team, row.away_team, row.home_score, row.away_score) == ("Home", "Away", 1, 0)
     assert row.competition_stage == "Final"
+    assert row.match_week == 7
 
 
 def test_events_have_internal_coordinates(staged: Path) -> None:

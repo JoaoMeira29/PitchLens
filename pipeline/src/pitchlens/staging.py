@@ -47,6 +47,7 @@ def _match_row(match: dict[str, Any]) -> dict[str, Any]:
         "match_date": match["match_date"],
         "kick_off": match.get("kick_off"),
         "competition_stage": _name(match.get("competition_stage")),
+        "match_week": match.get("match_week"),
         "home_team_id": match["home_team"]["home_team_id"],
         "home_team": match["home_team"]["home_team_name"],
         "away_team_id": match["away_team"]["away_team_id"],

@@ -127,5 +127,7 @@ All sources, licence links and last-checked dates live in `docs/DATA_SOURCES.md`
   conversion rate; scikit-learn and matplotlib added as dependencies.
 - 2026-10: Site design "the pitch is the page": mown-stripe turf, Big Shoulders Display and
   Atkinson Hyperlegible, amber home and sky-blue away; one load animation, reduced motion respected.
+- 2026-10: Site navigation is competition -> team or round -> match, each with its own URL;
+  light and dark themes follow the system; page changes use the View Transitions API.
 - 2026-10: The MVP is static-first (ADR 0004): pipeline-exported JSON and a static site, no API or
   database; FastAPI and Postgres stay available for later phases.

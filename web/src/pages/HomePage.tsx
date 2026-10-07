@@ -1,129 +1,65 @@
-import { type KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useMemo } from "react";
+import { type CompetitionSummary, competitions } from "../competitions";
 import { Link } from "../components/Link";
-import { ShotMap } from "../components/ShotMap";
-import { formatDate, formatXg, type MatchDocument, type MatchSummary } from "../data";
-import { type CompetitionGroup, groupByCompetition, homeXgShare } from "../matches";
-import { matchPath } from "../router";
-import { useJson, useNarrow } from "../useJson";
+import type { MatchSummary } from "../data";
+import { paths } from "../router";
+import { useJson } from "../useJson";
 
-/** The match the hero shows: a final if there is one, else the most recent match. */
-function featured(matches: MatchSummary[]): MatchSummary | undefined {
-  const finals = matches.filter((m) => m.stage === "Final");
-  const byDate = (a: MatchSummary, b: MatchSummary) => b.date.localeCompare(a.date);
-  return [...finals].sort(byDate)[0] ?? [...matches].sort(byDate)[0];
-}
-
-function Hero({ match }: { match: MatchSummary }) {
-  const loaded = useJson<MatchDocument>(`/data/matches/${match.id}.json`);
-  const narrow = useNarrow();
+/** Every match as a dot, in date order; dot area grows with the match's total xG (largest = max). */
+function Constellation({ competition }: { competition: CompetitionSummary }) {
+  const count = competition.matches.length;
+  const columns = Math.ceil(Math.sqrt(count * 2.2));
+  const rows = Math.ceil(count / columns);
+  const cell = 10;
+  const most = Math.max(...competition.matches.map((m) => m.home.xg + m.away.xg), 0.01);
   return (
-    <section className="hero" aria-labelledby="hero-title">
-      <div className="hero-copy">
-        <h1 id="hero-title">See what happened beyond the score.</h1>
-        <p>
-          Pick a match to see every shot on the pitch and how good each chance was, measured by our
-          own expected goals model and shown with the method behind it.
-        </p>
-      </div>
-      <Link className="hero-match" href={matchPath(match.id)}>
-        <span className="hero-score">
-          <span className="hero-team">{match.home.team}</span>
-          <span className="hero-digits">
-            {match.home.score}–{match.away.score}
-          </span>
-          <span className="hero-team">{match.away.team}</span>
-        </span>
-        <span className="hero-caption">
-          {match.competition} {match.season} {match.stage?.toLowerCase()}, xG{" "}
-          {formatXg(match.home.xg)} to {formatXg(match.away.xg)}. Open the match.
-        </span>
-        {loaded.state === "ready" && (
-          <span className="hero-pitch" aria-hidden="true">
-            <ShotMap match={loaded.data} orientation={narrow ? "vertical" : "horizontal"} />
-          </span>
-        )}
-      </Link>
-    </section>
+    <svg
+      className="constellation"
+      viewBox={`0 0 ${columns * cell} ${rows * cell}`}
+      aria-hidden="true"
+      focusable="false"
+    >
+      {competition.matches.map((match, index) => {
+        const total = match.home.xg + match.away.xg;
+        return (
+          <circle
+            key={match.id}
+            cx={(index % columns) * cell + cell / 2}
+            cy={Math.floor(index / columns) * cell + cell / 2}
+            r={0.8 + (cell / 2 - 1.3) * Math.sqrt(total / most)}
+            style={{ "--order": index } as CSSProperties}
+          />
+        );
+      })}
+    </svg>
   );
 }
 
-function MatchRow({ match }: { match: MatchSummary }) {
-  const share = homeXgShare(match);
+function CompetitionTile({ competition }: { competition: CompetitionSummary }) {
+  const { competitionId, seasonId } = competition;
   return (
     <li>
-      <Link className="match-row" href={matchPath(match.id)}>
-        <time dateTime={match.date}>{formatDate(match.date)}</time>
-        <span className="row-home">{match.home.team}</span>
-        <span className="row-score">
-          {match.home.score}–{match.away.score}
+      <Link className="tile" href={paths.competition(competitionId, seasonId)}>
+        <span className="tile-art">
+          <Constellation competition={competition} />
         </span>
-        <span className="row-away">{match.away.team}</span>
-        <span
-          className="row-bar"
-          role="img"
-          aria-label={`xG ${formatXg(match.home.xg)} to ${formatXg(match.away.xg)}`}
-        >
-          <span className="bar-home" style={{ flexGrow: share }} />
-          <span className="bar-away" style={{ flexGrow: 1 - share }} />
+        <span className="tile-body">
+          <span
+            className="tile-name"
+            style={
+              { viewTransitionName: `competition-${competitionId}-${seasonId}` } as CSSProperties
+            }
+          >
+            {competition.name}
+          </span>
+          <span className="tile-season">{competition.season}</span>
+          <span className="tile-meta">
+            {competition.matches.length} matches, {competition.teams} teams, {competition.goals}{" "}
+            goals
+          </span>
         </span>
       </Link>
     </li>
-  );
-}
-
-function CompetitionTabs({ groups }: { groups: CompetitionGroup[] }) {
-  const [selected, setSelected] = useState(groups[0]?.key);
-  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
-  const current = groups.find((group) => group.key === selected) ?? groups[0];
-
-  const onKeyDown = (event: KeyboardEvent, index: number) => {
-    const step = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
-    if (!step) return;
-    const next = (index + step + groups.length) % groups.length;
-    setSelected(groups[next].key);
-    tabs.current[next]?.focus();
-  };
-
-  return (
-    <section className="competitions" aria-label="Matches by competition">
-      <div className="tabs" role="tablist" aria-label="Competition">
-        {groups.map((group, index) => (
-          <button
-            key={group.key}
-            ref={(element) => {
-              tabs.current[index] = element;
-            }}
-            type="button"
-            role="tab"
-            id={`tab-${index}`}
-            aria-selected={group.key === current.key}
-            aria-controls="matches-panel"
-            tabIndex={group.key === current.key ? 0 : -1}
-            onClick={() => setSelected(group.key)}
-            onKeyDown={(event) => onKeyDown(event, index)}
-          >
-            {group.competition} <span className="season">{group.season}</span>
-          </button>
-        ))}
-      </div>
-      <div
-        id="matches-panel"
-        role="tabpanel"
-        aria-labelledby={`tab-${groups.indexOf(current)}`}
-        key={current.key}
-        className="panel-fade"
-      >
-        <p className="list-note">
-          {current.matches.length} matches. The bar splits the match xG between the two teams: the
-          longer side made the better chances.
-        </p>
-        <ol className="match-list">
-          {current.matches.map((match) => (
-            <MatchRow key={match.id} match={match} />
-          ))}
-        </ol>
-      </div>
-    </section>
   );
 }
 
@@ -132,23 +68,35 @@ export function HomePage() {
   useEffect(() => {
     document.title = "PitchLens: football matches beyond the score";
   }, []);
-  const groups = useMemo(
-    () => (loaded.state === "ready" ? groupByCompetition(loaded.data) : []),
-    [loaded],
-  );
+  const list = useMemo(() => (loaded.state === "ready" ? competitions(loaded.data) : []), [loaded]);
 
-  if (loaded.state === "loading") return <p className="status">Loading matches…</p>;
+  if (loaded.state === "loading") return <p className="status">Loading competitions…</p>;
   if (loaded.state === "error")
     return (
       <p className="status">
         Match data is missing. Locally, run the pipeline and then `pnpm data` in web/.
       </p>
     );
-  const hero = featured(loaded.data);
   return (
     <>
-      {hero && <Hero match={hero} />}
-      <CompetitionTabs groups={groups} />
+      <section className="intro" aria-labelledby="intro-title">
+        <h1 id="intro-title">See what happened beyond the score.</h1>
+        <p>
+          Choose a competition, then a team or a round, then a match: every shot on the pitch and
+          how good each chance was, measured by our own expected goals model.
+        </p>
+      </section>
+      <section aria-label="Competitions">
+        <ul className="tiles">
+          {list.map((competition) => (
+            <CompetitionTile
+              key={`${competition.competitionId}/${competition.seasonId}`}
+              competition={competition}
+            />
+          ))}
+        </ul>
+        <p className="list-note">Each dot is one match, in date order; bigger dots had more xG.</p>
+      </section>
     </>
   );
 }
