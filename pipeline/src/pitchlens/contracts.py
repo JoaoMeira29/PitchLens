@@ -5,6 +5,7 @@ a duplicated event that would double-count, a shot whose goal flag disagrees wit
 Every rule was checked against the phase 1 data before it was added (0 violations).
 """
 
+import math
 from pathlib import Path
 
 import pandas as pd
@@ -13,7 +14,7 @@ from pandera.pandas import Check, Column, DataFrameSchema
 
 from pitchlens.coords import PITCH_LENGTH, PITCH_WIDTH
 
-TABLES = ("matches", "events", "shots", "lineups")
+TABLES = ("matches", "events", "shots", "lineups", "shot_features")
 
 _on_pitch_x = Check.in_range(0, PITCH_LENGTH)
 _on_pitch_y = Check.in_range(0, PITCH_WIDTH)
@@ -66,6 +67,22 @@ SCHEMAS: dict[str, DataFrameSchema] = {
         {"match_id": Column(int), "player_id": Column(int)},
         unique=["match_id", "player_id"],
     ),
+    "shot_features": DataFrameSchema(
+        {
+            "event_id": Column(str, unique=True),
+            "match_id": Column(int),
+            "competition": Column(str),
+            "period": Column(int, Check.isin([1, 2, 3, 4])),  # no shootout kicks
+            "distance": Column(float, Check.ge(0)),
+            "angle": Column(float, Check.in_range(0, math.pi)),
+            "body_part_group": Column(str, Check.isin(["head", "foot", "other"])),
+            "shot_type": Column(str, Check.notin(["Penalty"])),  # penalties are modelled apart
+            "play_pattern": Column(str),
+            "first_time": Column(bool),
+            "is_goal": Column(bool),
+            "statsbomb_xg": Column(float, Check.in_range(0, 1)),
+        }
+    ),
 }
 
 
@@ -95,6 +112,9 @@ def validate_tables(tables: dict[str, pd.DataFrame]) -> dict[str, list[str]]:
     )
     problems["shots"] += _orphans(
         tables["shots"].event_id, tables["events"].event_id, "event_id not in events"
+    )
+    problems["shot_features"] += _orphans(
+        tables["shot_features"].event_id, tables["shots"].event_id, "event_id not in shots"
     )
     return {name: found for name, found in problems.items() if found}
 

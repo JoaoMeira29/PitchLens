@@ -53,6 +53,22 @@ def valid_tables() -> Tables:
         "lineups": pd.DataFrame(
             {"match_id": [1, 1], "team": ["Home", "Away"], "player_id": [7, 8]}
         ),
+        "shot_features": pd.DataFrame(
+            {
+                "event_id": ["e2"],
+                "match_id": [1],
+                "competition": ["Cup"],
+                "period": [1],
+                "distance": [15.0],
+                "angle": [0.4],
+                "body_part_group": ["foot"],
+                "shot_type": ["Open Play"],
+                "play_pattern": ["Regular Play"],
+                "first_time": [False],
+                "is_goal": [True],
+                "statsbomb_xg": [0.1],
+            }
+        ),
     }
 
 
@@ -68,6 +84,13 @@ def set_value(
 def duplicate_row(table: str) -> Callable[[Tables], None]:
     def mutate(tables: Tables) -> None:
         tables[table] = pd.concat([tables[table], tables[table].tail(1)], ignore_index=True)
+
+    return mutate
+
+
+def drop_event(event_id: str) -> Callable[[Tables], None]:
+    def mutate(tables: Tables) -> None:
+        tables["events"] = tables["events"][tables["events"].event_id != event_id]
 
     return mutate
 
@@ -93,7 +116,17 @@ BROKEN = {
     "player listed twice": ("lineups", duplicate_row("lineups")),
     "event for unknown match": ("events", set_value("events", "match_id", 99)),
     "lineup for unknown match": ("lineups", set_value("lineups", "match_id", 99)),
-    "shot missing from events": ("shots", set_value("shots", "event_id", "e9")),
+    "shot missing from events": ("shots", drop_event("e2")),
+    "negative distance": ("shot_features", set_value("shot_features", "distance", -1.0)),
+    "angle above pi": ("shot_features", set_value("shot_features", "angle", 3.5)),
+    "penalty among features": ("shot_features", set_value("shot_features", "shot_type", "Penalty")),
+    "shootout among features": ("shot_features", set_value("shot_features", "period", 5)),
+    "unknown body part group": (
+        "shot_features",
+        set_value("shot_features", "body_part_group", "x"),
+    ),
+    "feature xg above 1": ("shot_features", set_value("shot_features", "statsbomb_xg", 1.5)),
+    "feature for unknown shot": ("shot_features", set_value("shot_features", "event_id", "e9")),
 }
 
 

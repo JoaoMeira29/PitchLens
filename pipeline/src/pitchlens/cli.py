@@ -8,6 +8,7 @@ import typer
 from pitchlens.config import COMPETITIONS
 from pitchlens.contracts import TABLES, validate_staged
 from pitchlens.coverage import coverage, render_markdown
+from pitchlens.features import write_shot_features
 from pitchlens.sources.statsbomb import fetch_url, ingest_competition
 from pitchlens.staging import stage
 
@@ -37,6 +38,8 @@ def ingest(
     staged_dir = data_dir / "staged"
     for table, rows in stage(raw_dir, staged_dir, COMPETITIONS).items():
         typer.echo(f"{staged_dir / table}.parquet: {rows} rows")
+    rows = write_shot_features(staged_dir)
+    typer.echo(f"{staged_dir / 'shot_features'}.parquet: {rows} rows")
 
 
 @app.command()

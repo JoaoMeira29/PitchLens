@@ -94,6 +94,22 @@ def write_staged(staged: Path, xg: float) -> None:
         }
     ).to_parquet(staged / "shots.parquet")
     pd.DataFrame({"match_id": [1], "player_id": [7]}).to_parquet(staged / "lineups.parquet")
+    pd.DataFrame(
+        {
+            "event_id": ["e1"],
+            "match_id": [1],
+            "competition": ["Cup"],
+            "period": [1],
+            "distance": [15.0],
+            "angle": [0.4],
+            "body_part_group": ["foot"],
+            "shot_type": ["Open Play"],
+            "play_pattern": ["Regular Play"],
+            "first_time": [False],
+            "is_goal": [False],
+            "statsbomb_xg": [min(xg, 1.0)],
+        }
+    ).to_parquet(staged / "shot_features.parquet")
 
 
 def test_validate_exits_zero_on_valid_data(tmp_path: Path) -> None:
