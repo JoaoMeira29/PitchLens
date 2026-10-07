@@ -1,0 +1,34 @@
+[
+ {
+  "team_id": 1,
+  "team_name": "Synthetic Rovers",
+  "lineup": [
+   {
+    "player_id": 11,
+    "player_name": "Rovers Nine",
+    "jersey_number": 9
+   },
+   {
+    "player_id": 12,
+    "player_name": "Rovers Seven",
+    "jersey_number": 7
+   }
+  ]
+ },
+ {
+  "team_id": 2,
+  "team_name": "Synthetic United",
+  "lineup": [
+   {
+    "player_id": 21,
+    "player_name": "United Nine",
+    "jersey_number": 9
+   },
+   {
+    "player_id": 22,
+    "player_name": "United Four",
+    "jersey_number": 4
+   }
+  ]
+ }
+]
