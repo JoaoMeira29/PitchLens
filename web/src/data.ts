@@ -15,6 +15,11 @@ export interface MatchSummary {
   season_id: number;
   stage: string | null;
   match_week: number | null;
+  /** Group-stage matches: "Group A" (letter from the data) or "Group 1" (numbered by date). */
+  group?: string | null;
+  shootout?: { home: number; away: number } | null;
+  /** Winning team, on the score or the shootout; null for a draw. */
+  winner?: string | null;
   home: Side;
   away: Side;
 }

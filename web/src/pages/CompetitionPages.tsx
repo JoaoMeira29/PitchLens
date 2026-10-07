@@ -12,8 +12,11 @@ import { Breadcrumbs, type Crumb } from "../components/Breadcrumbs";
 import { Figures } from "../components/Figures";
 import { Link } from "../components/Link";
 import { MatchList } from "../components/MatchList";
+import { Bracket, StandingsTable } from "../components/Standings";
+import { TeamMark } from "../components/TeamMark";
 import { formatXg, type MatchSummary } from "../data";
 import { paths, type View } from "../router";
+import { bracket, groupTables, standings } from "../standings";
 import { useJson } from "../useJson";
 
 /** Load the index and find one competition season; renders loading and missing states itself. */
@@ -78,9 +81,11 @@ function CompetitionHeader({ competition }: { competition: CompetitionSummary })
 
 function ViewSwitch({ competition, view }: { competition: CompetitionSummary; view: View }) {
   const { competitionId, seasonId } = competition;
+  const isLeague = competition.matches.every((m) => m.stage === "Regular Season");
   const options: [View, string][] = [
     ["teams", "By team"],
     ["rounds", "By round"],
+    ["table", isLeague ? "Table" : "Groups and bracket"],
   ];
   return (
     <nav className="switch" aria-label="Browse matches">
@@ -113,7 +118,8 @@ export function CompetitionPage({
             <Breadcrumbs trail={competitionTrail(competition)} />
             <CompetitionHeader competition={competition} />
             <ViewSwitch competition={competition} view={view} />
-            {view === "teams" ? (
+            {view === "table" && <TableView competition={competition} />}
+            {view === "teams" && (
               <ul className="team-grid" key="teams">
                 {teams(competition.matches).map((team, index) => (
                   <li key={team.team} style={{ "--order": index } as CSSProperties}>
@@ -121,7 +127,10 @@ export function CompetitionPage({
                       className="team-tile"
                       href={paths.team(competitionId, seasonId, team.team)}
                     >
-                      <span className="team-name">{team.team}</span>
+                      <span className="team-name">
+                        <TeamMark team={team.team} size={22} />
+                        {team.team}
+                      </span>
                       <span className="team-meta">
                         {team.matches} {team.matches === 1 ? "match" : "matches"}, goals{" "}
                         {team.goalsFor}–{team.goalsAgainst}
@@ -133,7 +142,8 @@ export function CompetitionPage({
                   </li>
                 ))}
               </ul>
-            ) : (
+            )}
+            {view === "rounds" && (
               <ul className="round-grid" key="rounds">
                 {rounds(competition.matches).map((round, index) => (
                   <li key={round.key} style={{ "--order": index } as CSSProperties}>
@@ -269,6 +279,69 @@ function TitledList({
         <Figures items={figures} />
       </header>
       <MatchList matches={matches} highlight={highlight} />
+    </>
+  );
+}
+
+/** League: the full table. Tournament: group tables, then the knockout bracket. */
+function TableView({ competition }: { competition: CompetitionSummary }) {
+  const { competitionId, seasonId } = competition;
+  const isLeague = competition.matches.every((m) => m.stage === "Regular Season");
+  const tieBreakNote =
+    "Ordered by points, goal difference and goals scored. The competition's own tie-breakers, such as head-to-head results, are not applied, so teams level on these can appear in a different order from the official table. xG and xGA are PitchLens expected goals for and against.";
+  if (isLeague) {
+    return (
+      <section aria-labelledby="table-title">
+        <h2 id="table-title" className="section-title">
+          Table
+        </h2>
+        <StandingsTable
+          rows={standings(competition.matches)}
+          caption={`${competition.name} ${competition.season}, computed from all ${competition.matches.length} matches`}
+          competitionId={competitionId}
+          seasonId={seasonId}
+        />
+        <p className="list-note">{tieBreakNote}</p>
+      </section>
+    );
+  }
+  const groups = groupTables(competition.matches);
+  const numbered = groups.some((g) => /^Group \d+$/.test(g.group));
+  return (
+    <>
+      <section aria-labelledby="groups-title">
+        <h2 id="groups-title" className="section-title">
+          Group stage
+        </h2>
+        {numbered && (
+          <p className="list-note">
+            The data does not name these groups, so they are numbered by the date of their first
+            match.
+          </p>
+        )}
+        <div className="group-grid">
+          {groups.map((g) => (
+            <StandingsTable
+              key={g.group}
+              rows={g.rows}
+              caption={g.group}
+              competitionId={competitionId}
+              seasonId={seasonId}
+              compact
+            />
+          ))}
+        </div>
+        <p className="list-note">{tieBreakNote}</p>
+      </section>
+      <section aria-labelledby="bracket-title">
+        <h2 id="bracket-title" className="section-title">
+          Knockout stage
+        </h2>
+        <p className="list-note">
+          Winners in bold; penalty shootout scores in brackets. Select a match to open it.
+        </p>
+        <Bracket columns={bracket(competition.matches)} />
+      </section>
     </>
   );
 }

@@ -13,6 +13,12 @@
       href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Big+Shoulders+Display:wght@500;700;800;900&display=swap"
     />
     <title>PitchLens</title>
+    <script>
+      try {
+        const theme = localStorage.getItem("pitchlens-theme");
+        if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+      } catch {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Link } from "./components/Link";
+import { ThemeToggle } from "./components/ThemeToggle";
 import { CompetitionPage, RoundPage, TeamPage } from "./pages/CompetitionPages";
 import { HomePage } from "./pages/HomePage";
 import { MatchPage } from "./pages/MatchPage";
@@ -30,6 +31,7 @@ export function App() {
           PitchLens
         </Link>
         <span className="tagline">Show the numbers, show the method</span>
+        <ThemeToggle />
       </header>
       <main id="main" ref={main} tabIndex={-1}>
         {route.page === "home" && <HomePage />}

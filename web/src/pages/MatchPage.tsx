@@ -3,6 +3,7 @@ import { roundOf } from "../competitions";
 import { Breadcrumbs } from "../components/Breadcrumbs";
 import { ShotMap } from "../components/ShotMap";
 import { ShotList, StatsTable } from "../components/StatsTable";
+import { TeamMark } from "../components/TeamMark";
 import { XgTimeline } from "../components/XgTimeline";
 import { formatClock, formatDate, formatXg, type MatchDocument } from "../data";
 import { paths } from "../router";
@@ -51,7 +52,10 @@ export function MatchPage({ id }: { id: number }) {
           {match.home.team} {match.home.score}, {match.away.team} {match.away.score}
         </h1>
         <div className="team home">
-          <span className="name">{match.home.team}</span>
+          <span className="name">
+            <TeamMark team={match.home.team} size={30} />
+            {match.home.team}
+          </span>
           <span className="xg">xG {formatXg(match.home.xg)}</span>
         </div>
         <div
@@ -64,7 +68,10 @@ export function MatchPage({ id }: { id: number }) {
           <span>{match.away.score}</span>
         </div>
         <div className="team away">
-          <span className="name">{match.away.team}</span>
+          <span className="name">
+            <TeamMark team={match.away.team} size={30} />
+            {match.away.team}
+          </span>
           <span className="xg">xG {formatXg(match.away.xg)}</span>
         </div>
         <p className="context">

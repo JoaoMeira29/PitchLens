@@ -127,7 +127,14 @@ All sources, licence links and last-checked dates live in `docs/DATA_SOURCES.md`
   conversion rate; scikit-learn and matplotlib added as dependencies.
 - 2026-10: Site design "the pitch is the page": mown-stripe turf, Big Shoulders Display and
   Atkinson Hyperlegible, amber home and sky-blue away; one load animation, reduced motion respected.
-- 2026-10: Site navigation is competition -> team or round -> match, each with its own URL;
-  light and dark themes follow the system; page changes use the View Transitions API.
+- 2026-10: Site navigation is competition -> team, round or table -> match, each with its own URL;
+  page changes use the View Transitions API; a header button picks Auto, Light or Dark, and the
+  dark theme is a stadium-night navy.
+- 2026-10: No official crests or competition logos: they are trademarks we have no licence for
+  (a Football Manager logo pack, TCM Logos, is for personal use only). National teams show flags
+  (flag-icons, MIT); clubs show badges we draw from their initials and colours.
+- 2026-10: Tables are computed from the matches (3 points a win, 1 a draw; ordered by points, goal
+  difference, goals scored) and say that official tie-breakers are not applied. Groups are found
+  from who played whom; the Euro 2024 data has no group letters, so those groups are numbered.
 - 2026-10: The MVP is static-first (ADR 0004): pipeline-exported JSON and a static site, no API or
   database; FastAPI and Postgres stay available for later phases.

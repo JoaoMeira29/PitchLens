@@ -22,16 +22,33 @@
   color-scheme: light dark;
 }
 
-/* Night match: same pitch and team colours, deep turf-green surroundings instead of white. */
+/* Night match: a stadium-night navy around the same green pitch and team colours. The theme
+   button sets data-theme on <html>; without it the system preference decides. */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --paper: #0f1622;
+  --surface: #182131;
+  --ink: #e8edf3;
+  --ink-soft: #9aa6b5;
+  --rule: #26324a;
+  --home-ink: #f2b33d;
+  --away-ink: #7cc8ee;
+  color-scheme: dark;
+}
+
 @media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #0e1a13;
-    --surface: #15251b;
-    --ink: #e4ece5;
-    --ink-soft: #a5b5a9;
-    --rule: #2a3b30;
+  :root:not([data-theme="light"]) {
+    --paper: #0f1622;
+    --surface: #182131;
+    --ink: #e8edf3;
+    --ink-soft: #9aa6b5;
+    --rule: #26324a;
     --home-ink: #f2b33d;
     --away-ink: #7cc8ee;
+    color-scheme: dark;
   }
 }
 
@@ -138,8 +155,15 @@ main {
 }
 
 /* The official logo has dark lettering, so on the night theme it sits on a light chip. */
+:root[data-theme="dark"] .site-footer img {
+  background: #ffffff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  box-sizing: content-box;
+}
+
 @media (prefers-color-scheme: dark) {
-  .site-footer img {
+  :root:not([data-theme="light"]) .site-footer img {
     background: #ffffff;
     padding: 4px 8px;
     border-radius: 6px;
@@ -830,6 +854,240 @@ main {
   font-weight: 700;
 }
 
+/* Theme button, team marks */
+
+.theme-toggle {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  color: var(--ink);
+  font: 600 0.9rem / 1 var(--text);
+  cursor: pointer;
+  transition: border-color 180ms ease-out;
+}
+
+.theme-toggle:hover {
+  border-color: var(--turf-light);
+}
+
+.team-mark {
+  flex: none;
+  vertical-align: middle;
+}
+
+.team-mark.flag {
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 18%, transparent);
+  object-fit: cover;
+}
+
+.row-home,
+.row-away,
+.team-name,
+.scoreboard .name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.row-home {
+  justify-content: flex-end;
+}
+
+.scoreboard .home .name {
+  justify-content: flex-end;
+}
+
+/* Tables, groups and bracket */
+
+.section-title {
+  font: 800 clamp(1.6rem, 3.5vw, 2.2rem) / 1.05 var(--display);
+  margin: 2rem 0 0.75rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+}
+
+.standings {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.table-caption {
+  margin: 0 0 0.5rem;
+  font: 700 1.2rem / 1.2 var(--display);
+}
+
+.standings th,
+.standings td {
+  padding: 0.5rem 0.6rem;
+  text-align: right;
+  border-bottom: 1px solid var(--rule);
+  white-space: nowrap;
+}
+
+.standings thead th {
+  color: var(--ink-soft);
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+
+.standings abbr {
+  text-decoration: none;
+}
+
+.standings .club {
+  text-align: left;
+  width: 100%;
+}
+
+.standings .pos,
+.standings .club {
+  position: sticky;
+  background: var(--surface);
+  z-index: 1;
+}
+
+.standings .pos {
+  left: 0;
+  min-width: 2.4rem;
+}
+
+.standings .club {
+  left: 2.4rem;
+}
+
+.standings .club a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.standings .club a:hover {
+  text-decoration: underline;
+}
+
+.standings .pos {
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+.standings .pts {
+  font: 800 1.15rem / 1 var(--display);
+}
+
+.standings .xg-col {
+  color: var(--ink-soft);
+}
+
+.standings tbody tr {
+  animation: rise 320ms ease-out both;
+  animation-delay: calc(var(--order) * 15ms);
+}
+
+.standings tbody tr:last-child th,
+.standings tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.group-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 30rem), 1fr));
+  gap: 1.5rem;
+}
+
+.bracket {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(13rem, 1fr);
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.bracket-round {
+  display: flex;
+  flex-direction: column;
+}
+
+.bracket-round h3 {
+  font: 700 1.15rem / 1.2 var(--display);
+  margin: 0 0 0.5rem;
+  color: var(--ink-soft);
+}
+
+.bracket-round ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 0.6rem;
+}
+
+.bracket-match {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  text-decoration: none;
+  transition:
+    transform 180ms ease-out,
+    border-color 180ms ease-out;
+}
+
+.bracket-match:hover,
+.bracket-match:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--turf-light);
+}
+
+.bracket-team {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--ink-soft);
+}
+
+.bracket-team.won {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.bracket-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bracket-score {
+  font: 800 1.1rem / 1 var(--display);
+  font-variant-numeric: tabular-nums;
+}
+
+.bracket-score sup {
+  font: 600 0.75rem var(--text);
+  color: var(--ink-soft);
+}
+
 /* Small screens */
 
 .match .pitch {
@@ -844,6 +1102,13 @@ main {
 
   .tagline {
     display: none;
+  }
+
+  .standings .club {
+    width: auto;
+    max-width: 10rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .round-grid {
@@ -886,6 +1151,7 @@ main {
 @media (prefers-reduced-motion: reduce) {
   .shots-animate .shot,
   .timeline .step,
+  .standings tbody tr,
   .constellation circle,
   .team-grid li,
   .round-grid li {
@@ -897,7 +1163,9 @@ main {
   .tile,
   .team-tile,
   .round-tile,
-  .switch a {
+  .switch a,
+  .bracket-match,
+  .theme-toggle {
     transition: none;
   }
 
