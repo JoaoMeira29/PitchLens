@@ -53,10 +53,10 @@ def train(staged_dir: Path, models_dir: Path, test_competitions: Collection[str]
         "feature_names": model.feature_names,
         "coefficients": model.coefficients,
         "intercept": model.intercept,
-        "penalty_xg": penalty_value,
+        "penalty_xg": None if penalty_count == 0 else penalty_value,  # no penalties: no value
         "penalty_train_count": penalty_count,
         "penalty_test_count": test_penalty_count,
-        "penalty_test_conversion": test_penalty_rate,
+        "penalty_test_conversion": None if test_penalty_count == 0 else test_penalty_rate,
     }
     models_dir.mkdir(parents=True, exist_ok=True)
     predictions.to_parquet(models_dir / PREDICTIONS, index=False)
