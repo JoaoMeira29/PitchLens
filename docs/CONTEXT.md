@@ -77,7 +77,7 @@ All sources, licence links and last-checked dates live in `docs/DATA_SOURCES.md`
  
 ## Current status
  
-- Phase: 1 (Data foundations), closing; next is phase 2 (xG model v1).
+- Phase: 2 (xG model v1), closing; phase 1 is done. Next is phase 3 (app MVP).
 - Done in phase 0: repo and uv workspace with the pitchlens package; ruff, mypy and pre-commit;
   coordinate conversion with tests; local Postgres via Docker Compose; CI on every pull request;
   CLAUDE.md; main protected; ADR 0001; docs/DATA_SOURCES.md; first shot map notebook;
@@ -87,9 +87,15 @@ All sources, licence links and last-checked dates live in `docs/DATA_SOURCES.md`
   clamping); `pitchlens validate` checks pandera contracts; `pitchlens coverage` writes
   docs/coverage.md; CI runs the whole pipeline end to end on synthetic fixtures. Real data cannot be
   stored, so it is validated locally rather than in CI.
-- Next up: plan phase 2 issues (shot features, logistic regression xG, evaluation, model card)
+- Done in phase 2 (issues #17-#22): shot features (distance, angle, body part, play type);
+  logistic regression xG v1 trained on Premier League 2015/16 and tested on World Cup 2022 and Euro
+  2024; `pitchlens evaluate` writes docs/xg-v1-results.md (beats the naive baseline, behind
+  StatsBomb xG, over-predicts the highest-xG shots); docs/model-card-xg-v1.md; write-up #1 draft in
+  docs/writeups/.
+- Next up: plan phase 3 issues (read-only API, match and competition pages, deployment)
 - Open questions: which league for the live layer; how long to keep the live layer running before
-  archive mode
+  archive mode; the StatsBomb logo on committed results docs and write-ups before they count as
+  published
 
 ## Decisions log
  
@@ -112,3 +118,7 @@ All sources, licence links and last-checked dates live in `docs/DATA_SOURCES.md`
 - 2026-10: Event locations up to 1 StatsBomb unit outside the pitch are clamped and flagged (ADR 0002).
 - 2026-10: Test fixtures are synthetic files in the StatsBomb format (tests/fixtures/), because real
   StatsBomb data cannot be committed; expected values in tests are derived from the fixture files.
+- 2026-10: Shot angle uses StatsBomb's posts scaled to the internal pitch (6.8 m goal, ADR 0003).
+- 2026-10: xG v1 is trained on Premier League 2015/16 and tested on World Cup 2022 and Euro 2024,
+  split by competition so no match is on both sides; penalties are valued at the training-set
+  conversion rate; scikit-learn and matplotlib added as dependencies.
